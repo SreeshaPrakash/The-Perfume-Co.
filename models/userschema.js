@@ -71,20 +71,20 @@ const userschema = new mongoose.Schema(
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "user"
     // }],
-    // searchHistory :[{
-    //     category: {
-    //         type: mongoose.Schema.Types.ObjectId,
-    //         ref :"Category"
-    //     },
-    //     brand:{
-    //         type: String
-    //     },
-    //     searchOn : {
-    //         type:Date,
-    //         default: Date.now
-    //     }
+    searchHistory :[{
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref :"Category"
+        },
+        brand:{
+            type: String
+        },
+        searchOn : {
+            type:Date,
+            default: Date.now
+        }
 
-    // }]
+    }]
   },
   { timestamps: true },
 );

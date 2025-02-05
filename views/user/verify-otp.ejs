@@ -172,6 +172,8 @@
             data:{otp:otpInput},
             success: function(response){
                 if(response.success){
+                    document.body.style.backgroundColor = "#fff"
+                    document.body.innerHTML = ""
                     Swal.fire({
                         icon:"success",
                         title:"OTP verified successfully",

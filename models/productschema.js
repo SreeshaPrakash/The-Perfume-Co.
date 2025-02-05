@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
-const {Schema } = new Schema({
+const { Schema } = mongoose
+const productschema = new Schema({
     productName :{
         type: String,
         required : true
@@ -13,7 +14,7 @@ const {Schema } = new Schema({
         type: String ,
         required: true
     },
-    brand:{
+    category:{
         type: String,
         ref : "Category",
         required : true
@@ -28,12 +29,13 @@ const {Schema } = new Schema({
         required : true
     },
     productOffer :{
+        type:Number,
         default : 0,
 
     },
     quantity:{
         type:Number,
-        default : true
+        default : 0
     },
     color:{
         type: String,
@@ -55,7 +57,7 @@ const {Schema } = new Schema({
     },
     
 
-}, {Timestamp :true})
+}, {timestamps :true})
 
 const Product = mongoose.model("Product",productschema)
 
