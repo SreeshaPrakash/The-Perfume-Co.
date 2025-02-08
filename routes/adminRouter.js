@@ -38,6 +38,10 @@ router.post("/editCategory/:id",adminAuth,categoryController.editCategory)
 //brand mangement
 router.get("/brands",adminAuth,brandController.getBrandPage)
 router.post("/addBrand",adminAuth,upload.single("image"),brandController.addBrand)
+router.get("/blockBrand",adminAuth,brandController.blockBrand)
+router.get("/unblockBrand",adminAuth,brandController.unBlockBrand)
+router.get("/deleteBrand", adminAuth,brandController.deleteBrand)
+
 //product management
 router.get("/addProducts",adminAuth,productController.getProductAddPage)
 router.post("/addProducts",adminAuth,upload.array("images",4),productController.addProducts)

@@ -191,7 +191,7 @@ const getAllProducts = async(req,res)=>{
       
         const search = req.query.search || ""
         const page = req.query.page || 1
-        const limit = 4
+        const limit = 5
         const productData = await Product.find({
             $or:[
 
@@ -200,10 +200,7 @@ const getAllProducts = async(req,res)=>{
 
             ],
         })
-        .limit(limit*1)
-        .skip((page-1)*limit)
-        .populate('category')
-        .exec()
+        .limit(limit*1).skip((page-1)*limit).populate('category').exec()
 
         const count = await Product.find({
             $or:[
