@@ -48,5 +48,7 @@ router.post("/addProducts",adminAuth,upload.array("images",4),productController.
 router.get("/products",adminAuth,productController.getAllProducts)
 
 
+router.get("/blockProduct",adminAuth,productController.blockProduct)
+router.get("/unblockProduct",adminAuth,productController.unblockProduct)
 
 module.exports = router;
