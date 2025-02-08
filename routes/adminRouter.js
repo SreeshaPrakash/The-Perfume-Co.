@@ -45,8 +45,6 @@ router.get("/deleteBrand", adminAuth,brandController.deleteBrand)
 //product management
 router.get("/addProducts",adminAuth,productController.getProductAddPage)
 router.post("/addProducts",adminAuth,upload.array("images",4),productController.addProducts)
-
-
 router.get("/products",adminAuth,productController.getAllProducts)
 
 

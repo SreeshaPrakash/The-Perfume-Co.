@@ -31,7 +31,7 @@
                <div class="card mb-4">
                    <div class="card-body">
                        <form method="post" action="/admin/addProducts" enctype="multipart/form-data"
-                           onsubmit="return validateForm()
+                           onsubmit="return validateForm()"
 ">
                            <div class="mb-4">
                                <label for="product_name" class="form-label">Product Name</label>
@@ -85,17 +85,7 @@
                                    </div>
                                </div>
                            </div>
-                           <!-- <div class="row">
-                              
-                               <div class="col-lg-4">
-                                   <div class="mb-4">
-                                       <label class="form-label">Color</label>
-                                       <input  name="color" type="text" class="form-control border">
-                                   </div>
-                                   <div id="color-error" class="error-message"></div>
-                               </div>
-                            
-                           </div> -->
+                           
                            <div class="card mb-4">
                                <div class="card-body">
                                    <div class="row gx-2">
@@ -208,8 +198,8 @@
 <script>
     function validateAndSubmit(){
         if(validateForm()){
-            //document.forms[0].submit()
-            document.querySelector("form").submit()
+            document.forms[0].submit()
+            //document.querySelector("form").submit()
 
         }
     }
@@ -285,7 +275,7 @@
     }
 
 
-
+//to set images as thumbnail
     const selectedImages = []
     document.getElementById("input1").addEventListener("change",handleFileSelect)
 
