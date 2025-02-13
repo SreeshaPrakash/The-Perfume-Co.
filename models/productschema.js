@@ -10,9 +10,17 @@ const productschema = new Schema({
     type : String,
     required: true
     },
-    brand:{
-        type: String ,
-        required: true
+    // brand:{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref:"Brand",
+    //     required: true
+    // },
+    brand: {
+        // type: String,
+        // required : true
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Brand",
+        required : true
     },
     category:{
         // type: ObjectId,
@@ -29,26 +37,34 @@ const productschema = new Schema({
         type : Number,
         required : true
     },
-    productOffer :{
-        type:Number,
-        default : 0,
+    // productOffer :{
+    //     type:Number,
+    //     default : 0,
 
-    },
+    // },
     quantity:{
         type:Number,
-        default : 0
+        default : 0,
+        min:0
     },
     productImage :{
         type :[String],
         required :true
     },
+    // productImage :[
+    //     {
+    //         url : String,
+    //         format : String,
+    //         size : Number
+    //     }
+    // ],
     isBlocked :{
         type: Boolean,
         default :false
     },
     status:{
         type : String,
-        enum : ["Available","out of stock","Discount"],
+        enum : ["Available","out of stock","isOnSale"],
         required: true,
         default:"Available"
     },

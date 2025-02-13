@@ -5,6 +5,12 @@ const brandschema = new Schema({
     type: String,
     required: true,
   },
+//   brandName: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Brand", // Reference to Brand model
+//     required: true
+// },
+
   brandImage: {
     type: [String],
     required: true,
@@ -13,10 +19,7 @@ const brandschema = new Schema({
     type: Boolean,
     default: false,
   },
-  // createdAt: {
-  //   type: Date,
-  //   default: Date.now,
-  // },
+  
 },  { timestamps: true });
 
 const Brand = mongoose.model("Brand", brandschema);

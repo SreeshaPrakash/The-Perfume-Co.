@@ -1,0 +1,79 @@
+<%- include("../../views/partials/user/header") %>
+
+<body class="homepage">
+  <div class="preloader text-white fs-6 text-uppercase overflow-hidden"></div>
+
+  <div class="search-popup">
+    <div class="search-popup-container">
+      <form role="search" method="get" class="form-group" action="">
+        <input type="search" id="search-form" class="form-control border-0 border-bottom"
+          placeholder="Type and press enter" value="" name="s" />
+        <button type="submit" class="search-submit border-0 position-absolute bg-white"
+          style="top: 15px;right: 15px;">🔍</button>
+      </form>
+      <h5 class="cat-list-title">Browse Categories</h5>
+      <ul class="cat-list">
+        <% categories.forEach(category => { %>
+          <li class="cat-list-item">
+            <a href="<%= category.link %>" title="<%= category.name %>"><%= category.name %></a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <section id="billboard" class="bg-light py-5">
+    <div class="container">
+      <h1 class="section-title text-center mt-4" data-aos="fade-up">New Collections</h1>
+      <div class="row">
+        <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
+          <div class="swiper-wrapper d-flex border-animation-left">
+            <% products.forEach(product => { %>
+              <div class="swiper-slide">
+                <div class="banner-item image-zoom-effect">
+                  <div class="image-holder">
+                    <a href="<%= product.link %>">
+                      <img src="<%= product.img %>" alt="<%= product.name %>" class="img-fluid">
+                    </a>
+                  </div>
+                  <div class="banner-content py-4">
+                    <h5 class="element-title text-uppercase">
+                      <a href="<%= product.link %>" class="item-anchor"><%= product.name %></a>
+                    </h5>
+                    <div class="btn-left">
+                      <a href="<%= product.link %>" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials py-5 bg-light">
+    <div class="section-header text-center mt-5">
+      <h3 class="section-title">WE LOVE GOOD COMPLIMENT</h3>
+    </div>
+    <div class="swiper testimonial-swiper overflow-hidden my-5">
+      <div class="swiper-wrapper d-flex">
+        <% testimonials.forEach(testimonial => { %>
+          <div class="swiper-slide">
+            <div class="testimonial-item text-center">
+              <blockquote>
+                <p>“<%= testimonial.text %>”</p>
+                <div class="review-title text-uppercase"><%= testimonial.author %></div>
+              </blockquote>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+    <div class="testimonial-swiper-pagination d-flex justify-content-center mb-5"></div>
+  </section>
+
+</body>
+<%-include("../../views/partials/user/footer")%>

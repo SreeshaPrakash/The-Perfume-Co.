@@ -70,6 +70,13 @@
             border-color: #b76e79;
         }
 
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
         .login-btn {
             width: 100%;
             padding: 1rem;
@@ -99,6 +106,9 @@
         <div class="login-header">
             <div class="perfume-icon">💎</div>
             <h1>Admin Login</h1>
+            <h2><% if (errorMessage && errorMessage.length>0) { %>
+             <%= errorMessage %>
+            <% } %></h2>
         </div>
         <form action="/admin/login" method="POST">
             <div class="form-group">
@@ -120,6 +130,8 @@
                     placeholder="Enter Password Here"
                     required
                 >
+                <div class="error" id="passwordError">Password must be at least 6 characters</div>
+
             </div>
             <button type="submit" class="login-btn">Login</button>
         </form>
@@ -130,5 +142,43 @@
             <%= error %>
         </div>
     <% } %>
+
+
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            let isValid = true;
+            
+            // Email validation
+            const email = document.getElementById("email").value;
+            const emailError = document.getElementById("emailError");
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                emailError.style.display = "block";
+                isValid = false;
+            } else {
+                emailError.style.display = "none";
+            }
+
+            // Password validation
+            const password = document.getElementById("password").value;
+            const passwordError = document.getElementById("passwordError");
+            if (password.length < 6) {
+                passwordError.style.display = "block";
+                isValid = false;
+            } else {
+                passwordError.style.display = "none";
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+
+
+        
+    </script>
+
+
 </body>
 </html>

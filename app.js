@@ -11,6 +11,7 @@ const userRouter = require("./routes/userRouter");
 const db = require("./config/db");
 db();
 const adminRouter = require("./routes/adminRouter");
+const flash = require("express-flash");
 
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
@@ -29,6 +30,7 @@ app.use(
     },
   }),
 );
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -52,5 +54,9 @@ app.use("/admin", adminRouter);
 app.listen(process.env.PORT, () => {
   console.log("server running");
 });
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 module.exports = app;

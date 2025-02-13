@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
+const upload = require("../helpers/multer");
+const { userAuth } = require("../middlewares/auth");
+const productController = require("../controllers/user/productController")
 
 router.get("/", userController.loadHomepage);
 router.get("/pageNotFound", userController.pageNotFound);
@@ -26,5 +29,13 @@ router.get("/login", userController.loadLogin);
 router.post("/login", userController.login);
 
 router.get("/logout", userController.logout);
+
+//router.get('/',userController.getHomePage)
+router.post("/upload", upload.single("image"), userController.uploadProduct);
+
+//product management
+
+router.get("/productDetails",productController.productDetails)
+
 
 module.exports = router;

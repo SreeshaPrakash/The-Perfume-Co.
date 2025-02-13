@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    
+    <!-- Fancybox for Zooming -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0.0/dist/fancybox.umd.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0.0/dist/fancybox.css"/>
+    
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+
+
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f4f4f4; /* Light grey background */
+            color: #333; /* Dark text color */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            color: #333; /* Changed breadcrumb text to dark grey */
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .breadcrumbs a {
+            color: #000; /* Changed red to black */
+            text-decoration: none;
+        }
+
+        /* Product Details */
+        .product-details {
+            display: flex;
+            gap: 20px;
+            background: #fff; /* White background for product details */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .product-info h1 {
+            color: #000; /* Changed red to black for product name */
+            font-size: 24px;
+        }
+
+        .product-info p {
+            color: #555; /* Dark grey text for description */
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff4d00; /* You can adjust this to black if you wish */
+        }
+
+        .discount {
+            font-size: 14px;
+            color: #ffcc00;
+        }
+
+        .stock {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000; /* Changed red to black for stock status */
+        }
+
+        .rating {
+            color: #ffcc00;
+            font-size: 18px;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: #000; /* Changed red to black for button background */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #333; /* Changed hover color to dark grey */
+        }
+
+        /* Related Products - Horizontal Layout */
+        .related-products-list {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap; /* To ensure responsiveness */
+        }
+
+        .related-product {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .related-product img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .related-product h4 {
+            font-size: 14px;
+            color: #000; /* Changed red to black for related product name */
+            margin: 5px 0;
+        }
+
+        .related-product p {
+            font-size: 14px;
+            color: #555; /* Dark grey text for price */
+            margin: 0;
+        }
+
+        
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="breadcrumbs">
+            <a href="/">Home</a> > 
+            <a href="/productDetails<%= product._id %>">Product Details</a> > 
+            <span><%= product.productName %></span>
+        </div>
+        
+
+        <div class="product-details">
+            
+            <div class="product-image">
+                <img id="zoomImage" 
+                src="/uploads/re-images/<%= product.productImage[0] %>" 
+                data-zoom-image="/uploads/re-images/<%= product.productImage[0] %>" 
+                alt="<%= product.productName %>">
+
+
+                <div class="image-thumbnails">
+                    <% product.productImage.forEach(image => { %>
+                        <a href="/uploads/re-images/<%= image %>" data-fancybox="gallery">
+                            <img src="/uploads/re-images/<%= image %>" style="width: 100px; margin: 5px;">
+                        </a>
+                    <% }) %>
+                </div>
+
+            </div>
+
+            <div class="product-info">
+                <h1><%= product.productName %></h1>
+                <p><%= product.description %></p>
+                <p><strong>Brand:</strong> <%= product.brand.brandName %></p>
+                <p><strong>Category:</strong> <%= product.category.name %></p>
+
+                
+                <p class="price">Sale Price: Rs.<%= product.salePrice %>  
+                    <% if (product.regularPrice > product.salePrice) { %>
+                        <span class="discount">(Save <%= ((product.regularPrice - product.salePrice) / product.regularPrice * 100).toFixed(1) %>%)</span>
+                    <% } %>
+                </p>
+
+                <p class="stock">
+                    <%= product.quantity > 0 ? "In Stock" : "<span style='color:black;'>Sold Out</span>" %>
+                </p>
+                
+                <p class="rating">⭐⭐⭐⭐☆ (4.5 / 5)</p>
+                <button class="btn">Add to Cart</button>
+                <button class="btn">Wishlist</button>
+            </div>
+        </div>
+
+        <div class="related-products">
+            <h3>Related Products</h3>
+            <div class="related-products-list">
+                <% relatedProducts.forEach((related) => { %>
+                    <div class="related-product">
+                        <a href="/productDetails/<%= related._id %>">
+                            <img src="/uploads/re-images/<%= related.productImage[0] %>" 
+                                 alt="<%= related.productName %>">
+                            <h4><%= related.productName %></h4>
+                            <p>₹<%= related.salePrice %></p>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('[data-fancybox="gallery"]').fancybox({
+                buttons: ["zoom", "close"]
+            });
+        });
+
+
+
+        $(document).ready(function() {
+        $("#zoomImage").elevateZoom({
+            zoomType: "window",    // Enables zoom window effect
+            zoomWindowWidth: 500,  // Adjust width of zoomed image
+            zoomWindowHeight: 500, // Adjust height of zoomed image
+            zoomWindowOffsetX: 20, // Moves zoomed image slightly to the right
+            scrollZoom: true,      // Enables scroll zoom
+            cursor: "crosshair"
+        });
+    });
+
+
+
+    </script>
+</body>
+</html>

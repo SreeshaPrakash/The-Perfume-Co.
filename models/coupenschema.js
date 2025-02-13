@@ -12,10 +12,10 @@ const couponSchema = new mongoose.Schema({
   //   default: Date.now,
   //   required: true,
   // },
-  offerPrice: {
-    type: Number,
-    required: true,
-  },
+  // offerPrice: {
+  //   type: Number,
+  //   required: true,
+  // },
   minimumPrice: {
     type: Number,
     required: true,

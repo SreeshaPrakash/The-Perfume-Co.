@@ -1,6 +1,7 @@
 const User = require("../../models/userschema");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const flash = require('express-flash')
 
 const pageerror = async (req, res) => {
   res.render("admin-error");
@@ -8,9 +9,11 @@ const pageerror = async (req, res) => {
 
 const loadLogin = (req, res) => {
   if (req.session.admin) {
+   
     return res.redirect("/admin/dashboard");
   }
-  res.render("admin-login", { message: null });
+  const errorMessage=req.flash('message');
+  res.render("admin-login", { errorMessage });
 };
 
 const login = async (req, res) => {
@@ -18,15 +21,17 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     const admin = await User.findOne({ email, isAdmin: true });
     if (admin) {
-      const passwordMatch = bcrypt.compare(password, admin.password);
-      if (passwordMatch) {
+      
+      if (password==admin.password) {
         req.session.admin = true;
         return res.redirect("/admin");
       } else {
-        return res.redirect("/login");
+        req.flash('message',"Password is wrong")
+        return res.redirect("/admin/login")
       }
     } else {
-      return res.redirect("/login");
+      req.flash('message',"invalid email")
+      return res.redirect("/admin/login");
     }
   } catch (error) {
     console.log("login error", error);

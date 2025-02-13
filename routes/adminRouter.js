@@ -29,11 +29,12 @@ router.get("/unblockCustomer", adminAuth, customerController.customerunBlocked);
 router.get("/category",adminAuth,categoryController.categoryInfo)
 router.post("/addCategory",adminAuth,categoryController.addCategory)
 
-router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
-router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
+//router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
+//router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
 router.get("/listCategory",adminAuth,categoryController.getListCategory)
 router.get("/unlistCategory",adminAuth,categoryController.getUnlistCategory)
 router.get("/editCategory",adminAuth,categoryController.getEditCategory)
+router.post("/editCategory",adminAuth,categoryController.getEditCategory)
 router.post("/editCategory/:id",adminAuth,categoryController.editCategory)
 //brand mangement
 router.get("/brands",adminAuth,brandController.getBrandPage)
@@ -50,5 +51,21 @@ router.get("/products",adminAuth,productController.getAllProducts)
 
 router.get("/blockProduct",adminAuth,productController.blockProduct)
 router.get("/unblockProduct",adminAuth,productController.unblockProduct)
+router.get("/editProduct",adminAuth,productController.getEditProduct)
+router.post("/editProduct/:id",adminAuth,upload.array("images",4),productController.editProduct)
+router.post("/deleteImage",adminAuth,productController.deleteSingleImage)
+router.post("/upload",adminAuth, upload.single("image"), (req, res) => {
+    // console.log(req.body); // Should contain form fields
+    // console.log(req.file); // Should contain file data
+
+    if (!req.file) {
+        return res.status(400).json({ message: "File not uploaded" });
+    }
+
+    res.status(200).json({ message: "File uploaded successfully", file: req.file });
+});
+
+
+
 
 module.exports = router;
