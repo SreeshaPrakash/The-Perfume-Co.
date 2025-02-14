@@ -192,6 +192,8 @@
                 }
             },
             error: function(){
+                document.body.style.backgroundColor = "#fff"
+                    document.body.innerHTML = ""
                 Swal.fire({
                     icon:"error",
                     title:"Invalid OTP",
@@ -216,6 +218,8 @@
             url:"/resend-otp",
             success: function(response){
                 if(response.success){
+                     document.body.style.backgroundColor = "#fff"
+                    document.body.innerHTML = ""
                     Swal.fire({
                     icon:"success",
                     title:"OTP resend successfully",
@@ -226,7 +230,11 @@
 
                 }
                 else{
+                    
+                    document.body.style.backgroundColor = "#fff"
+                    document.body.innerHTML = ""
                     Swal.fire({
+                        
                         icon:"error",
                         title:"Error",
                         text:"an error occured while resending OTP. Please try again"

@@ -146,7 +146,7 @@ const getAllProducts = async(req,res)=>{
             $match: {
                 $or: [
                     { productName: { $regex: search, $options: "i" } },
-                    { "brandDetails.name": { $regex: search, $options: "i" } },
+                    { 'brandDetails.name': { $regex: search, $options: "i" } },
                     { "categoryDetails.name": { $regex: search, $options: "i" } }
                 ]
             }
@@ -353,7 +353,7 @@ const editProduct = async (req, res) => {
             };
 
             await Product.findByIdAndUpdate(id, updateFields, { new: true });
-            return res.status(200).json({ message: "Product updated successfully without image changes" });
+            return res.status(200).json({ message: "Product updated successfully " });
 
         } else {
             // New images uploaded, update them
