@@ -8,14 +8,19 @@ const passport = require("./config/passport");
 const userschema = require("./models/userschema");
 const path = require("path");
 const userRouter = require("./routes/userRouter");
-const db = require("./config/db");
-db();
 const adminRouter = require("./routes/adminRouter");
 const flash = require("express-flash");
+const bodyParser = require("body-parser");
+
+const db = require("./config/db");
+db();
 
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+app.use(bodyParser.json());
+//const MongoStore = require('connect-mongo');
+//middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -23,6 +28,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+  //   store: MongoStore.create({
+  //     mongoUrl: process.env.MONGODB_URI, // Change to your DB
+  //     collectionName: 'sessions'
+  // }),
     cookie: {
       secure: false,
       httpOnly: true,
@@ -30,8 +39,8 @@ app.use(
     },
   }),
 );
-app.use(flash());
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -40,23 +49,24 @@ app.use((req, res, next) => {
   next();
 });
 
+//view engine setup
 app.set("view engine", "ejs");
 app.set("views", [
   path.join(__dirname, "views/user"),
   path.join(__dirname, "views/admin"),
 ]);
+
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/", userRouter);
-
 app.use("/admin", adminRouter);
+
+
 
 app.listen(process.env.PORT, () => {
   console.log("server running");
 });
-
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 module.exports = app;

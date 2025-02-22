@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Address</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+       body {
+           background-color: #f8f9fa;
+       }
+
+       .sidebar {
+           background-color: #343a40;
+           color: white;
+           border-radius: 10px;
+           height: 75vh;
+       }
+
+       .sidebar .nav-link {
+           color: white;
+           transition: 0.3s;
+           font-size: 1.1rem;
+       }
+
+       .sidebar .nav-link:hover {
+           background-color: #495057;
+           border-radius: 5px;
+       }
+
+       .logout-link {
+           color: #dc3545 !important;
+           font-weight: bold;
+       }
+
+       .form-container {
+           background-color: white;
+           padding: 20px;
+           border-radius: 10px;
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+       }
+
+       .breadcrumb {
+           background: transparent;
+           font-size: 0.85rem;
+           padding: 5px 0;
+           margin-bottom: 10px;
+       }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-md-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb small mb-2 px-2 py-1">
+                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-dark">Home</a></li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">Add Address</li>
+                    </ol>
+                </nav>
+
+                <div class="card sidebar p-3">
+                    <div class="text-center">
+                        <h4><%= (user && user.firstName) ? user.firstName + ' ' + user.lastName : 'Guest' %></h4>
+
+                    </div>
+                    <hr>
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a href="account" class="nav-link">Account</a></li>
+                        <li class="nav-item"><a href="address" class="nav-link">Address</a></li>
+                        <li class="nav-item"><a href="/user/orders" class="nav-link">Orders</a></li>
+                        <li class="nav-item"><a href="/user/wishlist" class="nav-link">Wishlist</a></li>
+                        <li class="nav-item"><a href="/user/cart" class="nav-link">Cart</a></li>
+                        <li class="nav-item"><a href="/user/wallet" class="nav-link">Wallet</a></li>
+                        <li class="nav-item"><a href="/user/coupons" class="nav-link">Coupons</a></li>
+                        <li class="nav-item"><a href="/logout" class="nav-link logout-link">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content Column -->
+            <div class="col-md-9">
+                <div class="form-container">
+                    <h4 class="text-primary">Add New Address</h4>
+                    <hr>
+                    <form id="addAddress" action="/address" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" name="fullName" id="fullName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" name="phone" id="phone" pattern="[0-9]{10}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Street Address</label>
+                            <input type="text" class="form-control" name="street" id="street" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control" name="city" id="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">State</label>
+                            <input type="text" class="form-control" name="state" id="state" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ZIP Code</label>
+                            <input type="text" class="form-control" name="zipcode" id="zipcode" required>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.getElementById('addAddress').addEventListener("submit",async(event) =>{
+        event.preventDefault()
+
+        const fullName = document.getElementById("fullName").value.trim()
+        const phone = document.getElementById('phone').value.trim()
+        const street = document.getElementById('street').value.trim()
+        const city = document.getElementById('city').value.trim()
+        const state = document.getElementById('state').value.trim()
+        const zipcode = document.getElementById('zipcode').value.trim()
+
+        // Validation Patterns
+    const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
+    const zipcodePattern = /^[1-9][0-9]{5}$/; // 6-digit positive number, cannot start with 0
+    const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
+
+    if (!fullName || !phone || !street || !city || !state || !zipcode) {
+        return Swal.fire("Error!", "All fields are required.", "error");
+    }
+
+    if (!alphabetPattern.test(fullName) || !alphabetPattern.test(street) || !alphabetPattern.test(city) || !alphabetPattern.test(state) ) {
+        return Swal.fire("Error!", " fullName,street, City and State should contain only alphabets.", "error");
+    }
+
+    if (!zipcodePattern.test(zipcode)) {
+        return Swal.fire("Error!", "zipcode must be a 6-digit positive number.", "error");
+    }
+
+    if (!phonePattern.test(phone)) {
+        return Swal.fire("Error!", "Phone number must be a 10-digit positive number starting with 6-9.", "error");
+    }
+
+     // If all validations pass, send the data
+     const data = {
+       
+        fullName: fullName,
+        phone: phone,
+        street : street,
+        city: city,
+        state: state,
+        zipcode : zipcode, 
+        //userId: userId
+    };
+    console.log(data)
+
+    try {
+        const response = await fetch("/add-address", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Success!",
+                text: "Address Added Successfully",
+                icon: "success",
+                showConfirmButton: true
+            }).then(() => {
+                if (document.referrer.includes("/checkout")) {
+                    window.location.href = "/user/checkout";
+                } else {
+                    window.location.href = "/userProfile";
+                }
+            });
+        } else {
+            Swal.fire("Error!", "Failed to add address. Please try again.", "error");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        Swal.fire("Error!", "Something went wrong.", "error");
+    }
+
+    })
+</script>
+
+
+
+</body>
+</html>

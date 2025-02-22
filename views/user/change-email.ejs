@@ -1,0 +1,74 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+   /* Change form background to white */
+   .card-login {
+       background-color: white;
+       padding: 20px;
+       border-radius: 10px;
+       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+   }
+
+   /* Change text color to black */
+   .card-title, label, .form-control {
+       color: black;
+   }
+
+   /* Change button style: Grey → Red */
+   .btn-primary {
+       background-color: red !important;
+       border-color: red !important;
+       color: white !important;
+   }
+
+   .btn-primary:hover {
+       background-color: darkred !important;
+       border-color: darkred !important;
+   }
+
+   /* Page background */
+   body {
+       background-color: #f5f5f5; /* Light grey */
+   }
+</style>
+
+<section class="content-main mt-80 mb-80">
+   <div class="card mx-auto card-login col-4">
+       <div class="card-body">
+           <h4 class="card-title mb-4">Enter Current Email</h4>
+           <form method="post" action="/change-email" onsubmit="return validateLoginForm()">
+               <div class="mb-3">
+                   <input class="form-control" name="email" placeholder="Email" type="text" id="email">
+                   <div class="error-message text-danger mt-2" id="email-error"></div>
+               </div>
+               <div class="mb-4">
+                   <button type="submit" class="btn btn-primary w-100">Verify</button>
+               </div>
+           </form>
+       </div>
+   </div>
+</section>
+
+<script>
+   function validateLoginForm() {
+       const emailInput = document.getElementById('email');
+       const emailError = document.getElementById('email-error');
+       const emailValue = emailInput.value.trim();
+       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+       if (emailValue === '') {
+           emailError.textContent = 'Please enter your email.';
+           emailInput.classList.add('is-invalid');
+           return false;
+       } else if (!emailValue.match(emailPattern)) {
+           emailError.textContent = 'Please enter a valid email address';
+           emailInput.classList.add('is-invalid');
+           return false;
+       } else {
+           emailError.textContent = '';
+           emailInput.classList.remove('is-invalid');
+           return true;
+       }
+   }
+</script>
+
+<%- include("../../views/partials/user/footer") %>

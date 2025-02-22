@@ -64,7 +64,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Regular price</label>
-                                        <input placeholder="$" name="regularPrice" type="text"
+                                        <input placeholder="Rs" name="regularPrice" type="text"
                                             class="form-control border">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
@@ -198,7 +198,7 @@
 
     <script>
         function validateAndSubmit() {
-            if (validateForm()) {
+            if (validateForm(event)) {
                 document.forms[0].submit()
                 //document.querySelector("form").submit()
 

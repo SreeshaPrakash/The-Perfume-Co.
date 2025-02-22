@@ -1,4 +1,12 @@
 <%- include("../../views/partials/admin/header") %>
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+
+
+
 <div class="content-header row">
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="content-title card-title">Customers</h2>
@@ -36,11 +44,13 @@
                                 <td> 
                                     <%if(userData[i].isBlocked===false){%>
                                         <button class="btn btn-danger" style="width: 80px;">
-                                            <a href="/admin/blockCustomer?id=<%=userData[i]._id%>" class="text-white" style="text-decoration: none;">Block</a>
+                                            <a href="#" onclick="confirmBlock('<%=userData[i]._id%>', '<%=userData[i].firstName%> <%=userData[i].lastName%>'); return false" 
+                                                class="text-white" style="text-decoration: none;">Block</a>
                                         </button>
                                         <%}else{%>
                                         <button class="btn btn-success" style="width: 80px;">
-                                            <a href="/admin/unblockCustomer?id=<%=userData[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a>
+                                            <a href="#" onclick="confirmUnblock('<%=userData[i]._id%>', '<%=userData[i].firstName%> <%=userData[i].lastName%>'); return false" 
+                                                class="text-white" style="text-decoration: none;">Unblock</a>
                                         </button> 
                                         <%}%>
                                 </td>
@@ -61,4 +71,57 @@
                 </ul>
             </nav>
         </div>
+
+
+<!-- 
+        <script>
+            function confirmBlock(userId, userName) {
+                if(confirm(`Are you sure you want to block ${userName}?`)) {
+                    window.location.href = `/admin/blockCustomer?id=${userId}`;
+                }
+            }
+        
+            function confirmUnblock(userId, userName) {
+                if(confirm(`Are you sure you want to unblock ${userName}?`)) {
+                    window.location.href = `/admin/unblockCustomer?id=${userId}`;
+                }
+            }
+        </script> -->
+
+        <script>
+            function confirmBlock(userId, userName) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to block ${userName}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, block user',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/admin/blockCustomer?id=${userId}`;
+                    }
+                });
+            }
+            
+            function confirmUnblock(userId, userName) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to unblock ${userName}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, unblock user',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/admin/unblockCustomer?id=${userId}`;
+                    }
+                });
+            }
+            </script>
+
         <%- include("../../views/partials/admin/footer") %>

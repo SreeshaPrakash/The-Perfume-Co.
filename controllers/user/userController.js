@@ -1,10 +1,9 @@
 const User = require("../../models/userschema");
-const Category = require("../../models/categoryschema")
-const Product = require("../../models/productschema")
+const Category = require("../../models/categoryschema");
+const Product = require("../../models/productschema");
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-
 
 const pageNotFound = async (req, res) => {
   try {
@@ -16,34 +15,30 @@ const pageNotFound = async (req, res) => {
 };
 
 const loadHomepage = async (req, res) => {
-  
   try {
-    
     const userId = req.session.userId;
-    const categories = await Category.find({isListed : true})
+    const categories = await Category.find({ isListed: true });
     let productData = await Product.find({
-      isBlocked:false,
-      category :{ $in : categories.map(category=>category._id)},
-      quantity:{$gt : 0}
-    })
+      isBlocked: false,
+      category: { $in: categories.map((category) => category._id) },
+      quantity: { $gt: 0 },
+    });
 
-    productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn))
-    productData = productData.slice(0,4)
+    productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+    productData = productData.slice(0, 4);
     // const recentProducts = productData.slice(0, 4);
 
-
     const products = await Product.find(); // Fetch all products from MongoDB
-    //res.render("home", { products }); 
+    //res.render("home", { products });
 
     if (userId) {
       const userData = await User.findById(userId);
-  
+
       // return res.render("home", { user: userData, products:recentProducts });
-      return res.render("home", { user: userData, products:productData });
-    }
-    else{
-    // return res.render("home", {products : products});
-    return res.render("home", {products : productData});
+      return res.render("home", { user: userData, products: productData });
+    } else {
+      // return res.render("home", {products : products});
+      return res.render("home", { products: productData });
     }
   } catch (error) {
     console.log("home page not found", error);
@@ -51,13 +46,12 @@ const loadHomepage = async (req, res) => {
   }
 };
 
-
 // const loadHomepage = async (req, res) => {
 //   try {
 //     console.log("helleo ")
 //     console.log("req.files",req.files);
-//     console.log("req.body",req.body); 
-    
+//     console.log("req.body",req.body);
+
 //     const userId = req.session.userId;
 //     let userData = null;
 
@@ -66,9 +60,8 @@ const loadHomepage = async (req, res) => {
 //     }
 
 //     const products = await Products.find();
-     
-//     return res.render("home", { user: userData, products});
 
+//     return res.render("home", { user: userData, products});
 
 //     //else{
 //    // return res.render("home");
@@ -78,7 +71,6 @@ const loadHomepage = async (req, res) => {
 //     res.status(500).send("server error");
 //   }
 // };
-
 
 const loadSignUp = async (req, res) => {
   try {
@@ -317,7 +309,6 @@ const logout = async (req, res) => {
   }
 };
 
-
 // const getHomePage = async(req,res)=>{
 //   try{
 //     const products = await Products.find()
@@ -329,35 +320,29 @@ const logout = async (req, res) => {
 //   }
 // }
 
-
-const uploadProduct = async(req,res)=>{
+const uploadProduct = async (req, res) => {
   try {
-    
-    if(!req.file){
-      console.log("no file uploaded")
-      return res.status(400).json({message : " Please upload an image"})
+    if (!req.file) {
+      console.log("no file uploaded");
+      return res.status(400).json({ message: " Please upload an image" });
     }
 
-
-    console.log("uploaded file:",req.file)
+    console.log("uploaded file:", req.file);
 
     const newProduct = new Product({
-      name : req.body.name,
-      image : "/uploads" + req.file.filename,
-      description : req.body.description,
-      price : req.body.price,
-    })
+      name: req.body.name,
+      image: "/uploads" + req.file.filename,
+      description: req.body.description,
+      price: req.body.price,
+    });
 
-    await newProduct.save()
-    res.redirect("/")
-
-
+    await newProduct.save();
+    res.redirect("/");
   } catch (error) {
-    cconsole.log("Error uploading product:",error)
-    res.status(500).send("server error")
-    
+    cconsole.log("Error uploading product:", error);
+    res.status(500).send("server error");
   }
-}
+};
 
 module.exports = {
   loadHomepage,
@@ -370,5 +355,5 @@ module.exports = {
   login,
   logout,
   uploadProduct,
-  // getHomePage
+  
 };

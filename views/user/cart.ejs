@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+        .cart-container {
+            flex: 1;
+            padding: 20px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            padding: 15px 0;
+        }
+        .cart-item img {
+            width: 80px;
+            height: auto;
+        }
+        .cart-item div {
+            flex: 1;
+            margin-left: 15px;
+        }
+        .cart-actions button {
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .remove-btn {
+            background: red;
+            color: white;
+        }
+        .checkout-btn {
+            background: black;
+            color: white;
+            padding: 10px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="/user/account">Account</a></li>
+            <li><a href="/user/address">Address</a></li>
+            <li><a href="/user/orders">Orders</a></li>
+            <li><a href="/user/wishlist">Wishlist</a></li>
+            <li><a href="/user/cart">Cart</a></li>
+            <li><a href="/user/wallet">Wallet</a></li>
+            <li><a href="/user/coupons">Coupons</a></li>
+            <li><a href="/logout" style="color: red;">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="cart-container">
+        <h2>Your Cart</h2>
+        
+        <% if(cart.length > 0) { %>
+            <% cart.forEach(item => { %>
+                <div class="cart-item">
+                    <img src="<%= item.image %>" alt="<%= item.name %>">
+                    <div>
+                        <h3><%= item.name %></h3>
+                        <p>Price: <%= item.price %></p>
+                        <p>Stock: <%= item.stock %></p>
+                    </div>
+                    <div class="cart-actions">
+                        <form action="/cart/update" method="POST">
+                            <input type="hidden" name="productId" value="<%= item.id %>">
+                            <button type="submit" name="action" value="decrease">-</button>
+                            <span><%= item.quantity %></span>
+                            <button type="submit" name="action" value="increase">+</button>
+                        </form>
+                        <form action="/cart/remove" method="POST" style="display: inline;">
+                            <input type="hidden" name="productId" value="<%= item.id %>">
+                            <button type="submit" class="remove-btn">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+            
+            <h3>Total: <%= cartTotal %></h3>
+            <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+        <% } else { %>
+            <p>Your cart is empty.</p>
+        <% } %>
+    </div>
+</body>
+</html>

@@ -68,8 +68,6 @@
 
 
 
-
-
 </head>
 
 
@@ -131,7 +129,7 @@
                     </li>
                   </ul>
                 </li> 
-                
+              
 
 
                 <li class="nav-item">
@@ -157,9 +155,9 @@
                         <!-- <a href="#" class="sign-in-link"><%=locals.user.firstName + ' ' + locals.user.lastName%></a> -->
                         <div class="dropdown-content">
 
-                          <li class="nav-item">
+                          <!-- <li class="nav-item">
                             <a class="nav-link" href="/signup">Sign Up</a>
-                          </li>
+                          </li> -->
                             <a href="/userProfile">Profile</a>
                             <a href="/logout">Logout</a>
 
@@ -170,10 +168,12 @@
                     </div>
                 <%}else {%>
 
-                
+                   
+
                 <li class="nav-item">
                   <a class="nav-link" href="/signup">Sign Up</a>
                 </li>
+
 
                 <li class="nav-item">
                   <a class="nav-link" href="/login">Log In</a>
@@ -187,9 +187,6 @@
 
         <div class="col-3 col-lg-auto">
           <ul class="list-unstyled d-flex m-0">
-
-
-
 
 
             

@@ -157,11 +157,11 @@
                     <td class="text-start">
                       <% if(category.isListed){ %>
                       <button class="btn btn-danger" style="width: 70px">
-                        <a href="/admin/listCategory?id=<%=category._id%>" class="text-white">Unlist</a>
+                        <a href="#" onclick="confirmUnlist('<%=category._id%>', '<%=category.name%>'); return false;" class="text-white">Unlist</a>
                       </button>
                       <% }else { %>
                       <button class="btn btn-success" style="width: 70px">
-                        <a href="/admin/unlistCategory?id=<%=category._id%>" class="text-white">List</a>
+                        <a href="#" onclick="confirmList('<%=category._id%>', '<%=category.name%>'); return false;" class="text-white">List</a>
                       </button>
                       <% } %>
                     </td>
@@ -274,6 +274,41 @@ function validateForm(){
 }
 
 
+
+
+function confirmList(categoryId, categoryName) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to list ${categoryName}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, list it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/admin/unlistCategory?id=${categoryId}`;
+        }
+    });
+}
+
+function confirmUnlist(categoryId, categoryName) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to unlist ${categoryName}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, unlist it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/admin/listCategory?id=${categoryId}`;
+        }
+    });
+}
 
 
 function displayErrorMessage(elementId,message){
@@ -399,3 +434,41 @@ function clearErrorMessages(){
 
 
 <%- include("../../views/partials/admin/footer") %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

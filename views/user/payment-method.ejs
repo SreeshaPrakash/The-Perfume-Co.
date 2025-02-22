@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #f8f9fa;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            margin-bottom: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .logout {
+            color: white;
+            background: red;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .container {
+            flex: 1;
+            padding: 20px;
+        }
+        .checkout-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        .address-section, .payment-section {
+            margin-bottom: 20px;
+        }
+        .address-list {
+            margin-top: 10px;
+        }
+        .add-address {
+            background: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+        }
+        .payment-method label {
+            margin: 5px 0;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: black;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: darkgray;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="/profile">Account</a>
+        <a href="/address">Address</a>
+        <a href="/orders">Orders</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/cart">Cart</a>
+        <a href="/wallet">Wallet</a>
+        <a href="/coupons">Coupons</a>
+        <div class="logout">Logout</div>
+    </div>
+
+    <div class="container">
+        <div class="checkout-box">
+            <h2>Checkout - Payment</h2>
+
+            <!-- Shipping Address Section -->
+            <div class="address-section">
+                <h3>Shipping Address</h3>
+                <div class="address-list">
+                    <% if (user.Address.length > 0) { %>
+                        <% user.Address.forEach(address => { %>
+                            <div>
+                                <input type="radio" name="selectedAddress" value="<%= address.id %>"> 
+                                <label><%= address.street %>, <%= address.city %></label>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No address available. Please add one.</p>
+                    <% } %>
+                </div>
+                <button class="add-address">+ Add Address</button>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="payment-section">
+                <h3>Payment Method</h3>
+                <div class="payment-method">
+                    <label><input type="radio" name="paymentMethod" value="COD"> Cash on Delivery</label>
+                    <label><input type="radio" name="paymentMethod" value="Wallet"> Wallet</label>
+                    <label><input type="radio" name="paymentMethod" value="Card"> Credit/Debit Card</label>
+                    <label><input type="radio" name="paymentMethod" value="UPI"> UPI</label>
+                </div>
+            </div>
+
+            <button class="btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -24,6 +24,12 @@ const userschema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+  //   address: [{
+  //     street: String,
+  //     city: String,
+  //     state: String,
+  //     zipcode: String
+  // }],
     phone: {
       type: String,
       default: null,
@@ -37,10 +43,10 @@ const userschema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // cart:[{
-    //     type : mongoose.Schema.Types.ObjectId,
-    //     ref:"Cart",
-    // }],
+    cart:[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref:"Cart",
+    }],
     googleId: {
       type: String,
       unique: true,
@@ -53,14 +59,10 @@ const userschema = new mongoose.Schema(
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref: "Wishlist"
     // }],
-    // orderHistory:[{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Order"
-    // }],
-    //   createdOn: {
-    //     type: Date,
-    //     default: Date.now,
-    //},
+    orders:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order"
+    }],
     referalcode: {
       type: String,
     },
@@ -71,22 +73,26 @@ const userschema = new mongoose.Schema(
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "user"
     // }],
-    searchHistory :[{
+    searchHistory: [
+      {
         category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref :"Category"
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Category",
         },
-        brand:{
-            type: String
+        brand: {
+          type: String,
         },
-        searchOn : {
-            type:Date,
-            default: Date.now
-        }
-
-    }]
+        searchOn: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );
 
-module.exports = mongoose.model("User", userschema);
+//module.exports = mongoose.model("User", userschema);
+const User = mongoose.model("User",userschema)
+module.exports = User
+
