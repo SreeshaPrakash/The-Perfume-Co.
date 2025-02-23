@@ -128,6 +128,20 @@
          const currentpassword = document.getElementById("current-password").value.trim();
          const NewPassword = document.getElementById("new-password").value.trim();
          const Cpassword = document.getElementById("confirm-password").value.trim();
+
+
+         const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
+        const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
+
+        if (!phonePattern.test(phone)) {
+        return Swal.fire("Error!", "Phone number must be a 10-digit positive number starting with 6-9.", "error");
+    }
+  
+    if (!alphabetPattern.test(fname) || !alphabetPattern.test(lname)) {
+        return Swal.fire("Error!", " firstName and lastName should contain only alphabets.", "error");
+    }
+   
+
      
          try {
              const response = await fetch("account", {
@@ -139,7 +153,7 @@
                                          userId,
                                          firstName:fname,
                                          lastName:lname,
-                                         phone,
+                                         phone: phone,
                                          currentpassword,
                                          NewPassword,
                                          Cpassword

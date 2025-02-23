@@ -37,8 +37,7 @@ app.use(
       httpOnly: true,
       maxAge: 72 * 60 * 60 * 1000,
     },
-  }),
-);
+  }));
 
 app.use(flash());
 app.use(passport.initialize());
@@ -55,6 +54,12 @@ app.set("views", [
   path.join(__dirname, "views/user"),
   path.join(__dirname, "views/admin"),
 ]);
+
+app.use((req, res, next) => {
+  // Make user data available to all templates
+  res.locals.user = req.session.user || null;
+  next();
+});
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

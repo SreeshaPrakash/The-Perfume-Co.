@@ -199,7 +199,7 @@ const postNewPassword = async(req,res)=>{
 const userProfile= async(req,res)=>{
     try {
        
-        const userId = req.session.userId
+        const userId = req.session.user._id
         if (!userId) {
             console.log("User not logged in!");
             return res.redirect("/login");
@@ -219,12 +219,12 @@ const userProfile= async(req,res)=>{
 
 const getAccount = async(req,res) =>{
     try {
-        console.log("session userId:", req.session.userId);
-                if (!req.session.userId) {
+        console.log("session userId:", req.session.user._id);
+                if (!req.session.user._id) {
                     console.log("User not logged in, redirecting to login.");
                     return res.redirect('/login'); 
                 }
-                const userId = req.session.userId;
+                const userId = req.session.user._id;
         
                 const userData = await User.findById(userId);               
                 if (!userData) {
@@ -289,7 +289,7 @@ const getAddress = async(req,res)=>{
             console.log("User not logged in, redirecting to login.");
             return res.redirect('/login'); 
         }
-        const userId = req.session.userId;
+        const userId = req.session.user._id;
         const userData = await User.findById(userId)
     
         if (!userData) {
@@ -317,7 +317,7 @@ const addAddress = async (req, res) => {
             console.log("User not logged in, redirecting to login.");
             return res.redirect('/login');
         }
-        const userId = req.session.userId;
+        const userId = req.session.user._id;
         const userData = await User.findById(userId);
         console.log("User ID:", userId);
         
@@ -336,7 +336,7 @@ const addAddress = async (req, res) => {
 const postAddress = async (req, res) => {
     try {
         const { fullName, phone, street, city, state, zipcode } = req.body;
-        const userId = req.session.userId;
+        const userId = req.session.user._id;
         const userData = await User.findById(userId);
         const newAddress = new Address({
             fullName,
@@ -360,7 +360,7 @@ const postAddress = async (req, res) => {
 const editAddress = async (req, res) => {     
     try {     
      
-        const userId = req.session.user;    
+        const userId = req.session.user?._id;    
         const addressId = req.params.id;
         const addressData = await Address.findOne({ _id:addressId });
 
@@ -379,7 +379,7 @@ const editAddress = async (req, res) => {
 
 const updateAddress = async (req, res) => {
     try {
-      const userId=req.session.userId
+      const userId=req.session.user._id
         console.log(req.body);
       const {fullName, phone, street, city, state, zipcode,addressId } = req.body;
       const updatedAddress = await Address.findByIdAndUpdate(

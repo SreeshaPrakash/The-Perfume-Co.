@@ -146,29 +146,28 @@ document.getElementById("editAddress").addEventListener("submit", async (event) 
         const State = document.getElementById('state').value
         const Zipcode = document.getElementById('zipcode').value
 
-    // // Validation Patterns
-    // const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
-    // const zipcodePattern = /^[1-9][0-9]{5}$/; // 6-digit positive number, cannot start with 0
-    // const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
+    // Validation Patterns
+    const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
+    const zipcodePattern = /^[1-9][0-9]{5}$/; // 6-digit positive number, cannot start with 0
+    const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
 
 
-    // if (!fullName || !phone || !street || !city || !state || !zipcode) {
-    //     return Swal.fire("Error!", "All fields are required.", "error");
-    // }
+    if (!fullName || !phone || !street || !city || !state || !zipcode) {
+        return Swal.fire("Error!", "All fields are required.", "error");
+    }
     
-    // if (!alphabetPattern.test(fullName) || !alphabetPattern.test(street) || !alphabetPattern.test(city) || !alphabetPattern.test(state) ) {
-    //     return Swal.fire("Error!", " fullName,street, City and State should contain only alphabets.", "error");
-    // }
+    if (!alphabetPattern.test(fullName) || !alphabetPattern.test(street) || !alphabetPattern.test(city) || !alphabetPattern.test(state) ) {
+        return Swal.fire("Error!", " fullName,street, City and State should contain only alphabets.", "error");
+    }
 
-    // if (!zipcodePattern.test(zipcode)) {
-    //     return Swal.fire("Error!", "zipcode must be a 6-digit positive number.", "error");
-    // }
+    if (!zipcodePattern.test(zipcode)) {
+        return Swal.fire("Error!", "zipcode must be a 6-digit positive number.", "error");
+    }
 
-    // if (!phonePattern.test(phone)) {
-    //     return Swal.fire("Error!", "Phone number must be a 10-digit positive number starting with 6-9.", "error");
-    // }
+    if (!phonePattern.test(phone)) {
+        return Swal.fire("Error!", "Phone number must be a 10-digit positive number starting with 6-9.", "error");
+    }
 
-    // If all validations pass, send the data
     const data = {
        
        fullName: FullName,

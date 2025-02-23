@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0.0/dist/fancybox.umd.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0.0/dist/fancybox.css"/>
     
-    
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
@@ -197,7 +197,13 @@
                 </p>
                 
                 <p class="rating">⭐⭐⭐⭐☆ (4.5 / 5)</p>
-                <button class="btn">Add to Cart</button>
+                <button class="btn"><a href="#" class="add-cart" 
+                    data-id="<%= product._id %>" 
+                    data-quantity="1" 
+                    data-price="<%= product.salePrice %>">
+                    + Add To Cart
+                 </a>
+                 </button>
                 <button class="btn">Wishlist</button>
             </div>
         </div>
@@ -242,5 +248,55 @@
 
 
     </script>
+
+<script>
+    document.querySelectorAll('.add-cart').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            const productId = this.getAttribute('data-id');
+            const quantity = this.getAttribute('data-quantity');
+  
+            $.ajax({
+                url: `/addToCart/${productId}`,
+                method: 'POST',
+                data: JSON.stringify({ quantity: quantity }),
+                contentType: 'application/json',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Cart',
+                        text: response.message,
+                        confirmButtonText: 'OK',
+                    }).then(() => {
+                        Swal.fire({
+                            title: 'Go to cart?',
+                            text: 'Do you want to go to cart?',
+                            showCancelButton: true,
+                            confirmButtonText: "YES",
+                            cancelButtonText: "NO",
+                        })
+                        .then((confirmation) => {
+                            if (confirmation.isConfirmed) {
+                                window.location.href = '/cart';
+                            } else {
+                                console.log('Stay on the current page');
+                            }
+                        });
+                    })
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Error while adding to cart. Please try again!",
+                        confirmButtonText: 'OK',
+                    });
+                    console.error('Error while adding to Cart', error);
+                }
+            });
+        });
+    });
+  </script>
+  
 </body>
 </html>

@@ -51,13 +51,7 @@ const productschema = new Schema(
       type: [String],
       required: true,
     },
-    // productImage :[
-    //     {
-    //         url : String,
-    //         format : String,
-    //         size : Number
-    //     }
-    // ],
+    
     isBlocked: {
       type: Boolean,
       default: false,

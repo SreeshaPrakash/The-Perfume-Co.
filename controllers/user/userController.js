@@ -16,7 +16,7 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
   try {
-    const userId = req.session.userId;
+    const userId = req.session.user?._id;
     const categories = await Category.find({ isListed: true });
     let productData = await Product.find({
       isBlocked: false,
@@ -114,8 +114,7 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
   try {
-    const { firstName, lastName, phone, email, password, confirmPassword } =
-      req.body;
+    const { firstName, lastName, phone, email, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
       return res.render("signup", { message: "passwords do not match" });
@@ -138,7 +137,6 @@ const signup = async (req, res) => {
 
     req.session.userOtp = otp;
     req.session.userData = { firstName, lastName, phone, email, password };
-
     return res.render("verify-otp");
   } catch (error) {
     console.error("signup error", error);
@@ -198,7 +196,7 @@ const verifyOtp = async (req, res) => {
       const savedUser = await saveUserData.save();
       //console.log("Saved User:", savedUser);
 
-      req.session.user = savedUser._id;
+      req.session.user = savedUser;
 
       res.json({ success: true, redirectUrl: "/" });
     } else {
@@ -284,9 +282,11 @@ const login = async (req, res) => {
       return res.render("login", { message: "incorrect password" });
     }
     //console.log("findUser._id:",findUser._id)
-    req.session.userId = findUser._id;
+    req.session.user = findUser;
     // req.session.user = findUser._id
     //console.log("user logged in:",req.session.userId)
+  
+
     res.redirect("/");
   } catch (error) {
     console.error("login error", error);
