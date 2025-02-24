@@ -134,7 +134,7 @@
         // Validation Patterns
     const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
     const zipcodePattern = /^[1-9][0-9]{5}$/; // 6-digit positive number, cannot start with 0
-    const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
+    const phonePattern =  /^\d{10}$/;      // 10-digit number, starts with 6-9
 
     if (!fullName || !phone || !street || !city || !state || !zipcode) {
         return Swal.fire("Error!", "All fields are required.", "error");
@@ -175,19 +175,20 @@
         });
 
         if (response.ok) {
-            Swal.fire({
-                title: "Success!",
-                text: "Address Added Successfully",
-                icon: "success",
-                showConfirmButton: true
-            }).then(() => {
-                if (document.referrer.includes("/checkout")) {
-                    window.location.href = "/user/checkout";
-                } else {
-                    window.location.href = "/userProfile";
-                }
-            });
+    Swal.fire({
+        title: "Success!",
+        text: "Address Added Successfully",
+        icon: "success",
+        showConfirmButton: true
+    }).then(() => {
+        if (document.referrer.includes("/checkout")) { 
+            window.location.href = "/checkout";  // ✅ Redirect to the correct path
         } else {
+            window.location.href = "/address";
+        } 
+    });
+}
+ else {
             Swal.fire("Error!", "Failed to add address. Please try again.", "error");
         }
     } catch (error) {

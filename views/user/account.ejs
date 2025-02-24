@@ -131,7 +131,7 @@
 
 
          const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
-        const phonePattern = /^[6-9]\d{9}$/;      // 10-digit number, starts with 6-9
+        const phonePattern = /^\d{10}$/     // 10-digit number, starts with 6-9
 
         if (!phonePattern.test(phone)) {
         return Swal.fire("Error!", "Phone number must be a 10-digit positive number starting with 6-9.", "error");

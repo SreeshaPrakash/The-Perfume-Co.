@@ -282,28 +282,61 @@ const updateAccount = async (req, res) => {
   };
 
 
+// const getAddress = async(req,res)=>{
+//     try {
+       
+//         if (!req.session.user) {
+//             console.log("User not logged in, redirecting to login.");
+//             return res.redirect('/login'); 
+//         }
+//         const userId = req.session.user._id;
+//         const userData = await User.findById(userId)
+    
+//         if (!userData) {
+//             return res.status(404).send('User not found');
+//         }
+//            const userAddress = await Address.find({userId:userId}) ; 
+//             //console.log(userData)
+
+//         res.render('address',{ user: userData, userAddress  })
+        
+//     } catch (error) {
+//         console.error("an error occured while loading address page:",error)
+//         res.redirect('/pageNotFound')
+        
+//     }
+// }
+
+
 const getAddress = async(req,res)=>{
     try {
-       
-        if (!req.session.userId) {
-            console.log("User not logged in, redirecting to login.");
+        console.log("1. Session user:", req.session.user._id);
+        
+        if (!req.session.user._id) {
+            console.log("2. No user session found");
             return res.redirect('/login'); 
         }
+        
         const userId = req.session.user._id;
-        const userData = await User.findById(userId)
+        console.log("3. Attempting to find addresses for userId:", userId);
+        
+        const userData = await User.findById(userId);
+        console.log("4. User data found:", !!userData);
     
         if (!userData) {
+            console.log("5. User not found in database");
             return res.status(404).send('User not found');
         }
-           const userAddress = await Address.find({userId:userId}) ; 
-            //console.log(userData)
+        
+        const userAddress = await Address.find({userId: userId});
+        console.log("6. Found addresses:", userAddress);
 
-        res.render('address',{ user: userData, userAddress  })
+        console.log("7. Rendering address page");
+        res.render('address',{ user: userData, userAddress });
         
     } catch (error) {
-        console.error("an error occured while loading address page:",error)
+        console.error("8. Error in getAddress:", error);
         res.redirect('/pageNotFound')
-        
     }
 }
 
@@ -313,7 +346,7 @@ const addAddress = async (req, res) => {
         // console.log(session)
         // console.log("Session User ID:", req.session.userId);
 
-        if (!req.session.userId) {
+        if (!req.session.user._id) {
             console.log("User not logged in, redirecting to login.");
             return res.redirect('/login');
         }

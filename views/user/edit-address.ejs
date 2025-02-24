@@ -67,8 +67,8 @@
                     
                     <hr>
                     <ul class="nav flex-column">
-                        <li class="nav-item"><a href="/user/account" class="nav-link">Account</a></li>
-                        <li class="nav-item"><a href="/user/address" class="nav-link">Address</a></li>
+                        <li class="nav-item"><a href="/account" class="nav-link">Account</a></li>
+                        <li class="nav-item"><a href="/address" class="nav-link">Address</a></li>
                         <li class="nav-item"><a href="/user/orders" class="nav-link">Orders</a></li>
                         <li class="nav-item"><a href="/user/wishlist" class="nav-link">Wishlist</a></li>
                         <li class="nav-item"><a href="/user/cart" class="nav-link">Cart</a></li>
@@ -137,14 +137,14 @@ document.getElementById("editAddress").addEventListener("submit", async (event) 
     event.preventDefault()
  
 
-    const AddressId = document.getElementById("addressId").value
+    const AddressId = document.getElementById("addressId")
  
-    const FullName = document.getElementById("fullName").value
-        const Phone = document.getElementById('phone').value
-        const Street = document.getElementById('street').value
-        const City = document.getElementById('city').value
-        const State = document.getElementById('state').value
-        const Zipcode = document.getElementById('zipcode').value
+    const FullName = document.getElementById("fullName").value.trim()
+        const Phone = document.getElementById('phone').value.trim()
+        const Street = document.getElementById('street').value.trim()
+        const City = document.getElementById('city').value.trim()
+        const State = document.getElementById('state').value.trim()
+        const Zipcode = document.getElementById('zipcode').value.trim()
 
     // Validation Patterns
     const alphabetPattern = /^[A-Za-z\s]+$/;  // Only alphabets and spaces

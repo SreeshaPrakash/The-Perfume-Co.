@@ -4,6 +4,7 @@ const userController = require("../controllers/user/userController");
 const productController = require("../controllers/user/productController");
 const profileController = require('../controllers/user/profileController');
 const cartController = require("../controllers/user/cartController")
+const orderController = require("../controllers/user/orderController")
 const passport = require("passport");
 const upload = require("../helpers/multer");
 const {userAuth } = require("../middlewares/auth");
@@ -48,7 +49,9 @@ router.get('/shop',productController.loadshop)
 //cart management
 router.get('/cart',cartController.loadCart)
 router.post('/addToCart/:productId',userAuth,cartController.addToCart)
-
+router.patch('/increment/:itemId',userAuth,cartController.increaseQuantity); 
+router.patch('/decrement/:itemId',userAuth,cartController.decreaseQuantity);
+router.post('/remove/:itemId',userAuth,cartController.removeItem);
 
 
 
@@ -73,9 +76,12 @@ router.get('/add-address',userAuth,profileController.addAddress)
 router.post('/add-address',userAuth,profileController.postAddress)
 router.get('/edit-address/:id',userAuth,profileController.editAddress)
 router.post("/edit-address",userAuth,profileController.updateAddress);
-
-
 router.delete('/address/:id',userAuth, profileController.deleteAddress);
+
+
+
+//checkout management
+router.get('/checkout',userAuth,orderController.getCheckoutPage);
 
 
 

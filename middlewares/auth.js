@@ -61,7 +61,7 @@
 const User = require("../models/userschema");
 
 const userAuth = async (req, res, next) => {
-  console.log("Session User:", req.session.user);
+  //console.log("Session User:", req.session.user);
   try {
     if (!req.session.user) {
       console.log("User not logged in. Redirecting...");
