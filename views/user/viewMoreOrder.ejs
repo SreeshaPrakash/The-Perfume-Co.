@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <%- include('../../views/partials/user/header') %>
+    <style>
+        .order-details {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .order-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .order-summary {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .summary-total {
+            font-weight: bold;
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <div class="container my-5">
+        <div class="order-details">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Order Details</h2>
+                <span class="order-id">#<%= orders[0]._id %></span>
+            </div>
+
+            <!-- Order Status and Actions -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Order Status</h5>
+                           
+                            <p>Order Date: <%= orders[0].Date %></p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Shipping Address</h5>
+                </div>
+                <div class="card-body">
+                   <p><%= orders[0].address.fullName %></p>
+                   <p><%= orders[0].address.phone %></p>
+                   <p><%= orders[0].address.city %></p>
+                   <p><%= orders[0].address.street %></p>
+                   <p><%= orders[0].address.state %></p>
+                   <p><%= orders[0].address.zipcode %></p>
+
+
+
+                </div>
+            </div>
+            <input type="hidden" value="<%= orders[0]._id %>" id="orderId">
+
+            <!-- Order Items -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-borderless mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Details</th>
+                                    <th scope="col" class="text-center">Quantity</th>
+                                    <th scope="col" class="text-end">Price</th>
+                                    <th scope="col" class="text-end">Total</th>
+                                    <th>action</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (orders && orders.length > 0 && orders[0].orderItems && orders[0].orderItems.length > 0) { %>
+                                    <% orders[0].orderItems.forEach(element => { %>
+                                        <tr>
+                                            <td>
+                                                <img src="/uploads/re-images/<%= element.productImage %>" alt="" class="product-image">
+                                            </td>
+                                            <td><h6 class="mb-0"><%= element.productName %></h6></td>
+                                            <td class="text-center"><%= element.quantity %></td>
+                                            <td class="text-end">₹ <%= element.price %></td>
+                                            <td class="text-end">₹ <%= element.quantity * element.price %></td>
+                                            <td> 
+                                                <% if (element.orderStatus.toLowerCase() === 'delivered') { %>
+                                                    <button class="btn btn-warning returnOrder" 
+                                                            data-product-id="<%= element._id %>" 
+                                                            data-order-id="<%= orders[0]._id %>">
+                                                        Return
+                                                    </button>
+                                                    <!-- Hidden return form -->
+                                                    <div class="return-form" id="return-form-<%= element._id %>" style="display: none;">
+                                                        <textarea class="form-control returnReason" placeholder="Enter return reason" required></textarea>
+                                                        <button class="btn btn-primary submitReturn" 
+                                                                data-product-id="<%= element._id %>" 
+                                                                data-order-id="<%= orders[0]._id %>">
+                                                            Submit
+                                                        </button>
+                                                    </div>
+                            
+                                                <% } else if (element.orderStatus.toLowerCase() === 'return request') { %>
+                                                    <span class="text-primary">Return Request Processing</span>
+                                                    <p><strong>Return Reason:</strong> <%= element.returnReason ? element.returnReason : 'No reason provided' %></p> 
+                            
+                                                <% } else if (element.orderStatus.toLowerCase() === 'returned') { %>
+                                                    <span class="text-success">Returned</span>
+                            
+                                                <% } else if (element.orderStatus.toLowerCase() === 'return denied') { %>
+                                                    <span class="text-danger">Return Denied</span>
+                            
+                                                <% } else { %>
+                                                    <button class="btn btn-danger cancelOrder" 
+                                                            data-product-id="<%= element._id %>" 
+                                                            data-order-id="<%= orders[0]._id %>">
+                                                        Cancel
+                                                    </button>
+                                                <% } %>
+                                            </td> 
+                                            <td>
+                                                <span class="status-badge status-<%= element.orderStatus.toLowerCase().replace(' ', '-') %>">
+                                                    <%= element.orderStatus %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No order items found.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="row">
+                <div class="col-md-6 ms-auto">
+                    <div class="order-summary">
+                        <h5 class="mb-3">Order Summary</h5>
+                        <div class="summary-item">
+                            <span>Subtotal</span>
+                            <span>₹ <%= Totalprice %></span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Shipping</span>
+                            <span>free</span>
+                        </div>
+                
+                        <div class="summary-item summary-total">
+                            <span>Total</span>
+                            <span><%= Totalprice %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-4">
+                <a href="/orders" class="btn btn-outline-primary">Back to Orders</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+       // Use event delegation to handle all cancel buttons
+document.addEventListener('click', async (event) => {
+    // Check if clicked element is a cancel button
+    if (event.target.classList.contains('cancelOrder')) {
+        const productId = event.target.dataset.productId;
+        const orderId = event.target.dataset.orderId;
+        
+        try {
+            const response = await fetch("/cancelOrder", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, productId })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(data.success);
+                // Optionally refresh the page or update the UI
+                location.reload();
+            } else {
+                alert(data.message || "Failed to cancel order.");
+            }
+        } catch (error) {
+            console.error("Error cancelling order:", error);
+            alert("Something went wrong. Please try again.");
+        }
+    }
+});
+
+
+
+
+// // Handle return button click
+// document.addEventListener('click', async (event) => {
+//     if (event.target.classList.contains('returnOrder')) {
+//         const productId = event.target.dataset.productId;
+//         const orderId = event.target.dataset.orderId;
+        
+//         try {
+//             const response = await fetch("/returnOrder", {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify({ orderId, productId })
+//             });
+
+//             const data = await response.json();
+
+//             if (data.success) {
+//                 alert(data.success);
+//                 location.reload();
+//             } else {
+//                 alert(data.message || "Failed to return order.");
+//             }
+//         } catch (error) {
+//             console.error("Error processing return:", error);
+//             alert("Something went wrong. Please try again.");
+//         }
+//     }
+// });
+
+    </script>
+    <!-- <script>
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('returnOrder')) {
+                const productId = event.target.dataset.productId;
+                document.getElementById(`return-form-${productId}`).style.display = 'block';
+            }
+        });
+        
+        document.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('submitReturn')) {
+                const productId = event.target.dataset.productId;
+                const orderId = event.target.dataset.orderId;
+                const reasonInput = document.querySelector(`#return-form-${productId} .returnReason`);
+                const reason = reasonInput.value.trim();
+        
+                if (!reason) {
+                    alert("Please enter a reason for return.");
+                    return;
+                }
+        
+                try {
+                    const response = await fetch("/returnOrder", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ orderId, productId, returnReason: reason })
+                    });
+        
+                    const data = await response.json();
+        
+                    if (data.success) {
+                        alert("Return request submitted successfully!");
+                        location.reload();
+                    } else {
+                        alert("Failed to process return.");
+                    }
+                } catch (error) {
+                    console.error("Error processing return:", error);
+                    alert("Something went wrong. Please try again.");
+                }
+            }
+        });
+        </script> -->
+
+        <script>
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('returnOrder')) {
+            const productId = event.target.dataset.productId;
+            document.getElementById(`return-form-${productId}`).style.display = 'block';
+        }
+    });
+
+    document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('submitReturn')) {
+            const productId = event.target.dataset.productId;
+            const orderId = event.target.dataset.orderId;
+            const reasonInput = document.querySelector(`#return-form-${productId} .returnReason`);
+            const reason = reasonInput.value.trim();
+
+            if (!reason) {
+                alert("Please enter a reason for return.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/returnOrder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ orderId, productId, returnReason: reason })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Return request submitted successfully!");
+                    location.reload();
+                } else {
+                    alert("Failed to process return.");
+                }
+            } catch (error) {
+                console.error("Error processing return:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    });
+</script>
+
+
+
+
+
+<!-- 
+<script>
+    document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('approveReturn')) {
+            const orderId = event.target.dataset.orderId;
+            const productId = event.target.dataset.productId;
+    
+            try {
+                const response = await fetch(`/approve-return/${orderId}/${productId}`, { method: "POST" });
+                const data = await response.json();
+    
+                if (data.success) {
+                    alert("Return approved successfully!");
+                    location.reload();
+                } else {
+                    alert("Failed to approve return.");
+                }
+            } catch (error) {
+                console.error("Error approving return:", error);
+            }
+        }
+    
+        if (event.target.classList.contains('denyReturn')) {
+            const orderId = event.target.dataset.orderId;
+            const productId = event.target.dataset.productId;
+    
+            try {
+                const response = await fetch(`/deny-return/${orderId}/${productId}`, { method: "POST" });
+                const data = await response.json();
+    
+                if (data.success) {
+                    alert("Return request denied.");
+                    location.reload();
+                } else {
+                    alert("Failed to deny return request.");
+                }
+            } catch (error) {
+                console.error("Error denying return:", error);
+            }
+        }
+    });
+    </script> -->
+
+        
+    
+</body>
+</html>

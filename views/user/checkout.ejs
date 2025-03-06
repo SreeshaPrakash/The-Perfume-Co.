@@ -89,6 +89,10 @@
   }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <div class="checkout-container">
   <h1 class="page-title">Checkout</h1>
   <div class="checkout-grid">
@@ -122,6 +126,10 @@
             <input type="radio" name="paymentMethod" value="COD" checked />
             Cash on Delivery
           </label>
+          <label class="payment-option">
+            <input type="radio" name="paymentMethod" value="razorpay" checked />
+            Razorpay
+          </label>
         </div>
       </div>
     </div>
@@ -143,7 +151,7 @@
               <tr>
                 <td><%= item.productId.productName %></td>
                 <td><%= item.quantity %></td>
-                <td>₹<%= (item.price).toFixed(2) %></td>
+                <td>₹ <%= (item.price).toFixed(2) %></td>
               </tr>
             <% }) %>
           </tbody>
@@ -151,20 +159,27 @@
         <div class="price-summary">
           <div class="price-row">
             <span>Subtotal:</span>
-            <span>₹<span id="subtotal"> <%= total.toFixed(2) %> </span></span>
+            <span>₹ <span id="subtotal"> <%= total.toFixed(2) %> </span></span>
           </div>
           <div class="price-row total">
             <span>Total:</span>
             <input id="total" type="hidden" value="<%= total.toFixed(2) %>">
-            <span id="final-total">₹<%= total.toFixed(2) %></span>
+            <span id="final-total">₹ <%= total.toFixed(2) %></span>
           </div>
         </div>
-        <button id="place-order" class="btn-primary">Place Order</button>
+
+        <button id="place-order" class="btn btn-primary">Place Order</button>
+
       </div>
     </div>
   </div>
 </div>
 
+
+
+
+
+<!-- 
 <script>
   document.getElementById("place-order").addEventListener("click", function () {
     const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
@@ -190,6 +205,329 @@
     })
     .catch(error => console.error("Order placement error:", error));
   });
+</script> -->
+
+<!-- 
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById("place-order").addEventListener("click", function () {
+    const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
+    if (!selectedAddress) {
+      swal({
+        title: "Error!",
+        text: "Please select a delivery address.",
+        icon: "error",
+        button: "OK",
+      });
+      return;
+    }
+    const addressId = selectedAddress.value;
+    const cartId = document.querySelector("[data-cart-id]").getAttribute("data-cart-id");
+    if (!cartId) {
+      swal({
+        title: "Error!",
+        text: "Cart ID is missing. Please try again.",
+        icon: "error",
+        button: "OK",
+      });
+      return;
+    }
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const finalAmount = parseFloat(document.getElementById("total").value);
+
+    fetch("/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ addressId, cartId, paymentMethod, finalAmount })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        if (paymentMethod === "razorpay") {
+          const options = {
+            key: "<%= process.env.RAZORPAY_KEY_ID %>",
+            amount: finalAmount * 100,
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Test Transaction",
+            order_id: data.razorpayOrderId,
+            handler: function (response) {
+              swal({
+                title: "Success!",
+                text: "Order Placed Successfully!",
+                icon: "success",
+                button: "Continue",
+              }).then(() => {
+                window.location.href = `/order-placed?orderId=${data.orderId}`;
+              });
+            },
+            prefill: {
+              name: "<%= userData.name %>",
+              email: "<%= userData.email %>",
+              contact: "<%= userData.phone %>"
+            },
+            notes: {
+              address: "Razorpay Corporate Office"
+            },
+            theme: {
+              color: "#3399cc"
+            }
+          };
+          const rzp1 = new Razorpay(options);
+          rzp1.on('payment.failed', function (response) {
+            swal({
+              title: "Error!",
+              text: "Payment failed. Please try again.",
+              icon: "error",
+              button: "OK",
+            });
+          });
+          rzp1.open();
+        } else {
+          swal({
+            title: "Success!",
+            text: "Order Placed Successfully!",
+            icon: "success",
+            button: "Continue",
+          }).then(() => {
+            window.location.href = `/order-placed?orderId=${data.orderId}`;
+          });
+        }
+      } else {
+        swal({
+          title: "Error!",
+          text: "Error: " + data.message,
+          icon: "error",
+          button: "OK",
+        });
+      }
+    })
+    .catch(error => {
+      console.error("Order placement error:", error);
+      swal({
+        title: "Error!",
+        text: "An unexpected error occurred. Please try again later.",
+        icon: "error",
+        button: "OK",
+      });
+    });
+  });
 </script>
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("place-order").addEventListener("click", async function () {
+      const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
+      if (!selectedAddress) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Address Required',
+          text: 'Please select a delivery address'
+        });
+        return;
+      }
+  
+      const addressId = selectedAddress.value;
+      const cartIdElement = document.querySelector("[data-cart-id]");
+      const totalElement = document.getElementById("total");
+  
+      if (!cartIdElement || !totalElement) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Cart or total amount not found'
+        });
+        return;
+      }
+  
+      const cartId = cartIdElement.getAttribute("data-cart-id");
+      const finalAmount = parseFloat(totalElement.value);
+  
+      try {
+        console.log('this is the final cart value', finalAmount)
+        const response = await fetch("/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            addressId,
+            cartId,
+            paymentMethod: "COD",
+            finalAmount
+          })
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          Swal.fire({
+            title: 'Order Placed!',
+            text: 'Your order has been placed successfully',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(()=>{
+            window.location.href='/orders'
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: data.message || 'Failed to place order'
+          });
+        }
+      } catch (error) {
+        console.error('Order placement error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong while placing your order'
+        });
+      }
+    });
+  });
+  </script>
+   -->
+
+
+
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const placeOrderBtn = document.getElementById("place-order");
+
+    // Remove existing event listeners to prevent duplication
+    placeOrderBtn.removeEventListener("click", handleOrderPlacement);
+    placeOrderBtn.addEventListener("click", handleOrderPlacement);
+  });
+
+  async function handleOrderPlacement(event) {
+    event.preventDefault(); // Prevents default form submission
+    const placeOrderBtn = document.getElementById("place-order");
+
+    const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
+    if (!selectedAddress) {
+      swal({
+        title: "Error!",
+        text: "Please select a delivery address.",
+        icon: "error",
+        button: "OK",
+      });
+      return;
+    }
+
+    const addressId = selectedAddress.value;
+    const cartIdElement = document.querySelector("[data-cart-id]");
+    const totalElement = document.getElementById("total");
+
+    if (!cartIdElement || !totalElement) {
+      swal({
+        title: "Error!",
+        text: "Cart or total amount not found.",
+        icon: "error",
+        button: "OK",
+      });
+      return;
+    }
+
+    const cartId = cartIdElement.getAttribute("data-cart-id");
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const finalAmount = parseFloat(totalElement.value);
+
+    try {
+      console.log("Placing order with amount:", finalAmount);
+
+      // Disable button to prevent double-clicks
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.innerText = "Processing...";
+
+      const response = await fetch("/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ addressId, cartId, paymentMethod, finalAmount }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (paymentMethod === "razorpay") {
+          const options = {
+            key: "<%= process.env.RAZORPAY_KEY_ID %>",
+            amount: finalAmount * 100,
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Test Transaction",
+            order_id: data.razorpayOrderId,
+            handler: function (response) {
+              swal({
+                title: "Success!",
+                text: "Order Placed Successfully!",
+                icon: "success",
+                button: "Continue",
+              }).then(() => {
+                window.location.href = `/order-placed?orderId=${data.orderId}`;
+              });
+            },
+            prefill: {
+              name: "<%= userData.name %>",
+              email: "<%= userData.email %>",
+              contact: "<%= userData.phone %>",
+            },
+            notes: { address: "Razorpay Corporate Office" },
+            theme: { color: "#3399cc" },
+          };
+
+          const rzp1 = new Razorpay(options);
+          rzp1.on("payment.failed", function (response) {
+            swal({
+              title: "Error!",
+              text: "Payment failed. Please try again.",
+              icon: "error",
+              button: "OK",
+            });
+          });
+          rzp1.open();
+        } else {
+          swal({
+            title: "Success!",
+            text: "Order Placed Successfully!",
+            icon: "success",
+            button: "Continue",
+          }).then(() => {
+            window.location.href = `/order-placed?orderId=${data.orderId}`;
+          });
+        }
+      } else {
+        swal({
+          title: "Error!",
+          text: data.message || "Failed to place order.",
+          icon: "error",
+          button: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Order placement error:", error);
+      swal({
+        title: "Error!",
+        text: "Something went wrong while placing your order.",
+        icon: "error",
+        button: "OK",
+      });
+    } finally {
+      // Re-enable button after request completes
+      placeOrderBtn.disabled = false;
+      placeOrderBtn.innerText = "Place Order";
+    }
+  }
+</script>
+
+
 
 <%- include("../../views/partials/user/footer") %>

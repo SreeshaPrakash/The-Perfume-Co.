@@ -26,8 +26,6 @@ const getBrandPage = async (req, res) => {
 
 const addBrand = async (req, res) => {
   try {
-    //console.log(req.file)
-    //console.log(req.body)
 
     const brand = req.body.name;
     const findBrand = await Brand.findOne({ brand });
@@ -38,7 +36,7 @@ const addBrand = async (req, res) => {
       }
 
       const image = req.file ? req.file.filename : null;
-      //console.log("Uploaded Image:", image)
+      
       const newBrand = new Brand({
         brandName: brand,
         brandImage: image,

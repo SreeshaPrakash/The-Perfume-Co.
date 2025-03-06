@@ -154,8 +154,9 @@
 
     <div class="container">
         <div class="breadcrumbs">
-            <a href="/">Home</a> > 
-            <a href="/productDetails<%= product._id %>">Product Details</a> > 
+            <a href="/">Home</a> >
+            <a href="/shop">Shop</a> >
+            <a href="/productDetails<%= product._id %>"><%= product.productName %></a> > 
             <span><%= product.productName %></span>
         </div>
         
@@ -186,25 +187,31 @@
                 <p><strong>Category:</strong> <%= product.category.name %></p>
 
                 
-                <p class="price">Sale Price: Rs.<%= product.salePrice %>  
+                <p class="price">Sale Price: ₹ <%= product.salePrice %>  
                     <% if (product.regularPrice > product.salePrice) { %>
                         <span class="discount">(Save <%= ((product.regularPrice - product.salePrice) / product.regularPrice * 100).toFixed(1) %>%)</span>
                     <% } %>
                 </p>
 
-                <p class="stock">
-                    <%= product.quantity > 0 ? "In Stock" : "<span style='color:black;'>Sold Out</span>" %>
-                </p>
-                
-                <p class="rating">⭐⭐⭐⭐☆ (4.5 / 5)</p>
-                <button class="btn"><a href="#" class="add-cart" 
-                    data-id="<%= product._id %>" 
-                    data-quantity="1" 
-                    data-price="<%= product.salePrice %>">
-                    + Add To Cart
-                 </a>
-                 </button>
+
+                <p class="stock-status">
+                    <% if (product.quantity > 0) { %>
+                      <span style="color: green;">In Stock (<%= product.quantity %> left)</span>
+                    <% } else { %>
+                      <span style="color: red;">Out of Stock</span>
+                    <% } %>
+                  </p>
+
+                <% if (product.quantity > 0) { %>
+                    <button class="btn add-cart" data-id="<%= product._id %>" data-quantity="1"  data-price="<%= product.salePrice %>">+ Add To Cart</button>
+                  <% } else { %>
+                    <button class="btn" disabled>Out of Stock</button>
+                  <% } %>
+                  
                 <button class="btn">Wishlist</button>
+
+                <p class="rating">⭐⭐⭐⭐☆ (4.5 / 5)</p>
+
             </div>
         </div>
 
@@ -217,7 +224,7 @@
                             <img src="/uploads/re-images/<%= related.productImage[0] %>" 
                                  alt="<%= related.productName %>">
                             <h4><%= related.productName %></h4>
-                            <p>₹<%= related.salePrice %></p>
+                            <p>₹ <%= related.salePrice %></p>
                         </a>
                     </div>
                 <% }); %>
@@ -297,6 +304,7 @@
         });
     });
   </script>
+  
   
 </body>
 </html>

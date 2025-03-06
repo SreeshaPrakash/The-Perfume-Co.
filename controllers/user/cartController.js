@@ -195,11 +195,12 @@ const increaseQuantity = async (req, res) => {
 
 
       const currentQuantity = item.quantity
-
+      const maxQtyPerPerson = 5;
       if (currentQuantity >= product.quantity) {
           return res.status(400).json({ success: false, message: "Quantity exceeded" });
       } 
       //else if
+      
       if (currentQuantity >= product.maxQtyPerPerson) {
           return res.status(400).json({ success: false, message: "Maximum quantity for one product exceeded" });
       } 
@@ -233,6 +234,7 @@ const increaseQuantity = async (req, res) => {
 
 const decreaseQuantity = async (req, res) => {
   try {
+    console.log("Haii")
       const itemId = req.params.itemId
       const userId = req.session.user._id
       const cart = await Cart.findOne({ userId: userId }).populate({ path: "items.productId", populate: { path: "category", select: "categoryOffer" } })
@@ -248,20 +250,20 @@ const decreaseQuantity = async (req, res) => {
           return res.status(400).json("Minimum quantity reached")
       }
       const product = await Product.findById(item.productId).populate('category')
+      console.log(item)
 
       const currentQuantity = item.quantity
 
-      if (currentQuantity >= product.quantity) {
-          return res.status(400).json({ success: false, message: "Quantity exceeded" });
-       } 
+    
       // else {
           const productOffer = product.productOffer || 0
           const categoryOffer = product.category.categoryOffer || 0
   
           const bestOffer = Math.max(productOffer, categoryOffer)
           const finalPrice = bestOffer > 0 ? product.salePrice - (product.salePrice * bestOffer / 100) : product.salePrice
-          item.quantity -= 1;
+          item.quantity =item.quantity- 1;
           item.price = Math.floor(item.quantity * finalPrice);
+          console.log(item.quantity)
           await cart.save();
           return res.status(200).json({ success: true, message: "Quantity incremented",  newQuantity: item.quantity, newPrice: item.price   });
       //}

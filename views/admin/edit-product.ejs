@@ -25,6 +25,8 @@
             }
         </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     </head>
     <section class="content-main">
         <div class="row">
@@ -202,12 +204,13 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div>
-
-
-                                <button class="btn btn-md rounded font-sm hover-up" id="updatebtn" type="button"
-                                    onclick="validateAndSubmit()">Update</button>
+                                <button class="btn btn-md rounded font-sm hover-up" id="updatebtn" type="button">
+                                    Update
+                                </button>
                             </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -217,15 +220,68 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    async function validateAndSubmit(event) {
+        event.preventDefault(); 
+
+        if (!validateForm()) {
+            return; 
+        }
+
+        let form = document.getElementById("productForm");
+        let formData = new FormData(form);
+
+        try {
+            let response = await fetch(form.action, {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    title: "Product Updated!",
+                    text: "The product details have been successfully updated.",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/admin/products"; 
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Something went wrong. Please try again.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error!",
+                text: "Server error. Please try again later.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        }
+    }
+
+    
+    document.getElementById("updatebtn").addEventListener("click", validateAndSubmit);
+</script>
+
+
 
     <script>
 
-        // function validateForm()
+        
         function validateForm(event) {
             let isValid = true;
             clearErrors();
 
-            // Product Name validation
+            
             const productName = document.getElementById('product_name').value.trim();
             if (!productName) {
                 showError('productName-error', 'Product name is required');
@@ -248,7 +304,7 @@
                 isValid = false;
             }
 
-            // Regular Price validation
+            
             const regularPrice = document.querySelector('input[name="regularPrice"]').value.trim();
             if (!regularPrice) {
                 showError('regularPrice-error', 'Regular price is required');
@@ -258,10 +314,10 @@
                 isValid = false;
             }
 
-            // Sale Price validation
+            
             const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
 
-            if (salePrice) {  // Only validate if sale price is provided
+            if (salePrice) {  
                 if (!isValidPrice(salePrice)) {
                     showError('salePrice-error', 'Please enter a valid sale price');
                     isValid = false;
@@ -271,7 +327,7 @@
                 }
             }
 
-            // Quantity validation
+           
             const quantity = document.querySelector('input[name="quantity"]').value.trim();
             if (!quantity) {
                 showError('quantity-error', 'Quantity is required');
@@ -281,7 +337,7 @@
                 isValid = false;
             }
 
-            // Image validation
+           
             const imageInputs = document.querySelectorAll('input[type="file"]');
             let hasMainImage = false;
             imageInputs.forEach((input, index) => {
@@ -296,7 +352,7 @@
                         showError('images-error', 'Only JPG, JPEG, and PNG files are allowed');
                         isValid = false;
                     }
-                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    if (file.size > 5 * 1024 * 1024) { 
                         showError('images-error', 'Image size should not exceed 5MB');
                         isValid = false;
                     }
@@ -306,7 +362,7 @@
             return isValid;
         }
 
-        // Helper functions
+        
         function isValidPrice(price) {
             const priceValue = parseFloat(price);
             return /^\d+(\.\d{1,2})?$/.test(price) && priceValue >= 0;
@@ -321,27 +377,21 @@
             if (errorElement) {
                 errorElement.textContent = message;
                 errorElement.style.color = 'red';
-                errorElement.style.display = 'block';  // Ensure error is visible
-                errorElement.style.marginTop = '5px';  // Add some spacing
-                errorElement.style.fontSize = '14px';  // Make it readable
+                errorElement.style.display = 'block';  
+                errorElement.style.marginTop = '5px';  
+                errorElement.style.fontSize = '14px'; 
             }
         }
 
         function clearErrors() {
         const errorElements = document.getElementsByClassName('error-message');
         for (let element of errorElements) {
-            element.textContent = '';
+            element.textContent = ''; 
             element.style.display = 'none';
         }
     }
 
-        function validateAndSubmit() {
-            if (validateForm()) {
-                document.querySelector('form').submit();
-            }
-        }
-
-        // Image preview functions
+    
         function viewImage(event, imageNumber) {
             const file = event.target.files[0];
             if (file) {

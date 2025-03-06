@@ -182,8 +182,10 @@
                             </div>
                     </div>
                     <div>
-                        <button class="btn btn-md rounded font-sm hover-up" type="submit"
-                            onclick="validateAndSubmit()">Publish</button>
+                        <!-- <button class="btn btn-md rounded font-sm hover-up" type="submit"
+                            onclick="validateAndSubmit()">Publish</button> -->
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+
                     </div>
                     </form>
                 </div>
@@ -192,18 +194,66 @@
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
     <script>
-        function validateAndSubmit() {
-            if (validateForm(event)) {
-                document.forms[0].submit()
-                //document.querySelector("form").submit()
+        // function validateAndSubmit() {
+        //     if (validateForm(event)) {
+        //         document.forms[0].submit()
+        //         //document.querySelector("form").submit()
 
-            }
+        //     }
+        // }
+
+        async function validateAndSubmit(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        if (!validateForm()) {
+            return; // Stop if form validation fails
         }
+
+        let form = document.querySelector("form");
+        let formData = new FormData(form);
+
+        try {
+            let response = await fetch(form.action, {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    title: "New Product Added!",
+                    text: "The product has been successfully added.",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/admin/products"; // Redirect to the product page
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Something went wrong. Please try again.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error!",
+                text: "Server error. Please try again later.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        }
+    }
+
+    // Attach the function to the Publish button
+    document.querySelector("form").addEventListener("submit", validateAndSubmit);
 
 
 

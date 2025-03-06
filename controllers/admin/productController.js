@@ -116,7 +116,7 @@ const getAllProducts = async (req, res) => {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     //const page = Number(req.query.page) || 1;
-    const limit = 5;
+    const limit = 10;
     const skip = (page - 1) * limit;
 
     const productData = await Product.aggregate([
@@ -176,6 +176,62 @@ const getAllProducts = async (req, res) => {
     return res.status(500).json({ error: "Message" });
   }
 };
+
+
+const addProductOffer=async(req,res)=>{
+  try {
+      
+      const {productId,percentage}=req.body;
+      const findProduct=await Product.findOne({_id:productId});
+      const findCategory=await Category.findOne({_id:findProduct.category});
+      if(findCategory.categoryOffer>percentage){
+          return res.json({status:false,message:'This products category already has a category offer'})
+      }
+
+      findProduct.salePrice=findProduct.salePrice+Math.floor(findProduct.regularPrice*(percentage/100))
+      findProduct.productOffer=parseInt(percentage);
+      await findProduct.save();
+      findCategory.categoryOffer=0;
+      await findCategory.save();
+      res.json({status:true});
+  } catch (error) {
+      
+      res.redirect('/pageerror');
+      res.status(500).json({status:false,message:'Internal Server Error'});
+  }
+};
+
+
+
+
+const removeProductOffer = async (req, res) => {
+  try {
+      const { productId } = req.body;
+      
+      // Find the product
+      const findProduct = await Product.findOne({ _id: productId });
+      if (!findProduct) {
+          return res.status(404).json({ status: false, message: "Product not found" });
+      }
+
+      // If no offer exists, return early
+      if (findProduct.productOffer === 0) {
+          return res.json({ status: false, message: "No offer to remove" });
+      }
+
+      // Restore the original price
+      findProduct.salePrice = findProduct.regularPrice;  // Reset price
+      findProduct.productOffer = 0; // Remove the offer
+      
+      await findProduct.save();
+      res.json({ status: true });
+
+  } catch (error) {
+      console.error("Error removing product offer:", error);
+      res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
 
 const blockProduct = async (req, res) => {
   try {
@@ -336,13 +392,40 @@ const deleteSingleImage = async (req, res) => {
   }
 };
 
+
+
+// Update product stock in productController.js
+const updateProductStock = async (req, res) => {
+  try {
+    const { productId, newQuantity } = req.body;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.quantity = newQuantity;
+    product.status = newQuantity > 0 ? "Available" : "out of stock";
+
+    await product.save();
+    res.json({ success: true, message: "Stock updated successfully" });
+  } catch (error) {
+    console.error("Error updating stock:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 module.exports = {
   getProductAddPage,
   addProducts,
   getAllProducts,
+  addProductOffer,
+  removeProductOffer,
   blockProduct,
   unblockProduct,
   getEditProduct,
   editProduct,
   deleteSingleImage,
+  updateProductStock
 };

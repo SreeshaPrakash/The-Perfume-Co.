@@ -113,8 +113,8 @@
                     <th class="text-center"></th>
                     <th>Name</th>
                     <th>Description</th>
-                    <!-- <th>Offer Price</th>
-                    <th>Offer</th> -->
+                    <th>Offer Price</th>
+                    <th>Offer</th>
                     <th>Status</th>
                     <th>List/Unlist</th>
                     <th class="text-start">Edit</th>
@@ -128,7 +128,7 @@
                     <td></td>
                     <td class="text-start"> <%= category.name %> </td>
                     <td class="text-start"> <%= category.description %></td>
-                    <!-- <td>
+                    <td>
                       <% if(category.categoryOffer){ %>
                         <%=category.categoryOffer %>
                         <%}else{%>
@@ -146,7 +146,7 @@
                         <a href="#" class="text-white" onclick="removeOffer('<%=category._id%>')">Remove</a>
                       </button>
                       <% } %>
-                    </td> -->
+                    </td>
                     <td class="text-start">
                       <% if (category.isListed) { %>
                       <span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>
@@ -322,7 +322,6 @@ function displayErrorMessage(elementId,message){
 
 
 
-
 function clearErrorMessages(){
   const errorElements = document.getElementsByClassName("error-message")
   Array.from(errorElements).forEach((element)=>{
@@ -334,100 +333,103 @@ function clearErrorMessages(){
 
 
 
-// async function  addOffer(categoryId) {
-//   const {value:amount} = await  Swal.fire({
-//     title : "offer in percentage",
-//     input :"number",
-//     inputLabel :"percentage",
-//     inputPlaceholder:"%",
+async function  addOffer(categoryId) {
+  const {value:amount} = await  Swal.fire({
+    title : "offer in percentage",
+    input :"number",
+    inputLabel :"percentage",
+    inputPlaceholder:"%",
 
-//   })
+  })
   
-// if(amount){
-//  try {
-//     const response = await fetch("/admin/addCategoryOffer", {
-//       method:"POST",
-//       headers:{
-//         'content-type':"application/json",
+if(amount){
+ try {
+    const response = await fetch("/admin/addCategoryOffer", {
+      method:"POST",
+      headers:{
+        'content-type':"application/json",
 
-//       },
-//       body: JSON.stringify({
-//         percentage: amount,
-//         categoryId :categoryId,
+      },
+      body: JSON.stringify({
+        percentage: amount,
+        categoryId :categoryId,
 
-//       })
-//     })
-
-
-//     const data = await response.json()
-//     if(response.ok && data.status === true){
-//       Swal.fire(
-//         "Offer added",
-//         "The offer has been added",
-
-//       ).then(()=>{
-//         location.reload()
-//       })
-//     }else{
-//       Swal.fire("Failed",data.message || "Adding offer failed", "error")
-//     }
-
-//  } catch (error) {
-//     Swal.fire(
-//       "Error",
-//       "an error occured while adding",
-//       "error"
-//     )
-//     console.log("Error adding offer",error)
-//  }
-// }
+      })
+    })
 
 
-// }
+    const data = await response.json()
+    if(response.ok && data.status === true){
+      Swal.fire(
+        "Offer added",
+        "The offer has been added",
+
+      ).then(()=>{
+        location.reload()
+      })
+    }else{
+      Swal.fire("Failed",data.message || "Adding offer failed", "error")
+    }
+
+ } catch (error) {
+    Swal.fire(
+      "Error",
+      "an error occured while adding",
+      "error"
+    )
+    console.log("Error adding offer",error)
+ }
+}
 
 
+}
 
 
 
-// async function removeOffer(categoryId) {
-//   try {
-//     const response = await fetch("/admin/removeCategoryOffer",{
-//         method: "POST",
-//         headers:{
-//           'content-type':"application/json",
 
-//         },
-//         body:JSON.stringify({
-//           categoryId: categoryId,
-//         })
-//     })
+
+async function removeOffer(categoryId) {
+  console.log("Removing offer for category:", categoryId);
+  try {
+    const response = await fetch("/admin/removeCategoryOffer",{
+        method: "POST",
+        headers:{
+          'content-type':"application/json",
+
+        },
+        body:JSON.stringify({
+          categoryId: categoryId,
+        })
+    })
    
-//     const data = await response.json()
-//     if(response.ok && data.status === true){
-//       Swal.fire(
-//         "Offer removed",
-//         "The offer has been removed",
-//         "Success"
-//       ).then(()=>{
-//         location.reload()
+    const data = await response.json()
+    console.log("Response from server:", data); // Debugging line
 
-//       })
-//     }
-//     else{
-//       Swal.fire("Failed",data.message || "removing offer failed","error")
-//     }
+    if(response.ok && data.status === true){
+      Swal.fire(
+        "Offer removed",
+        "The offer has been removed",
+        "Success"
+      ).then(()=>{
+        location.reload()
 
-//   } catch (error) {
-//     Swal.fire(
-//       "Error",
-//       "an error occured while removing the offer",
-//       "error"
-//     )
+      })
+    }
+    else{
+      Swal.fire("Failed",data.message || "removing offer failed","error")
+    }
 
-//     console.error("error removing offer",error)
-//   }
+  } catch (error) {
+    Swal.fire(
+      "Error",
+      "an error occured while removing the offer",
+      "error"
+    )
+
+    console.error("error removing offer",error)
+  }
   
-// }
+}
 
 </script>
 

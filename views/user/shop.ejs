@@ -142,6 +142,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    position: relative; 
   }
 
   .product-card:hover {
@@ -161,10 +162,10 @@
   }
 
   .product-info {
-    padding: 15px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1px;
     flex: 1;
   }
 
@@ -327,7 +328,70 @@
       height: 180px;
     }
   }
+
+  .wishlist-icon {
+    position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  color: black; /* Default color */
+  background: white;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.3s ease-in-out;
+  z-index: 10; 
+  }
+
+.wishlist-icon:hover {
+  background: rgba(255, 255, 255, 0.8); /* Slight background change on hover */
+}
+
+.product-card:hover .wishlist-icon {
+  transform: none; /* Prevents unwanted movement */
+  opacity: 1; /* Ensures it remains visible */
+}
+
+
+  .wishlist-icon.active i {
+  color: red; /* Change to red when active */
+}
+.cart-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #000000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Ensures it's styled properly even for <a> tags */
+}
+
+.cart-btn:hover {
+    background: #b02a37;
+}
+
+.go-to-cart-btn {
+    background: #000000 !important;
+}
+
+.go-to-cart-btn:hover {
+    background: #62a062 !important;
+}
+
+.out-of-stock-btn {
+    background: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <%- include('../../views/partials/user/header') %>
 
@@ -414,33 +478,69 @@
             
                 <% products.forEach((product, i) => { %> 
                 <div class="product-card">
-                 
-                 
+
+                  
+                  <span class="wishlist-icon" data-id="<%= product._id %>">
+                    <% if (wishlistItems.includes(product._id.toString())) { %>
+                        <i class="fa-solid fa-heart" style="color: red;"></i>
+                    <% } else { %>
+                        <i class="fa-regular fa-heart" style="color: black;"></i>
+                    <% } %>
+                </span>
+                
+
+                
+
                     <a href="/productDetails?id=<%= product._id %>">
 
-                 <img src="/uploads/re-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                          <img src="/uploads/re-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
                  
 
-                </a>
+                    </a>
                   <div class="product-info">
                     <h4 class="product-name">
                       <a href="/product/<%= product._id %>"><%= product.productName %></a>
                     </h4>
 
                     <p class="product-price">
-                      <span class="original-price">₹<%= product.regularPrice %></span>
-                      <span class="sale-price">₹<%= product.salePrice %></span>
+                      <span class="original-price"> <%= product.regularPrice %></span>
+                      <span class="sale-price">₹ <%= product.salePrice %></span>
+
+
+                      
+                  <p class="stock-status">
+                    <% if (product.quantity > 0) { %>
+                      <span style="color: green;">In Stock</span>
+                    <% } else { %>
+                      <span style="color: red;">Out of Stock</span>
+                    <% } %>
+                  </p>
+                  
+
+                  <% if (product.quantity > 0) { %>
+                    <% if (cartItems.includes(product._id.toString())) { %>
+                        <a href="/cart" class="cart-btn go-to-cart-btn" data-id="<%= product._id %>">
+                            Go to Cart
+                        </a>
+                    <% } else { %>
+                        <button class="cart-btn add-cart" data-id="<%= product._id %>" data-quantity="1">
+                            + Add To Cart
+                        </button>
+                    <% } %>
+                <% } else { %>
+                    <button class="cart-btn out-of-stock-btn" disabled>
+                        Out of Stock
+                    </button>
+                <% } %>
+                
+                
+
                     </p>
 
                     <!-- <button class="add-to-cart-btn" onclick="addToCart('<%= product._id %>')">
                     Add to Cart
                   </button> -->
-
-                    <a href="#" class="add-cart" data-id="<%= product._id %>" data-quantity="1"
-                      data-price="<%= product.salePrice %>">
-                      + Add To Cart
-                    </a>
-
+                 
 
                   </div>
                 </div>
@@ -453,66 +553,105 @@
 
 
 
-
-
+  <!-- wishlist icon-->
   <script>
-    document.querySelectorAll('.add-cart').forEach(function (button) {
-      button.addEventListener('click', function (event) {
-        event.preventDefault();
-        const productId = this.getAttribute('data-id');
-        const quantity = this.getAttribute('data-quantity');
-        console.log('this is the product id',productId)
-        $.ajax({
-          url: `/addToCart/${productId}`,
-          method: 'POST',
-          data: JSON.stringify({ quantity: quantity }),
-          contentType: 'application/json',
-          success: function (response) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Added to Cart',
-              text: response.message,
-              confirmButtonText: 'OK',
-            }).then(() => {
-              Swal.fire({
-                title: 'Go to cart?',
-                text: 'Do you want to go to cart?',
-                showCancelButton: true,
-                confirmButtonText: "YES",
-                cancelButtonText: "NO",
-              })
-                .then((confirmation) => {
-                  if (confirmation.isConfirmed) {
-                    window.location.href = '/cart';
-                  } else {
-                    console.log('Stay on the current page');
-                  }
-                });
-            })
-          },
-          error: function (xhr, status, error) {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Error while adding to cart. Please try again!",
-              confirmButtonText: 'OK',
+    $(document).ready(function () {
+        $(".wishlist-icon").on("click", function (event) {
+            event.stopPropagation();
+            const heartIcon = $(this).find("i");
+            const productId = $(this).attr("data-id");
+            const isAdding = heartIcon.hasClass("fa-regular");
+
+            $.ajax({
+                url: isAdding ? "/wishlist/add" : "/wishlist/remove",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ productId }),
+                success: function (response) {
+                    if (response.success) {
+                        heartIcon.toggleClass("fa-regular fa-solid");
+                        heartIcon.css("color", isAdding ? "red" : "black");
+
+                        // Show SweetAlert2 popup for Wishlist action
+                        Swal.fire({
+                            icon: "success",
+                            title: isAdding ? "Added to Wishlist" : "Removed from Wishlist",
+                            text: isAdding ? "Product has been added to your wishlist!" : "Product has been removed from your wishlist.",
+                            confirmButtonText: "OK"
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: response.message,
+                            confirmButtonText: "OK"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong! Please try again.",
+                        confirmButtonText: "OK"
+                    });
+                }
             });
-            console.error('Error while adding to Cart', error);
-          }
         });
-      });
     });
-  </script>
+</script>
 
+<script>
+  $(document).ready(function () {
+      $(".add-cart").on("click", function (event) {
+          event.preventDefault();
+          const button = $(this);
+          const productId = button.attr("data-id");
+          const quantity = button.attr("data-quantity");
 
+          $.ajax({
+              url: `/addToCart/${productId}`,
+              method: "POST",
+              data: JSON.stringify({ quantity: quantity }),
+              contentType: "application/json",
+              success: function (response) {
+                  Swal.fire({
+                      icon: "success",
+                      title: "Added to Cart",
+                      text: "Product successfully added to cart!",
+                      confirmButtonText: "OK",
+                  }).then(() => {
+                      // Change button appearance and behavior
+                      button.text("Go to Cart").removeClass("add-cart").addClass("go-to-cart-btn");
+                      button.attr("href", "/cart").off("click").on("click", function () {
+                          window.location.href = "/cart";
+                      });
+                  });
 
+                  // Check if stock turns zero dynamically
+                  if (response.stockRemaining === 0) {
+                      button.text("Out of Stock").prop("disabled", true).addClass("out-of-stock-btn");
+                  }
+              },
+              error: function () {
+                  Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "Could not add product to cart. Try again!",
+                      confirmButtonText: "OK",
+                  });
+              }
+          });
+      });
 
-
-
+      // Ensure products already in cart show "Go to Cart"
+      $(".go-to-cart-btn").on("click", function () {
+          window.location.href = "/cart";
+      });
+  });
+</script>
 
   <script>
-
-
     function filterPrice(min, max) {
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set('minPrice', min);

@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const { v4: uuidv4 } = require("uuid");
+
 
 const orderschema = new Schema(
   {
-    orderId: {
-      type: String,
-      default: () => uuidv4(),
-      unique: true,
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    orderId:{
+          type:String
     },
     orderItems: [
       {
@@ -15,6 +18,9 @@ const orderschema = new Schema(
           type: Schema.Types.ObjectId,
           ref: "Product",
           required: true,
+        },
+        productName:{
+          type:String,
         },
         quantity: {
           type: Number,
@@ -24,6 +30,29 @@ const orderschema = new Schema(
           type: Number,
           default: 0,
         },
+        orderStatus: {
+          type: String,
+          enum: [
+            "Pending",
+            "processing",
+            "shipped",
+            "delivered",
+            // "cancelled",
+            "return request",
+            "returned",
+            "return denied"
+          ],
+          default: "processing", // Default order status
+        },
+         returnReason: { 
+          type: String,
+          default: null 
+        }, 
+
+        productImage:{
+          type: String,
+          required: true,
+        }
       },
     ],
     totalPrice: {
@@ -39,34 +68,41 @@ const orderschema = new Schema(
       required: true,
     },
     address: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      fullName: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: Number,
+        required: true,
+      },
+      street: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        required: true,
+      },
+      zipcode: {
+        type: Number,
+        required: true,
+      },
     },
     Date: {
       type: String,
       required: true,
-      orderStatus: [
-        "Pending",
-        "processing",
-        "shipped",
-        "delivered",
-        "cancelled",
-        "return request",
-        "returned",
-      ],
     },
-    // createdAt: {
-    //   type: Date,
-    //   default: Date.now,
-    //   required: true,
-    // },
     couponapplied: {
       type: Boolean,
       default: false,
-    },
+    }
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 const Order = mongoose.model("Order", orderschema);
 

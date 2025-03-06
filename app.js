@@ -16,6 +16,7 @@ const db = require("./config/db");
 db();
 
 const mongoose = require("mongoose");
+const Wishlist = require("./models/wishlistschema");
 const { Schema } = mongoose;
 
 app.use(bodyParser.json());
@@ -67,6 +68,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
 
+
+app.use('/wishlist',userRouter)
+app.use("/cart",userRouter)
 
 
 app.listen(process.env.PORT, () => {

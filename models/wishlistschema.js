@@ -1,6 +1,10 @@
 // const mongoose = require("mongoose");
 
 // const { Schema } = mongoose;
+
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
 const wishlistschema = new Schema(
   {
     userId: {
@@ -26,3 +30,5 @@ const wishlistschema = new Schema(
 );
 const Wishlist = mongoose.model("Wishlist", wishlistschema);
 module.exports = Wishlist;
+
+

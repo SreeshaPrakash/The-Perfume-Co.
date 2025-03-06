@@ -6,6 +6,7 @@ const categoryController = require("../controllers/admin/categoryController");
 const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 const { userAuth, adminAuth } = require("../middlewares/auth");
+const orderController = require("../controllers/admin/orderController")
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const upload = require("../helpers/multer");
@@ -24,9 +25,8 @@ router.get("/unblockCustomer", adminAuth, customerController.customerunBlocked);
 //category management
 router.get("/category", adminAuth, categoryController.categoryInfo);
 router.post("/addCategory", adminAuth, categoryController.addCategory);
-
-//router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
-//router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
+router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
+router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
 router.get("/listCategory", adminAuth, categoryController.getListCategory);
 router.get("/unlistCategory", adminAuth, categoryController.getUnlistCategory);
 router.get("/editCategory", adminAuth, categoryController.getEditCategory);
@@ -46,14 +46,10 @@ router.get("/deleteBrand", adminAuth, brandController.deleteBrand);
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
-router.post(
-  "/addProducts",
-  adminAuth,
-  upload.array("images", 4),
-  productController.addProducts,
-);
+router.post("/addProducts",adminAuth,upload.array("images", 4),productController.addProducts,);
 router.get("/products", adminAuth, productController.getAllProducts);
-
+router.post('/addProductOffer',adminAuth,productController.addProductOffer);
+router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
 router.get("/blockProduct", adminAuth, productController.blockProduct);
 router.get("/unblockProduct", adminAuth, productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct);
@@ -76,5 +72,23 @@ router.post("/upload", adminAuth, upload.single("image"), (req, res) => {
     .status(200)
     .json({ message: "File uploaded successfully", file: req.file });
 });
+
+
+//order management
+// router.get('/orders',adminAuth,adminController.getOrders)
+// router.get("/orders/:orderId",  adminController.getOrderDetails)
+
+
+// router.get('/order',adminAuth,orderController.getOrders)
+// router.get('/orderlist',adminAuth,orderController.getOrders)
+//router.get("/orders/:orderId",  orderController.getOrderDetails)
+//router.get("/admin/orderdetails/:orderId", orderController.getOrderDetails);
+
+router.get('/orderlist',adminAuth,orderController.getOrders)
+router.get("/orderdetails/:orderId", adminAuth, orderController.getOrderDetails);
+router.post("/orders/update-status/:itemId", adminAuth, orderController.changeStatus);
+router.post("/approve-return/:orderId/:productId", orderController.approveReturn);
+router.post("/deny-return/:orderId/:productId", orderController.denyReturn);
+
 
 module.exports = router;

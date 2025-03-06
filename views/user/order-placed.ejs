@@ -1,0 +1,198 @@
+<%- include("../../views/partials/user/header") %>
+<head>
+  <!--=============== FLATICON ===============-->
+  <link rel="stylesheet"
+    href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css" />
+
+  <style>
+    .order-success-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Success Checkmark Animation */
+.success-checkmark {
+    width: 80px;
+    height: 115px;
+    margin: 0 auto;
+}
+
+.check-icon {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border-radius: 50%;
+    box-sizing: content-box;
+    border: 4px solid #4CAF50;
+}
+
+.icon-line {
+    height: 5px;
+    background-color: #4CAF50;
+    display: block;
+    border-radius: 2px;
+    position: absolute;
+    z-index: 10;
+}
+
+.line-tip {
+    width: 25px;
+    left: 14px;
+    top: 46px;
+    transform: rotate(45deg);
+    animation: icon-line-tip 0.75s;
+}
+
+.line-long {
+    width: 47px;
+    right: 8px;
+    top: 38px;
+    transform: rotate(-45deg);
+    animation: icon-line-long 0.75s;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    box-sizing: content-box;
+    border: 4px solid #4CAF50;
+}
+
+.icon-fix {
+    width: 5px;
+    height: 20px;
+    background-color: #fff;
+    position: absolute;
+    left: 26px;
+    top: 40px;
+    z-index: 1;
+    transform: rotate(-45deg);
+}
+
+@keyframes icon-line-tip {
+    0% { width: 0; left: 1px; top: 19px; }
+    54% { width: 0; left: 1px; top: 19px; }
+    70% { width: 25px; left: 14px; top: 46px; }
+    84% { width: 22px; left: 14px; top: 46px; }
+    100% { width: 25px; left: 14px; top: 46px; }
+}
+
+@keyframes icon-line-long {
+    0% { width: 0; right: 46px; top: 54px; }
+    65% { width: 0; right: 46px; top: 54px; }
+    84% { width: 47px; right: 8px; top: 38px; }
+    100% { width: 47px; right: 8px; top: 38px; }
+}
+
+/* Text Styles */
+h2 {
+    color: #333;
+    margin: 20px 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+p {
+    color: #666;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.order-info {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+/* Buttons */
+.action-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.order-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.home-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.home-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.orders-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.orders-btn:hover {
+    background-color: #1e87db;
+    transform: translateY(-2px);
+}
+
+.order-btn i {
+    margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .order-success-container {
+        margin: 20px;
+        padding: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+}
+  </style>
+</head>
+<div class="order-success-container">
+    <div class="success-checkmark">
+        <div class="check-icon">
+            <span class="icon-line line-tip"></span>
+            <span class="icon-line line-long"></span>
+            <div class="icon-circle"></div>
+            <div class="icon-fix"></div>
+        </div>
+    </div>
+    <h2>Order Placed Successfully!</h2>
+    <p>Thank you for shopping with "The Perfume Co."</p>
+    <p class="order-info">Your order has been confirmed and will be shipped soon.</p>
+    <div class="action-buttons">
+        <a href="/" class="order-btn home-btn">
+            <i class="fas fa-home"></i>
+            Back to Home
+        </a>
+        <a href="/orders" class="order-btn orders-btn">
+            <i class="fas fa-box"></i>
+            View Orders
+        </a>
+    </div>
+</div>
+
+<%- include("../../views/partials/user/footer") %>

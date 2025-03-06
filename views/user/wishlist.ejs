@@ -1,0 +1,230 @@
+<!-- views/wishlist.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+
+  <%- include('../../views/partials/user/header') %>
+  <style>
+    .wishlist-item {
+      transition: transform 0.3s ease;
+      margin-bottom: 30px;
+    }
+    .wishlist-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .product-img {
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .wishlist-header {
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #e9e9e9;
+    }
+    .price {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #212529;
+    }
+    .empty-wishlist {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .date-added {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    .wishlist-heart-btn {
+  background: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, transform 0.2s;
+}
+
+.wishlist-heart-btn i {
+  color: red; /* Default red filled heart */
+}
+
+.wishlist-heart-btn:hover {
+  transform: scale(1.1);
+}
+
+.wishlist-heart-btn.removed i {
+  color: black; /* Outline heart when removed */
+}
+
+  </style>
+</head>
+<body>
+  
+  <div class="container mt-5">
+    <div class="wishlist-header">
+      <h1>My Wishlist</h1>
+      <p class="text-muted">Items you've saved for later</p>
+    </div>
+
+    <% if (wishlistItems && wishlistItems.products && wishlistItems.products.length > 0) { %>
+      <div class="row"> <!-- Start Row -->
+        <% wishlistItems.products.forEach(function(item, index) { %>
+          <% if (item.productId) { %> <!-- Ensure product exists -->
+            <div class="col-md-3 col-sm-6 mb-4"> <!-- 4 products per row -->
+              <div class="card wishlist-item">
+                <a href="/products/<%= item.productId._id %>">
+                  <img 
+                    src="/uploads/re-images/<%= item.productId.productImage[0] %>" 
+                    class="card-img-top product-img" 
+                    alt="<%= item.productId.productName %>"
+                  >
+                </a>
+                <div class="card-body">
+                  <h5 class="card-title"><%= item.productId.productName || 'Unknown Product' %></h5>
+                  <p class="price mb-2">
+                    Rs. <%= item.productId.salePrice ? item.productId.salePrice.toFixed(2) : 'N/A' %>
+                  </p>
+                  
+                  <p class="date-added mb-2">
+                    Added: <%= item.addedOn ? new Date(item.addedOn).toLocaleDateString() : 'N/A' %>
+                  </p>
+
+                  <div class="d-flex">
+                    <% if (item.productId.quantity > 0) { %>
+                      <% if (cartItems.includes(item.productId._id.toString())) { %>
+                        <a href="/cart" class="btn btn-success">Go to Cart</a>
+                      <% } else { %>
+                        <button class="btn btn-primary add-to-cart-btn" data-product-id="<%= item.productId._id %>">Add to Cart</button>
+                      <% } %>
+                  <% } else { %>
+                      <button disabled class="btn btn-danger">Out of Stock</button>
+                  <% } %>
+                  
+                    
+                    <button class="wishlist-heart-btn" data-product-id="<%= item.productId._id %>">
+                      <i class="fa-solid fa-heart"></i>
+                    </button>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <% if ((index + 1) % 4 === 0) { %> <!-- Close row after 4 items and start a new row -->
+              </div><div class="row">
+            <% } %>
+
+          <% } %>
+        <% }); %>
+      </div> <!-- End Row -->
+      
+    <% } else { %>
+      <div class="empty-wishlist">
+        <h3>Your wishlist is empty</h3>
+        <p class="text-muted">Browse our products and add items to your wishlist</p>
+        <a href="/shop" class="btn btn-primary mt-3">Browse Products</a>
+      </div>
+    <% } %>
+
+  </div>
+
+  <!-- Bootstrap and jQuery Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+  $(document).ready(function () {
+    $(".add-to-cart-btn").on("click", function () {
+        const button = $(this);
+        const productId = button.data("product-id");
+
+        $.ajax({
+            url: `/addToCart/${productId}`, // Using the same route as the shop page
+            type: "POST",
+            contentType: "application/json",
+            success: function (response) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Added to Cart",
+                    text: response.message,
+                });
+                button.replaceWith('<a href="/cart" class="btn btn-success">Go to Cart</a>');
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message || "Failed to add product.";
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: errorMessage,
+                });
+
+                if (errorMessage === "Out of Stock") {
+                    button.replaceWith('<button disabled class="btn btn-danger">Out of Stock</button>');
+                }
+            }
+        });
+    });
+
+
+
+
+
+    
+      // Toggle wishlist functionality (Heart icon)
+      $('.wishlist-heart-btn').on('click', function() {
+        const heartIcon = $(this).find("i");
+        const productId = $(this).attr("data-product-id");
+        const isRemoving = heartIcon.hasClass("fa-solid"); // Check if it's filled
+    
+        $.ajax({
+          url: "/wishlist/remove",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ productId }),
+          success: function(response) {
+            if (response.success) {
+              // Toggle heart icon
+              heartIcon.toggleClass("fa-solid fa-regular");
+              heartIcon.css("color", isRemoving ? "black" : "red");
+    
+              // Remove item from DOM smoothly
+              heartIcon.closest(".col-md-3").fadeOut(300, function() {
+                $(this).remove();
+    
+                // If wishlist is empty after removal, reload the page
+                if ($(".wishlist-item").length === 0) {
+                  location.reload();
+                }
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.message,
+              });
+            }
+          },
+          error: function() {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+            });
+          }
+        });
+      });
+    });
+    </script>
+    </body>
+</html>
