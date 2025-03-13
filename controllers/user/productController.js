@@ -5,39 +5,96 @@ const Brand = require('../../models/brandschema')
 const Wishlist = require("../../models/wishlistschema")
 const Cart = require("../../models/cartschema")
 
+// const productDetails = async (req, res) => {
+//   try {
+//     const userId = req.session.user._id;
+//     //const userData = await User.findById(userId)
+//     const userData = userId ? await User.findById(userId) : null;
+//     const productId = req.query.id;
+//     const product = await Product.findById(productId)
+//       .populate("category")
+//       .populate("brand");
+
+//     const findCategory = product.category;
+//     //const categoryOffer = findCategory ?.categoryOffer || 0
+//     //const productOffer = product.productOffer || 0
+//     // const totalOffer = categoryOffer + productOffer
+
+
+//     if (!product) {
+//       return res.redirect("/pageNotFound");
+//     }
+
+//     const categoryOffer = product.category ? product.category.categoryOffer : 0;
+//     const highestOffer = Math.max(product.productOffer, categoryOffer);
+    
+
+
+//     const relatedProducts = await Product.find({
+//       category: findCategory?._id,
+//       _id: { $ne: productId },
+//     }).limit(3);
+
+//     res.render("product-details", {
+//       user: userData,
+//       product: product,
+//       highestOffer,
+//       quantity: product.quantity,
+//       //totalOffer : totalOffer,
+//       category: findCategory,
+//       relatedProducts: relatedProducts,
+//     });
+//   } catch (error) {
+//     console.error("Error for fetching product details", error);
+//     res.redirect("/pageNotFound");
+//   }
+// };
+
+
+
 const productDetails = async (req, res) => {
   try {
-    const userId = req.session.user._id;
-    //const userData = await User.findById(userId)
+    // Check if user session exists before accessing `_id`
+    const userId = req.session.user ? req.session.user._id : null;
     const userData = userId ? await User.findById(userId) : null;
+
     const productId = req.query.id;
+    if (!productId) {
+      return res.redirect("/pageNotFound");
+    }
+
     const product = await Product.findById(productId)
       .populate("category")
       .populate("brand");
 
-    const findCategory = product.category;
-    //const categoryOffer = findCategory ?.categoryOffer || 0
-    //const productOffer = product.productOffer || 0
-    // const totalOffer = categoryOffer + productOffer
+    if (!product) {
+      return res.redirect("/pageNotFound");
+    }
 
+    const categoryOffer = product.category ? product.category.categoryOffer : 0;
+    const highestOffer = Math.max(product.productOffer, categoryOffer);
+    
     const relatedProducts = await Product.find({
-      category: findCategory?._id,
-      _id: { $ne: productId },
+      category: product.category._id,
+      _id: { $ne: productId }
     }).limit(3);
 
     res.render("product-details", {
       user: userData,
       product: product,
+      highestOffer,
       quantity: product.quantity,
-      //totalOffer : totalOffer,
-      category: findCategory,
-      relatedProducts: relatedProducts,
+      category: product.category,
+      relatedProducts: relatedProducts
     });
   } catch (error) {
-    console.error("Error for fetching product details", error);
+    console.error("Error fetching product details:", error);
     res.redirect("/pageNotFound");
   }
 };
+
+
+
 
  
 
@@ -102,6 +159,16 @@ const loadshop = async (req, res) => {
           Category.find({ isListed: true }),
           Brand.find()
       ]);
+
+
+      // Attach the highest offer to each product
+    products.forEach(product => {
+      const categoryOffer = product.category ? product.category.categoryOffer : 0;
+      product.highestOffer = Math.max(product.productOffer, categoryOffer);
+    });
+
+    console.log(products)
+      
 
       let wishlistItems = [];
       let cartItems = [];

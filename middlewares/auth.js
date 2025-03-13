@@ -78,8 +78,9 @@ const userAuth = async (req, res, next) => {
     }
 
     if (user.isBlocked) {
-      console.log("User is blocked");
-      req.session.destroy(); // Destroy session if user is blocked
+      // console.log("User is blocked");
+      console.log(`User ${user.email} is blocked. Logging out.`);
+      req.session.destroy(); // Destroy session if user is blocked // Force logout for blocked users
       return res.redirect("/login");
     }
 

@@ -7,6 +7,8 @@ const Order = require("../../models/orderschema");
 const Address = require("../../models/addressschema");
 const mongoose = require("mongoose");
 
+
+
 function generateOtp() {
   const digits = "1234567890";
   let otp = "";
@@ -172,6 +174,8 @@ const userProfile = async (req, res) => {
   }
 };
 
+
+
 const getAccount = async (req, res) => {
   try {
     console.log("session userId:", req.session.user._id);
@@ -191,6 +195,7 @@ const getAccount = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
 
 const updateAccount = async (req, res) => {
   try {
@@ -267,6 +272,7 @@ const updateAccount = async (req, res) => {
   }
 };
 
+
 // const getAddress = async(req,res)=>{
 //     try {
 
@@ -291,6 +297,7 @@ const updateAccount = async (req, res) => {
 
 //     }
 // }
+
 
 const getAddress = async (req, res) => {
   try {
@@ -323,6 +330,7 @@ const getAddress = async (req, res) => {
   }
 };
 
+
 const addAddress = async (req, res) => {
   try {
     // console.log(session)
@@ -348,6 +356,8 @@ const addAddress = async (req, res) => {
   }
 };
 
+
+
 const postAddress = async (req, res) => {
   try {
     const { fullName, phone, street, city, state, zipcode } = req.body;
@@ -371,6 +381,8 @@ const postAddress = async (req, res) => {
   }
 };
 
+
+
 const editAddress = async (req, res) => {
   try {
     const userId = req.session.user?._id;
@@ -386,6 +398,8 @@ const editAddress = async (req, res) => {
     res.redirect("/profile");
   }
 };
+
+
 
 const updateAddress = async (req, res) => {
   try {
@@ -417,6 +431,8 @@ const updateAddress = async (req, res) => {
   }
 };
 
+
+
 const deleteAddress = async (req, res) => {
   const addressId = req.params.id;
   try {
@@ -434,6 +450,8 @@ const deleteAddress = async (req, res) => {
     console.error("deleting error", error.message);
   }
 };
+
+
 
 module.exports = {
   getForgotPassword,

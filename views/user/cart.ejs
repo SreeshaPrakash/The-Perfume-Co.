@@ -244,11 +244,20 @@
                                         <div class="col-md-2">
                                             <div class="price">
                                                 <% 
+                                                // const salePrice = item.productId.salePrice;
+                                                // const productOffer = item.productId.productOffer || 0;
+                                                // const categoryOffer = item.productId.category.categoryOffer || 0;
+                                                // const bestOffer = Math.max(productOffer, categoryOffer);
+                                                // const finalPrice = bestOffer > 0 ? Math.floor((salePrice - (salePrice * bestOffer / 100)) * item.quantity) : salePrice * item.quantity;
+
                                                 const salePrice = item.productId.salePrice;
                                                 const productOffer = item.productId.productOffer || 0;
                                                 const categoryOffer = item.productId.category.categoryOffer || 0;
                                                 const bestOffer = Math.max(productOffer, categoryOffer);
-                                                const finalPrice = bestOffer > 0 ? Math.floor((salePrice - (salePrice * bestOffer / 100)) * item.quantity) : salePrice * item.quantity;
+                                                const discountedPrice = salePrice - (salePrice * bestOffer / 100);
+                                                const finalPrice = Math.floor(discountedPrice * item.quantity);
+
+
                                                 %>
                                                 ₹ <%= finalPrice %>
                                             </div>
@@ -362,6 +371,10 @@
                     },
                 });
             }
+
+
+
+
 
             function decreaseQuantity(itemId) {
                 $.ajax({

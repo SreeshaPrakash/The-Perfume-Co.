@@ -47,15 +47,35 @@ const customerInfo = async (req, res) => {
   }
 };
 
+// const customerBlocked = async (req, res) => {
+//   try {
+//     let id = req.query.id;
+//     await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
+//     res.redirect("/admin/users");
+//   } catch (error) {
+//     res.redirect("/pageerror");
+//   }
+// };
+
+
 const customerBlocked = async (req, res) => {
   try {
     let id = req.query.id;
     await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
+
+    // Destroy session if the user is currently logged in
+    if (req.session.user && req.session.user._id == id) {
+      req.session.destroy();
+    }
+
     res.redirect("/admin/users");
   } catch (error) {
+    console.error("Error blocking user:", error);
     res.redirect("/pageerror");
   }
 };
+
+
 
 const customerunBlocked = async (req, res) => {
   try {

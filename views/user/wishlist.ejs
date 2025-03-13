@@ -83,7 +83,8 @@
           <% if (item.productId) { %> <!-- Ensure product exists -->
             <div class="col-md-3 col-sm-6 mb-4"> <!-- 4 products per row -->
               <div class="card wishlist-item">
-                <a href="/products/<%= item.productId._id %>">
+
+                <a href="/productDetails?id=<%= item.productId._id %>">
                   <img 
                     src="/uploads/re-images/<%= item.productId.productImage[0] %>" 
                     class="card-img-top product-img" 
@@ -101,6 +102,7 @@
                   </p>
 
                   <div class="d-flex">
+
                     <% if (item.productId.quantity > 0) { %>
                       <% if (cartItems.includes(item.productId._id.toString())) { %>
                         <a href="/cart" class="btn btn-success">Go to Cart</a>
@@ -110,7 +112,7 @@
                   <% } else { %>
                       <button disabled class="btn btn-danger">Out of Stock</button>
                   <% } %>
-                  
+                
                     
                     <button class="wishlist-heart-btn" data-product-id="<%= item.productId._id %>">
                       <i class="fa-solid fa-heart"></i>
@@ -146,37 +148,47 @@
   <script>
   $(document).ready(function () {
     $(".add-to-cart-btn").on("click", function () {
-        const button = $(this);
-        const productId = button.data("product-id");
+    const button = $(this);
+    const productId = button.data("product-id");
 
-        $.ajax({
-            url: `/addToCart/${productId}`, // Using the same route as the shop page
-            type: "POST",
-            contentType: "application/json",
-            success: function (response) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Added to Cart",
-                    text: response.message,
-                });
-                button.replaceWith('<a href="/cart" class="btn btn-success">Go to Cart</a>');
-            },
-            error: function (xhr) {
-                const errorMessage = xhr.responseJSON?.message || "Failed to add product.";
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: errorMessage,
-                });
+    console.log("Adding product to cart, ID:", productId); // Add this for debugging
+    
 
-                if (errorMessage === "Out of Stock") {
-                    button.replaceWith('<button disabled class="btn btn-danger">Out of Stock</button>');
-                }
+    $.ajax({
+        url: "/cart/add", // Use the correct route from your router
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ productId: productId }),// Send productId in the request body
+        success: function (response) {
+          console.log("Success response:", response); // Add this for debugging
+           
+            Swal.fire({
+                icon: "success",
+                title: "Added to Cart",
+                text: response.message,
+            });
+            button.replaceWith('<a href="/cart" class="btn btn-success">Go to Cart</a>');
+        },
+//         error: function (xhr) {
+//             // Rest of your error handler
+//         }
+//     });
+// });
+error: function (xhr, status, error) {
+            console.error("Error response:", xhr.responseText, status, error); // Add detailed error info
+            const errorMessage = xhr.responseJSON?.message || "Failed to add product.";
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: errorMessage,
+            });
+
+            if (errorMessage === "Out of Stock") {
+                button.replaceWith('<button disabled class="btn btn-danger">Out of Stock</button>');
             }
-        });
+        }
     });
-
-
+ });
 
 
 

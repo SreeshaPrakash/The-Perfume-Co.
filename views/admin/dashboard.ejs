@@ -1,4 +1,9 @@
-<%- include("../../views/partials/admin/header") %>
+
+
+
+
+
+<!-- 
 <section class="content-main">
     <div class="content-header">
         <div>
@@ -6,5 +11,559 @@
         </div>
        
     </div>
+</section> -->
+
+
+<%- include("../../views/partials/admin/header") %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<section class="content-main">
+    <div class="content-header mb-4">
+        <div>
+            <h2 class="content-title card-title">Dashboard</h2>
+            <p class="text-muted">Welcome to your admin dashboard</p>
+        </div>
+        <div>
+            <button class="btn btn-success" id="downloadReport">
+                <i class="fas fa-download me-2"></i> Download Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card card-body mb-4 shadow-sm border-0">
+                <article class="d-flex align-items-center">
+                    <div class="icon-stat me-3 rounded-circle d-flex align-items-center justify-content-center bg-primary-light" style="width: 52px; height: 52px;">
+                        <i class="fas fa-users text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted">Total Users</h6>
+                        <span class="fs-4 fw-bold"><%= totalUsers %></span>
+                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= totalUsersGrowth || '5.3' %>% growth</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4 shadow-sm border-0">
+                <article class="d-flex align-items-center">
+                    <div class="icon-stat me-3 rounded-circle d-flex align-items-center justify-content-center bg-success-light" style="width: 52px; height: 52px;">
+                        <i class="fas fa-box text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted">Total Products</h6>
+                        <span class="fs-4 fw-bold"><%= totalProducts %></span>
+                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= totalProductsGrowth || '7.1' %>% growth</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4 shadow-sm border-0">
+                <article class="d-flex align-items-center">
+                    <div class="icon-stat me-3 rounded-circle d-flex align-items-center justify-content-center bg-warning-light" style="width: 52px; height: 52px;">
+                        <i class="fas fa-shopping-cart text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted">Total Orders</h6>
+                        <span class="fs-4 fw-bold"><%= totalOrders %></span>
+                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= totalOrdersGrowth || '3.2' %>% growth</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4 shadow-sm border-0">
+                <article class="d-flex align-items-center">
+                    <div class="icon-stat me-3 rounded-circle d-flex align-items-center justify-content-center bg-info-light" style="width: 52px; height: 52px;">
+                        <i class="fas fa-indian-rupee-sign text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted">Total Revenue</h6>
+                        <span class="fs-4 fw-bold">₹<%= totalRevenue.toLocaleString('en-IN') %></span>
+                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= totalRevenueGrowth || '8.9' %>% growth</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4 shadow-sm border-0">
+                <article class="d-flex align-items-center">
+                    <div class="icon-stat me-3 rounded-circle d-flex align-items-center justify-content-center bg-warning-light" style="width: 52px; height: 52px;">
+                        <i class="fas fa-tags text-primary fs-4"></i>  <!-- Discount Icon -->
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted">Total Discount</h6>
+                        <span class="fs-4 fw-bold"><%= totalDiscount %></span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        
+    </div>
+
+<!--------------------------------------------------------------------------------------------------------------------->
+
+
+    <!-- Charts and Overview -->
+    <div class="row">
+        <div class="col-xl-8 col-lg-12">
+            <div class="card mb-4 shadow-sm border-0">
+                <article class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Revenue & Orders Overview</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-calendar me-1"></i> Yearly
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+                                <li><a class="dropdown-item" href="#">Last 7 days</a></li>
+                                <li><a class="dropdown-item" href="#">Last 30 days</a></li>
+                                <li><a class="dropdown-item" href="#">Last 3 months</a></li>
+                                <li><a class="dropdown-item" href="#">Yearly</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height:400px; width:100%;">
+                        <canvas id="salesChart" width="800" height="400"></canvas>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-12">
+            <div class="row">
+
+
+                
+             <!--     File: dashboard.ejs
+          Update the Top Categories section -->
+            <div class="col-12 mb-4">
+                <div class="card mb-4 shadow-sm border-0">
+                    <article class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="card-title mb-0">Top Categories</h5> 
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter me-1"></i> Filter
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="week">Last Week</a></li>
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="month">Last Month</a></li>
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="year">Last Year</a></li>
+                                </ul>
+                            </div>
+                       </div>
+                        <div class="chart-container" style="position: relative; height:180px; width:100%;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card mb-4 shadow-sm border-0">
+                    <article class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="card-title mb-0">Top Brands</h5> 
+                          <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter me-1"></i> Filter
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="week">Last Week</a></li>
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="month">Last Month</a></li>
+                                    <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="year">Last Year</a></li>
+                                </ul>
+                            </div>
+                      </div> 
+                        <div class="chart-container" style="position: relative; height:180px; width:100%;">
+                            <canvas id="brandChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div> 
+
+
+    
+<!--------------------------------------------------------------------------------------------------------------------->
+
+
+
+    <!-- Recent Orders -->
+    <div class="card mb-4 shadow-sm border-0">
+        <header class="card-header bg-white">
+            <!-- <div class="d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Recent Orders</h4>
+                <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+            </div> -->
+        </header>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <!-- <th>Action</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentOrders.forEach(order => { %>
+                        <tr>
+                            <td>#<%= order.orderId %></td>
+                            <td><%= order.customerName %></td>
+                            <td><%= order.productName %></td>
+                            <td>₹<%= order.amount.toLocaleString('en-IN') %></td>
+                            <td>
+                                <% if (order.status === 'Pending COD') { %>
+                                <span class="badge bg-warning text-dark">Pending COD</span>
+                                <% } else if (order.status === 'Processing') { %>
+                                <span class="badge bg-info text-dark">Processing</span>
+                                <% } else if (order.status === 'Delivered') { %>
+                                <span class="badge bg-success">Delivered</span>
+                                <% } else if (order.status === 'Cancelled') { %>
+                                <span class="badge bg-danger">Cancelled</span>
+                                <% } else { %>
+                                <span class="badge bg-secondary"><%= order.status %></span>
+                                <% } %>
+                            </td>
+                            <td><%= order.date %></td>
+                            <!-- <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton-<%= order.orderId %>" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-<%= order.orderId %>">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-print me-2"></i>Print</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i>Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td> -->
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </section>
+
+<!-- Sales Report Modal -->
+<div class="modal fade" id="generateReportModal" tabindex="-1" aria-labelledby="generateReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="generateReportModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>Generate Sales Report
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label for="reportType" class="form-label">Report Type</label>
+                        <select class="form-select" id="reportType" name="reportType" required>
+                            <option value="daily">Daily Report</option>
+                            <option value="weekly">Weekly Report</option>
+                            <option value="custom">Custom Date Range</option>
+                            <option value="yearly">Yearly Report</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="customDateFields" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reportFormat" class="form-label">Report Format</label>
+                        <select class="form-select" id="reportFormat" name="reportFormat" required>
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="generateReportBtn">
+                    <i class="fas fa-download me-1"></i>Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Required Libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+
+<!-- Custom Styles -->
+<style>
+    .icon-stat { transition: all 0.3s; }
+    .card { transition: all 0.3s; }
+    .card:hover { transform: translateY(-5px); }
+    .bg-primary-light { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-success-light { background-color: rgba(25, 135, 84, 0.1); }
+    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
+    .bg-info-light { background-color: rgba(13, 202, 240, 0.1); }
+    .bg-danger-light { background-color: rgba(220, 53, 69, 0.1); }
+    .chart-container {
+        margin: 0 auto;
+        width: 100%;
+        min-height: 180px;
+        padding: 20px;
+        position: relative;
+    }
+    canvas#salesChart, canvas#categoryChart, canvas#brandChart {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+
+<!-- Dashboard Scripts -->
+<!-- // File: dashboard.ejs
+// Replace the chart scripts with this: -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const chartData = <%- JSON.stringify(chartData) %>;
+        console.log(chartData)
+        let currentTimeRange = 'yearly';
+
+        // Function to update charts based on time range
+        function updateCharts(timeRange) {
+            currentTimeRange = timeRange;
+            
+            // Here you would fetch new data based on timeRange
+            fetch(`/admin/chart-data?timeRange=${timeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update salesChart with new data
+                    salesChart.data.labels = data.chartLabels;
+                    salesChart.data.datasets[0].data = data.revenueData;
+                    salesChart.data.datasets[1].data = data.ordersData;
+                    salesChart.update();
+                })
+                .catch(error => console.error('Error updating charts:', error));
+        }
+
+        // Set up dropdown listeners
+        document.querySelectorAll('.dropdown-menu a').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const timeRange = this.textContent.toLowerCase().replace(/\s+/g, '-');
+        document.getElementById('timeRangeDropdown').innerHTML = 
+            `<i class="fas fa-calendar me-1"></i> ${this.textContent}`;
+        updateCharts(timeRange);
+    });
+});
+
+
+        // Sales Chart (Revenue & Orders Overview)
+        const salesChart = new Chart(
+            document.getElementById('salesChart').getContext('2d'),
+            
+            {
+                type: 'line',
+                data: {
+                    labels: chartData.chartLabels,
+                    datasets: [
+                        {
+                            label: 'Revenue (₹)',
+                            data: chartData.revenueData,
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            yAxisID: 'y-revenue'
+                        },
+                        {
+                            label: 'Orders',
+                            data: chartData.ordersData,
+                            borderColor: '#FF6384',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            yAxisID: 'y-orders'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        'y-revenue': {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: 'Revenue (₹)' }
+                        },
+                        'y-orders': {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'Number of Orders' },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: { legend: { position: 'top' } }
+                }
+            }
+        );
+
+        // Category Pie Chart - Dynamic data
+        const categoryChart = new Chart(
+            document.getElementById('categoryChart').getContext('2d'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.categoryLabels || ['No Data'],
+                    datasets: [{
+                        data: chartData.categoryData || [100],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            }
+        );
+
+        // Brand Pie Chart - Dynamic data
+        const brandChart = new Chart(
+            document.getElementById('brandChart').getContext('2d'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.brandLabels || ['No Data'],
+                    datasets: [{
+                        data: chartData.brandData || [100],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            }
+        );
+
+        // Set up filter buttons for category and brand charts
+        document.querySelectorAll('.btn-filter').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const chartType = this.dataset.chart;
+                const timeRange = document.querySelector(`#${chartType}Filter`).value;
+                
+                fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (chartType === 'category') {
+                            categoryChart.data.labels = data.labels;
+                            categoryChart.data.datasets[0].data = data.data;
+                            categoryChart.update();
+                        } else if (chartType === 'brand') {
+                            brandChart.data.labels = data.labels;
+                            brandChart.data.datasets[0].data = data.data;
+                            brandChart.update();
+                        }
+                    })
+                    .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+            });
+        });
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+    document.querySelectorAll('.filter-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            const chartType = this.dataset.chart;
+            const timeRange = this.dataset.range;
+            
+            fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (chartType === 'category') {
+                        categoryChart.data.labels = data.labels;
+                        categoryChart.data.datasets[0].data = data.data;
+                        categoryChart.update();
+                    } else if (chartType === 'brand') {
+                        brandChart.data.labels = data.labels;
+                        brandChart.data.datasets[0].data = data.data;
+                        brandChart.update();
+                    }
+                })
+                .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+        });
+    });
+
+//     // Download Report
+    document.getElementById('downloadReport').addEventListener('click', function() {
+        const myModal = new bootstrap.Modal(document.getElementById('generateReportModal'));
+        myModal.show();
+    });
+
+    document.getElementById('reportType').addEventListener('change', function() {
+        const customDateFields = document.getElementById('customDateFields');
+        customDateFields.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('generateReportBtn').addEventListener('click', function() {
+        const reportType = document.getElementById('reportType').value;
+        const reportFormat = document.getElementById('reportFormat').value;
+        let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
+
+        if (reportType === 'custom') {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+        }
+
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
+    });
+});
+
+
+
+</script>
+
+
+
+
 <%- include("../../views/partials/admin/footer") %>

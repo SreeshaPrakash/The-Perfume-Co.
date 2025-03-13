@@ -50,7 +50,8 @@
         <div class="order-details">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Order Details</h2>
-                <span class="order-id">#<%= orders[0]._id %></span>
+                <span class="order-id">#<%= order._id %></span>
+
             </div>
 
             <!-- Order Status and Actions -->
@@ -60,7 +61,8 @@
                         <div class="col-md-6">
                             <h5>Order Status</h5>
                            
-                            <p>Order Date: <%= orders[0].Date %></p>
+                            <p>Order Date: <%= order.Date %></p>
+
                         </div>
                         <div class="col-md-6 text-md-end">
                            
@@ -75,18 +77,16 @@
                     <h5 class="mb-0">Shipping Address</h5>
                 </div>
                 <div class="card-body">
-                   <p><%= orders[0].address.fullName %></p>
-                   <p><%= orders[0].address.phone %></p>
-                   <p><%= orders[0].address.city %></p>
-                   <p><%= orders[0].address.street %></p>
-                   <p><%= orders[0].address.state %></p>
-                   <p><%= orders[0].address.zipcode %></p>
-
-
+                    <p><%= order.address.fullName %></p>
+                    <p><%= order.address.phone %></p>
+                    <p><%= order.address.city %></p>
+                    <p><%= order.address.street %></p>
+                    <p><%= order.address.state %></p>
+                    <p><%= order.address.zipcode %></p>
 
                 </div>
             </div>
-            <input type="hidden" value="<%= orders[0]._id %>" id="orderId">
+            <input type="hidden" value="<%= order._id %>" id="orderId">
 
             <!-- Order Items -->
             <div class="card mb-4">
@@ -101,61 +101,68 @@
                                     <th scope="col">Product</th>
                                     <th scope="col">Details</th>
                                     <th scope="col" class="text-center">Quantity</th>
-                                    <th scope="col" class="text-end">Price</th>
+                                    <th scope="col" class="text-end"> Price</th>
+                                    <!-- <th scope="col" class="text-end">Offer Price</th> -->
                                     <th scope="col" class="text-end">Total</th>
                                     <th>action</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (orders && orders.length > 0 && orders[0].orderItems && orders[0].orderItems.length > 0) { %>
-                                    <% orders[0].orderItems.forEach(element => { %>
+                                <% if (order && order.orderItems && order.orderItems.length > 0) { %>
+                                    <% order.orderItems.forEach(item => { %>
+                                
                                         <tr>
                                             <td>
-                                                <img src="/uploads/re-images/<%= element.productImage %>" alt="" class="product-image">
+                                                <img src="/uploads/re-images/<%= item.productImage %>" alt="" class="product-image">
                                             </td>
-                                            <td><h6 class="mb-0"><%= element.productName %></h6></td>
-                                            <td class="text-center"><%= element.quantity %></td>
-                                            <td class="text-end">₹ <%= element.price %></td>
-                                            <td class="text-end">₹ <%= element.quantity * element.price %></td>
+                                            <td><h6 class="mb-0"><%= item.productName %></h6></td>
+                                            <td class="text-center"><%= item.quantity %></td>
+                                            <td class="text-end">₹ <%= item.price %></td>
+                                            <!-- <td class="text-end">₹ <%= item.offerPrice %></td> -->
+                                            <td class="text-end">₹ <%= item.quantity * item.price %></td>
                                             <td> 
-                                                <% if (element.orderStatus.toLowerCase() === 'delivered') { %>
+                                                <% if (item.orderStatus.toLowerCase() === 'cancelled') { %>
+                                                    <button class="btn btn-secondary" disabled>Cancelled</button>
+                                            
+                                                <% } else if (item.orderStatus.toLowerCase() === 'delivered') { %>
                                                     <button class="btn btn-warning returnOrder" 
-                                                            data-product-id="<%= element._id %>" 
-                                                            data-order-id="<%= orders[0]._id %>">
+                                                            data-product-id="<%= item._id %>" 
+                                                            data-order-id="<%= order._id %>">
                                                         Return
                                                     </button>
                                                     <!-- Hidden return form -->
-                                                    <div class="return-form" id="return-form-<%= element._id %>" style="display: none;">
+                                                    <div class="return-form" id="return-form-<%= item._id %>" style="display: none;">
                                                         <textarea class="form-control returnReason" placeholder="Enter return reason" required></textarea>
                                                         <button class="btn btn-primary submitReturn" 
-                                                                data-product-id="<%= element._id %>" 
-                                                                data-order-id="<%= orders[0]._id %>">
+                                                                data-product-id="<%= item._id %>" 
+                                                                data-order-id="<%= order._id %>">
                                                             Submit
                                                         </button>
                                                     </div>
-                            
-                                                <% } else if (element.orderStatus.toLowerCase() === 'return request') { %>
+                                            
+                                                <% } else if (item.orderStatus.toLowerCase() === 'return request') { %>
                                                     <span class="text-primary">Return Request Processing</span>
-                                                    <p><strong>Return Reason:</strong> <%= element.returnReason ? element.returnReason : 'No reason provided' %></p> 
-                            
-                                                <% } else if (element.orderStatus.toLowerCase() === 'returned') { %>
+                                                    <p><strong>Return Reason:</strong> <%= item.returnReason ? item.returnReason : 'No reason provided' %></p> 
+                                            
+                                                <% } else if (item.orderStatus.toLowerCase() === 'returned') { %>
                                                     <span class="text-success">Returned</span>
-                            
-                                                <% } else if (element.orderStatus.toLowerCase() === 'return denied') { %>
+                                            
+                                                <% } else if (item.orderStatus.toLowerCase() === 'return denied') { %>
                                                     <span class="text-danger">Return Denied</span>
-                            
+                                            
                                                 <% } else { %>
                                                     <button class="btn btn-danger cancelOrder" 
-                                                            data-product-id="<%= element._id %>" 
-                                                            data-order-id="<%= orders[0]._id %>">
+                                                            data-product-id="<%= item._id %>" 
+                                                            data-order-id="<%= order._id %>">
                                                         Cancel
                                                     </button>
                                                 <% } %>
-                                            </td> 
+                                            </td>
+                                             
                                             <td>
-                                                <span class="status-badge status-<%= element.orderStatus.toLowerCase().replace(' ', '-') %>">
-                                                    <%= element.orderStatus %>
+                                                <span class="status-badge status-<%= item.orderStatus.toLowerCase().replace(' ', '-') %>">
+                                                    <%= item.orderStatus %>
                                                 </span>
                                             </td>
                                         </tr>
@@ -175,23 +182,49 @@
             <div class="row">
                 <div class="col-md-6 ms-auto">
                     <div class="order-summary">
-                        <h5 class="mb-3">Order Summary</h5>
-                        <div class="summary-item">
+                        <h4 class="mb-4">Order Summary</h4>
+                        
+                        <!-- Subtotal -->
+                        <div class="summary-row">
                             <span>Subtotal</span>
                             <span>₹ <%= Totalprice %></span>
                         </div>
-                        <div class="summary-item">
+                    
+                        <!-- Offer Discount -->
+                        <% if (order.totalOfferDiscount > 0) { %>
+                            <div class="summary-row">
+                                <span>Offer Discount</span>
+                                <span>-₹ <%= order.totalOfferDiscount %></span>
+                            </div>
+                        <% } %>
+                    
+                        <!-- Coupon Discount -->
+                        <% if (order.couponApplied) { %>
+                            <div class="summary-row">
+                                <span>Coupon Discount (Code: <%= order.couponCode %>)</span>
+                                <span>-₹ <%= order.discount %></span>
+                            </div>
+                        <% } %>
+                    
+                        <!-- Shipping -->
+                        <div class="summary-row">
                             <span>Shipping</span>
-                            <span>free</span>
+                            <span>Free</span>
                         </div>
-                
-                        <div class="summary-item summary-total">
+                    
+                        <!-- Final Total -->
+                        <div class="summary-row total-row">
                             <span>Total</span>
-                            <span><%= Totalprice %></span>
+                            <span>₹ <%= order.finalAmount %></span>
                         </div>
                     </div>
+                    
                 </div>
             </div>
+ 
+            <button onclick="downloadInvoice('<%= order.orderId %>')" class="btn btn-primary">
+                <i class="bi bi-download me-2"></i>Download Invoice
+              </button>
 
             <!-- Back Button -->
             <div class="mt-4">
@@ -204,11 +237,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
        // Use event delegation to handle all cancel buttons
+// document.addEventListener('click', async (event) => {
+//     // Check if clicked element is a cancel button
+//     if (event.target.classList.contains('cancelOrder')) {
+//         const productId = event.target.dataset.productId;
+//         const orderId = event.target.dataset.orderId;
+        
+//         try {
+//             const response = await fetch("/cancelOrder", {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify({ orderId, productId })
+//             });
+            
+//             const data = await response.json();
+            
+//             if (data.success) {
+//                 alert(data.success);
+//                 // Optionally refresh the page or update the UI
+//                 location.reload();
+//             } else {
+//                 alert(data.message || "Failed to cancel order.");
+//             }
+//         } catch (error) {
+//             console.error("Error cancelling order:", error);
+//             alert("Something went wrong. Please try again.");
+//         }
+//     }
+// });
+
+
+
+
 document.addEventListener('click', async (event) => {
-    // Check if clicked element is a cancel button
     if (event.target.classList.contains('cancelOrder')) {
-        const productId = event.target.dataset.productId;
-        const orderId = event.target.dataset.orderId;
+        const button = event.target;
+        const productId = button.dataset.productId;
+        const orderId = button.dataset.orderId;
         
         try {
             const response = await fetch("/cancelOrder", {
@@ -216,13 +281,23 @@ document.addEventListener('click', async (event) => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ orderId, productId })
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
-                alert(data.success);
-                // Optionally refresh the page or update the UI
-                location.reload();
+                // Disable the button and update text
+                button.textContent = "Cancelled";
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-secondary');
+                button.disabled = true;
+
+                // Update order status dynamically
+                const statusElement = button.closest('tr').querySelector('.status-badge');
+                if (statusElement) {
+                    statusElement.textContent = "Cancelled";
+                    statusElement.classList.remove('status-pending', 'status-processing', 'status-delivered');
+                    statusElement.classList.add('status-cancelled');
+                }
             } else {
                 alert(data.message || "Failed to cancel order.");
             }
@@ -232,6 +307,7 @@ document.addEventListener('click', async (event) => {
         }
     }
 });
+
 
 
 
@@ -307,48 +383,98 @@ document.addEventListener('click', async (event) => {
             }
         });
         </script> -->
-
         <script>
-    document.addEventListener('click', (event) => {
-        if (event.target.classList.contains('returnOrder')) {
-            const productId = event.target.dataset.productId;
-            document.getElementById(`return-form-${productId}`).style.display = 'block';
-        }
-    });
-
-    document.addEventListener('click', async (event) => {
-        if (event.target.classList.contains('submitReturn')) {
-            const productId = event.target.dataset.productId;
-            const orderId = event.target.dataset.orderId;
-            const reasonInput = document.querySelector(`#return-form-${productId} .returnReason`);
-            const reason = reasonInput.value.trim();
-
-            if (!reason) {
-                alert("Please enter a reason for return.");
-                return;
-            }
-
-            try {
-                const response = await fetch("/returnOrder", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ orderId, productId, returnReason: reason })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert("Return request submitted successfully!");
-                    location.reload();
-                } else {
-                    alert("Failed to process return.");
+            document.addEventListener('click', (event) => {
+                if (event.target.classList.contains('returnOrder')) {
+                    const productId = event.target.dataset.productId;
+                    document.getElementById(`return-form-${productId}`).style.display = 'block';
                 }
-            } catch (error) {
-                console.error("Error processing return:", error);
-                alert("Something went wrong. Please try again.");
-            }
-        }
-    });
+            });
+            
+            document.addEventListener('click', async (event) => {
+                if (event.target.classList.contains('submitReturn')) {
+                    const productId = event.target.dataset.productId;
+                    const orderId = event.target.dataset.orderId;
+                    const reasonInput = document.querySelector(`#return-form-${productId} .returnReason`);
+                    const reason = reasonInput.value.trim();
+            
+                    if (!reason) {
+                        alert("Please enter a reason for return.");
+                        return;
+                    }
+            
+                    try {
+                        const response = await fetch("/returnOrder", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ orderId, productId, returnReason: reason })
+                        });
+            
+                        const data = await response.json();
+            
+                        if (data.success) {
+                            alert("Return request submitted successfully!");
+                            location.reload();
+                        } else {
+                            alert(data.message || "Failed to process return.");
+                        }
+                    } catch (error) {
+                        console.error("Error processing return:", error);
+                        alert("Something went wrong. Please try again.");
+                    }
+                }
+            });
+          
+            
+
+    
+// function downloadInvoice(orderId) {
+//   window.location.href = `/download-invoice/${orderId}`;
+// }
+
+
+
+// function downloadInvoice(orderId) {
+//   try {
+//     window.location.href = `/order/download-invoice/${orderId}`;
+//   } catch (error) {
+//     console.error('Error downloading invoice:', error);
+//     alert('Failed to download invoice. Please try again later.');
+//   }
+
+// }
+
+
+
+
+function downloadInvoice(orderId) {
+  const btn = event.target.closest('button');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Generating...';
+  btn.disabled = true;
+  
+  try {
+    window.location.href = `/order/download-invoice/${orderId}`;
+    // Reset button after a delay
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 3000);
+  } catch (error) {
+    console.error('Error downloading invoice:', error);
+    alert('Failed to download invoice. Please try again later.');
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+
+
+// function downloadInvoice(orderId) {
+//   window.location.href = `/order/download-invoice/${orderId}`;
+// }
+
+
 </script>
 
 

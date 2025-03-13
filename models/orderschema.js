@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-
 const orderschema = new Schema(
   {
-      userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    orderId:{
-          type:String
+    orderId: {
+      type: String,
     },
     orderItems: [
       {
@@ -19,13 +18,14 @@ const orderschema = new Schema(
           ref: "Product",
           required: true,
         },
-        productName:{
-          type:String,
+        productName: {
+          type: String,
         },
         quantity: {
           type: Number,
           required: true,
         },
+
         price: {
           type: Number,
           default: 0,
@@ -37,22 +37,25 @@ const orderschema = new Schema(
             "processing",
             "shipped",
             "delivered",
-            // "cancelled",
+            "cancelled",
             "return request",
             "returned",
-            "return denied"
+            "return denied",
           ],
           default: "processing", // Default order status
         },
-         returnReason: { 
+        returnReason: {
           type: String,
-          default: null 
-        }, 
+          default: null,
+        },
 
-        productImage:{
+        productImage: {
           type: String,
           required: true,
-        }
+        },
+        subdiscount: {
+          type: Number,
+        },
       },
     ],
     totalPrice: {
@@ -65,6 +68,11 @@ const orderschema = new Schema(
     },
     finalAmount: {
       type: Number,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["wallet", "COD", "razorpay"],
       required: true,
     },
     address: {
@@ -94,13 +102,13 @@ const orderschema = new Schema(
       },
     },
     Date: {
-      type: String,
-      required: true,
+      type: Date,
+      default: Date.now
     },
     couponapplied: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );

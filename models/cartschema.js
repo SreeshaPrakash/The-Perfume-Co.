@@ -18,6 +18,7 @@ const cartschema = new Schema(
         quantity: {
           type: Number,
           default: 1,
+          max: 5 
         },
         price: {
           type: Number,

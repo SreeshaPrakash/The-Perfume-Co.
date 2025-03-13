@@ -185,13 +185,13 @@
                 <p><%= product.description %></p>
                 <p><strong>Brand:</strong> <%= product.brand.brandName %></p>
                 <p><strong>Category:</strong> <%= product.category.name %></p>
-
                 
                 <p class="price">Sale Price: ₹ <%= product.salePrice %>  
-                    <% if (product.regularPrice > product.salePrice) { %>
-                        <span class="discount">(Save <%= ((product.regularPrice - product.salePrice) / product.regularPrice * 100).toFixed(1) %>%)</span>
+                    <% if (highestOffer > 0) { %>
+                      <span class="discount">- <%= highestOffer %>% OFF</span>
                     <% } %>
-                </p>
+                  </p>
+                  
 
 
                 <p class="stock-status">
@@ -207,8 +207,8 @@
                   <% } else { %>
                     <button class="btn" disabled>Out of Stock</button>
                   <% } %>
-                  
-                <button class="btn">Wishlist</button>
+<!--                   
+                <button class="btn">Wishlist</button> -->
 
                 <p class="rating">⭐⭐⭐⭐☆ (4.5 / 5)</p>
 

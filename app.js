@@ -19,8 +19,8 @@ const mongoose = require("mongoose");
 const Wishlist = require("./models/wishlistschema");
 const { Schema } = mongoose;
 
-app.use(bodyParser.json());
-//const MongoStore = require('connect-mongo');
+// app.use(bodyParser.json());
+// //const MongoStore = require('connect-mongo');
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,7 +71,7 @@ app.use("/admin", adminRouter);
 
 app.use('/wishlist',userRouter)
 app.use("/cart",userRouter)
-
+app.use('/order', userRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("server running");

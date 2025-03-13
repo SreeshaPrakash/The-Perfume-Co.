@@ -6,6 +6,7 @@ const profileController = require('../controllers/user/profileController');
 const cartController = require("../controllers/user/cartController")
 const orderController = require("../controllers/user/orderController")
 const wishlistController = require("../controllers/user/wishlistController")
+const walletController = require("../controllers/user/walletController")
 const { createOrder, getOrderDetails } = require('../controllers/user/orderController');
 
 const passport = require("passport");
@@ -87,16 +88,22 @@ router.delete('/address/:id',userAuth, profileController.deleteAddress);
 router.get('/checkout',userAuth,orderController.getCheckoutPage);
 
 
+//coupon side
+router.get("/get-available-coupons", userAuth, orderController.getAvailableCoupons);
+router.post("/apply-coupon", userAuth, orderController.applyCoupon);
+
+
+
 //router.get('/order-details/:orderId', gets);
 
-router.post('/create-order', createOrder);
+router.post('/create-order',userAuth, createOrder);
 router.get("/order-placed", userAuth, orderController.getOrderPlacedPage);
 
 router.get('/orders',orderController.orderDetail)
-router.get('/viewOrder',orderController.viewOrder)
-router.post('/cancelOrder',orderController.cancelOrder)
+router.get('/viewOrder',userAuth,orderController.viewOrder)
+router.post('/cancelOrder',userAuth,orderController.cancelOrder)
 
-router.post('/returnOrder', orderController.returnOrder);
+router.post('/returnOrder',userAuth, orderController.returnOrder);
 
 
 
@@ -110,8 +117,25 @@ router.post('/returnOrder', orderController.returnOrder);
 router.post('/wishlist/add',userAuth, wishlistController.addToWishlist)
 router.post("/wishlist/remove",userAuth,wishlistController.removeFromWishlist)
 //router.post('/cart/add', wishlistController.addToCart);
-router.post('/cart/add', userAuth, cartController.addToCart);
+//router.post('/cart/add', userAuth, wishlistController.addToCart);
 
+
+//wallet management
+
+router.get('/user-wallet', userAuth, walletController.loadWalletPage);
+router.get('/user-wallet', userAuth, walletController.loadWalletPage);
+// router.post('/add-money-to-wallet', userAuth, walletController.addMoneyToWallet);
+// router.post('/verify-payment', userAuth, walletController.verifyPayment);
+router.post('/wallet/add-money', userAuth, walletController.addMoneyToWallet);
+router.post('/wallet/verify-payment', userAuth, walletController.verifyPayment);
+// Add this to your routes file
+router.post('/process-wallet-payment', userAuth, walletController.processWalletPayment);
+
+
+
+
+//invoice
+router.get('/download-invoice/:orderId',userAuth, orderController.downloadInvoice);
 
 
 

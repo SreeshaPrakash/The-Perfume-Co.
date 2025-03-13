@@ -48,10 +48,16 @@
                                 <label for="product_name" class="form-label">Product Name</label>
                                 <input type="text" name="productName" value="<%= product.productName %>"
                                     class="form-control border" id="product_name">
-                                    <input type="hidden" value="<%= product.productImage[0] %>" name="image1">
-                                    <input type="hidden" value="<%= product.productImage[1] %>" name="image2">
-                                    <input type="hidden" value="<%= product.productImage[2] %>" name="image3">
-                                    <input type="hidden" value="<%= product.productImage[3] %>" name="image4">
+
+
+                                <!-- 
+                                    <input type="file" name="images" accept="image/png, image/jpeg, image/jpg"> -->
+
+                                <input class="form-control" type="file" name="images" id="input1"
+                                    accept="image/png, image/jpeg, image/jpg" multiple
+                                    onchange="updateImagePreview(event, 'imgView1')">
+
+
 
                                 <div id="productName-error" class="error-message"></div>
                             </div>
@@ -204,13 +210,13 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <button class="btn btn-md rounded font-sm hover-up" id="updatebtn" type="button">
                                     Update
                                 </button>
                             </div>
-                            
+
                         </form>
                     </div>
                 </div>
@@ -222,66 +228,87 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    async function validateAndSubmit(event) {
-        event.preventDefault(); 
+    <script>
 
-        if (!validateForm()) {
-            return; 
+
+
+
+        function updateImagePreview(event, imgViewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(imgViewId).src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
-        let form = document.getElementById("productForm");
-        let formData = new FormData(form);
 
-        try {
-            let response = await fetch(form.action, {
-                method: "POST",
-                body: formData
-            });
 
-            if (response.ok) {
-                Swal.fire({
-                    title: "Product Updated!",
-                    text: "The product details have been successfully updated.",
-                    icon: "success",
-                    confirmButtonText: "OK"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "/admin/products"; 
-                    }
+
+
+        async function validateAndSubmit(event) {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+            let form = document.getElementById("productForm");
+            let formData = new FormData(form);
+
+            console.log('1234567', formData)
+
+            try {
+                let response = await fetch(form.action, {
+                    method: "POST",
+                    body: formData
                 });
-            } else {
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: "Product Updated!",
+                        text: "The product details have been successfully updated.",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/admin/products";
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                }
+            } catch (error) {
                 Swal.fire({
                     title: "Error!",
-                    text: "Something went wrong. Please try again.",
+                    text: "Server error. Please try again later.",
                     icon: "error",
                     confirmButtonText: "OK"
                 });
             }
-        } catch (error) {
-            Swal.fire({
-                title: "Error!",
-                text: "Server error. Please try again later.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
         }
-    }
 
-    
-    document.getElementById("updatebtn").addEventListener("click", validateAndSubmit);
-</script>
+
+        document.getElementById("updatebtn").addEventListener("click", validateAndSubmit);
+    </script>
 
 
 
     <script>
 
-        
+
         function validateForm(event) {
             let isValid = true;
             clearErrors();
 
-            
+
             const productName = document.getElementById('product_name').value.trim();
             if (!productName) {
                 showError('productName-error', 'Product name is required');
@@ -304,7 +331,7 @@
                 isValid = false;
             }
 
-            
+
             const regularPrice = document.querySelector('input[name="regularPrice"]').value.trim();
             if (!regularPrice) {
                 showError('regularPrice-error', 'Regular price is required');
@@ -314,10 +341,10 @@
                 isValid = false;
             }
 
-            
+
             const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
 
-            if (salePrice) {  
+            if (salePrice) {
                 if (!isValidPrice(salePrice)) {
                     showError('salePrice-error', 'Please enter a valid sale price');
                     isValid = false;
@@ -327,7 +354,7 @@
                 }
             }
 
-           
+
             const quantity = document.querySelector('input[name="quantity"]').value.trim();
             if (!quantity) {
                 showError('quantity-error', 'Quantity is required');
@@ -337,7 +364,7 @@
                 isValid = false;
             }
 
-           
+
             const imageInputs = document.querySelectorAll('input[type="file"]');
             let hasMainImage = false;
             imageInputs.forEach((input, index) => {
@@ -352,7 +379,7 @@
                         showError('images-error', 'Only JPG, JPEG, and PNG files are allowed');
                         isValid = false;
                     }
-                    if (file.size > 5 * 1024 * 1024) { 
+                    if (file.size > 5 * 1024 * 1024) {
                         showError('images-error', 'Image size should not exceed 5MB');
                         isValid = false;
                     }
@@ -362,7 +389,7 @@
             return isValid;
         }
 
-        
+
         function isValidPrice(price) {
             const priceValue = parseFloat(price);
             return /^\d+(\.\d{1,2})?$/.test(price) && priceValue >= 0;
@@ -377,21 +404,21 @@
             if (errorElement) {
                 errorElement.textContent = message;
                 errorElement.style.color = 'red';
-                errorElement.style.display = 'block';  
-                errorElement.style.marginTop = '5px';  
-                errorElement.style.fontSize = '14px'; 
+                errorElement.style.display = 'block';
+                errorElement.style.marginTop = '5px';
+                errorElement.style.fontSize = '14px';
             }
         }
 
         function clearErrors() {
-        const errorElements = document.getElementsByClassName('error-message');
-        for (let element of errorElements) {
-            element.textContent = ''; 
-            element.style.display = 'none';
+            const errorElements = document.getElementsByClassName('error-message');
+            for (let element of errorElements) {
+                element.textContent = '';
+                element.style.display = 'none';
+            }
         }
-    }
 
-    
+
         function viewImage(event, imageNumber) {
             const file = event.target.files[0];
             if (file) {
@@ -432,7 +459,7 @@
 
 
 
-        
+
         function initImageCropper(event, index) {
             let input = event.target;
             let reader = new FileReader();
@@ -507,19 +534,39 @@
 
 
 
-        function deleteSingleImage(imageId, productId) {
-            $.ajax({
-                url: "/admin/deleteImage",
-                method: 'post',
-                data: { imageNameToServer: imageId, productIdToServer: productId },
-                success: ((response) => {
-                    if (response.status === true) {
-                        window.location.reload()
+        // function deleteSingleImage(imageId, productId) {
+        //     $.ajax({
+        //         url: "/admin/deleteImage",
+        //         method: 'post',
+        //         data: { imageNameToServer: imageId, productIdToServer: productId },
+        //         success: ((response) => {
+        //             if (response.status === true) {
+        //                 window.location.reload()
 
-                    }
+        //             }
 
-                })
+        //         })
+        //     })
+        // }
+
+        function deleteImage(imageName, productId) {
+            fetch("/admin/deleteImage", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    imageNameToServer: imageName,
+                    productIdToServer: productId,
+                }),
             })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === true) {
+                        window.location.reload();
+                    }
+                })
+                .catch((error) => console.error("Error deleting image:", error));
         }
 
     </script>
