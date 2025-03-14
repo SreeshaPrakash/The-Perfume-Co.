@@ -41,11 +41,11 @@
                 <% orders.forEach(element => { %>
                     <tr>
                         <td># <%= element._id %></td>
-                        <td><%= element.Date %></td>
-                        <td><%= element.userDetails[0].firstName %> <%= element.userDetails[0].lastrName %></td>
+                        <td><%= new Date(element.createdOn).toLocaleDateString() %></td>
+                        <td><%= element.userDetails[0].firstName %> <%= element.userDetails[0].lastName %></td>
                         <td>₹ <%= element.finalAmount %></td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary btn-view" onclick="window.location.href='/viewOrder?orderId=<%= element._id %>'">View</button>
+                            <button class="btn btn-sm btn-outline-primary btn-view" onclick="window.location.href='/viewOrder?orderId=<%= element.orderId %>'">View</button>
                         </td>
                     </tr>
                 <% }) %>

@@ -41,6 +41,7 @@ const orderschema = new Schema(
             "return request",
             "returned",
             "return denied",
+            "Payment failed"
           ],
           default: "processing", // Default order status
         },

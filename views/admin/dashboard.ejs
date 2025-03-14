@@ -105,11 +105,8 @@
         
     </div>
 
-<!--------------------------------------------------------------------------------------------------------------------->
-
-
     <!-- Charts and Overview -->
-    <div class="row">
+   <div class="row">
         <div class="col-xl-8 col-lg-12">
             <div class="card mb-4 shadow-sm border-0">
                 <article class="card-body">
@@ -133,19 +130,16 @@
                 </article>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-12">
+       <!-- <div class="col-xl-4 col-lg-12">
             <div class="row">
-
-
-                
-             <!--     File: dashboard.ejs
-          Update the Top Categories section -->
-            <div class="col-12 mb-4">
+                  File: dashboard.ejs
+          Update the Top Categories section
+           <div class="col-12 mb-4">
                 <div class="card mb-4 shadow-sm border-0">
                     <article class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="card-title mb-0">Top Categories</h5> 
-                            <div class="dropdown">
+                          <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-filter me-1"></i> Filter
                                 </button>
@@ -155,19 +149,69 @@
                                     <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="year">Last Year</a></li>
                                 </ul>
                             </div>
-                       </div>
+                      </div>
                         <div class="chart-container" style="position: relative; height:180px; width:100%;">
                             <canvas id="categoryChart"></canvas>
                         </div>
                     </article>
                 </div>
-            </div>
-            <div class="col-12">
+            </div>-->
+            <div class="col-xl-4 col-lg-12">
+                <div class="row">
+                    <!-- Top Products -->
+                    <div class="col-12 mb-4">
+                        <div class="card mb-4 shadow-sm border-0">
+                            <article class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title mb-0">Top Products</h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="product" data-range="week">Last Week</a></li>
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="product" data-range="month">Last Month</a></li>
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="product" data-range="year">Last Year</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="chart-container" style="position: relative; height:180px; width:100%;">
+                                    <canvas id="productChart"></canvas>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <div class="card mb-4 shadow-sm border-0">
+                            <article class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title mb-0">Top Categories</h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="week">Last Week</a></li>
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="month">Last Month</a></li>
+                                            <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="year">Last Year</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="chart-container" style="position: relative; height:180px; width:100%;">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    
+                    
+            <div class="col-12"> 
                 <div class="card mb-4 shadow-sm border-0">
                     <article class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="card-title mb-0">Top Brands</h5> 
-                          <div class="dropdown">
+                            <h5 class="card-title mb-0">Top Brands</h5>
+                            <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-filter me-1"></i> Filter
                                 </button>
@@ -176,8 +220,8 @@
                                     <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="month">Last Month</a></li>
                                     <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="year">Last Year</a></li>
                                 </ul>
-                            </div>
-                      </div> 
+                            </div> 
+                         </div> 
                         <div class="chart-container" style="position: relative; height:180px; width:100%;">
                             <canvas id="brandChart"></canvas>
                         </div>
@@ -185,14 +229,8 @@
                 </div>
             </div>
             </div>
-        </div>
-    </div> 
-
-
-    
-<!--------------------------------------------------------------------------------------------------------------------->
-
-
+        </div> 
+    </div>
 
     <!-- Recent Orders -->
     <div class="card mb-4 shadow-sm border-0">
@@ -349,45 +387,355 @@
 // Replace the chart scripts with this: -->
 
 <script>
+// document.addEventListener('DOMContentLoaded', function() {
+//     try {
+//         const chartData = <%- JSON.stringify(chartData) %>;
+//         console.log(chartData)
+//         let currentTimeRange = 'yearly';
+
+//         // // Function to update charts based on time range
+//         // function updateCharts(timeRange) {
+//         //     currentTimeRange = timeRange;
+            
+//         //     // Here you would fetch new data based on timeRange
+//         //     fetch(`/admin/chart-data?timeRange=${timeRange}`)
+//         //         .then(response => response.json())
+//         //         .then(data => {
+//         //             // Update salesChart with new data
+//         //             salesChart.data.labels = data.chartLabels;
+//         //             salesChart.data.datasets[0].data = data.revenueData;
+//         //             salesChart.data.datasets[1].data = data.ordersData;
+//         //             salesChart.update();
+//         //         })
+//         //         .catch(error => console.error('Error updating charts:', error));
+//         // }
+
+
+//         // Update charts function
+//     function updateCharts(timeRange) {
+//         currentTimeRange = timeRange;
+//         fetch(`/admin/chart-data?timeRange=${timeRange}`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 salesChart.data.labels = data.chartLabels;
+//                 salesChart.data.datasets[0].data = data.revenueData;
+//                 salesChart.data.datasets[1].data = data.ordersData;
+//                 salesChart.update();
+//             });
+//     }
+
+
+// //         // Set up dropdown listeners
+// //         document.querySelectorAll('.dropdown-menu a').forEach(item => {
+// //     item.addEventListener('click', function(e) {
+// //         e.preventDefault();
+// //         const timeRange = this.textContent.toLowerCase().replace(/\s+/g, '-');
+// //         document.getElementById('timeRangeDropdown').innerHTML = 
+// //             `<i class="fas fa-calendar me-1"></i> ${this.textContent}`;
+// //         updateCharts(timeRange);
+// //     });
+// // });
+
+
+// // Dropdown listeners for sales chart
+// document.querySelectorAll('#timeRangeDropdown + .dropdown-menu a').forEach(item => {
+//         item.addEventListener('click', function(e) {
+//             e.preventDefault();
+//             const timeRange = this.textContent.toLowerCase().replace(/\s+/g, '-');
+//             document.getElementById('timeRangeDropdown').innerHTML = 
+//                 `<i class="fas fa-calendar me-1"></i> ${this.textContent}`;
+//             updateCharts(timeRange);
+//         });
+//     });
+
+
+//         // Sales Chart (Revenue & Orders Overview)
+//         const salesChart = new Chart(
+//             document.getElementById('salesChart').getContext('2d'),
+            
+//             {
+//                 type: 'line',
+//                 data: {
+//                     labels: chartData.chartLabels,
+//                     datasets: [
+//                         {
+//                             label: 'Revenue (₹)',
+//                             data: chartData.revenueData,
+//                             borderColor: '#36A2EB',
+//                             backgroundColor: 'rgba(54, 162, 235, 0.1)',
+//                             borderWidth: 2,
+//                             fill: true,
+//                             yAxisID: 'y-revenue'
+//                         },
+//                         {
+//                             label: 'Orders',
+//                             data: chartData.ordersData,
+//                             borderColor: '#FF6384',
+//                             backgroundColor: 'rgba(255, 99, 132, 0.1)',
+//                             borderWidth: 2,
+//                             fill: true,
+//                             yAxisID: 'y-orders'
+//                         }
+//                     ]
+//                 },
+//                 options: {
+//                     responsive: true,
+//                     maintainAspectRatio: false,
+//                     scales: {
+//                         'y-revenue': {
+//                             type: 'linear',
+//                             position: 'left',
+//                             title: { display: true, text: 'Revenue (₹)' }
+//                         },
+//                         'y-orders': {
+//                             type: 'linear',
+//                             position: 'right',
+//                             title: { display: true, text: 'Number of Orders' },
+//                             beginAtZero: true
+//                         }
+//                     },
+//                     plugins: { legend: { position: 'top' } }
+//                 }
+//             }
+//         );
+
+//         // Product Pie Chart
+//     const productChart = new Chart(
+//         document.getElementById('productChart').getContext('2d'),
+//         {
+//             type: 'doughnut',
+//             data: {
+//                 labels: chartData.topProducts.productLabels,
+//                 datasets: [{
+//                     data: chartData.topProducts.productData,
+//                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+//                 }]
+//             },
+//             options: {
+//                 responsive: true,
+//                 maintainAspectRatio: false,
+//                 plugins: { legend: { position: 'bottom' } }
+//             }
+//         }
+//     );
+
+//         // // Category Pie Chart - Dynamic data
+//         // const categoryChart = new Chart(
+//         //     document.getElementById('categoryChart').getContext('2d'),
+//         //     {
+//         //         type: 'doughnut',
+//         //         data: {
+//         //             labels: chartData.categoryLabels || ['No Data'],
+//         //             datasets: [{
+//         //                 data: chartData.categoryData || [100],
+//         //                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+//         //             }]
+//         //         },
+//         //         options: {
+//         //             responsive: true,
+//         //             maintainAspectRatio: false,
+//         //             plugins: { legend: { position: 'bottom' } }
+//         //         }
+//         //     }
+//         // );
+        
+//         // Category Pie Chart
+//     const categoryChart = new Chart(
+//         document.getElementById('categoryChart').getContext('2d'),
+//         {
+//             type: 'doughnut',
+//             data: {
+//                 labels: chartData.topCategories.categoryLabels,
+//                 datasets: [{
+//                     data: chartData.topCategories.categoryData,
+//                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+//                 }]
+//             },
+//             options: {
+//                 responsive: true,
+//                 maintainAspectRatio: false,
+//                 plugins: { legend: { position: 'bottom' } }
+//             }
+//         }
+//     );
+
+
+//         // // Brand Pie Chart - Dynamic data
+//         // const brandChart = new Chart(
+//         //     document.getElementById('brandChart').getContext('2d'),
+//         //     {
+//         //         type: 'doughnut',
+//         //         data: {
+//         //             labels: chartData.brandLabels || ['No Data'],
+//         //             datasets: [{
+//         //                 data: chartData.brandData || [100],
+//         //                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+//         //             }]
+//         //         },
+//         //         options: {
+//         //             responsive: true,
+//         //             maintainAspectRatio: false,
+//         //             plugins: { legend: { position: 'bottom' } }
+//         //         }
+//         //     }
+//         // );
+
+
+
+//         // Brand Pie Chart
+//     const brandChart = new Chart(
+//         document.getElementById('brandChart').getContext('2d'),
+//         {
+//             type: 'doughnut',
+//             data: {
+//                 labels: chartData.topBrands.brandLabels,
+//                 datasets: [{
+//                     data: chartData.topBrands.brandData,
+//                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+//                 }]
+//             },
+//             options: {
+//                 responsive: true,
+//                 maintainAspectRatio: false,
+//                 plugins: { legend: { position: 'bottom' } }
+//             }
+//         }
+//     );
+
+
+//         // // Set up filter buttons for category and brand charts
+//         // document.querySelectorAll('.btn-filter').forEach(btn => {
+//         //     btn.addEventListener('click', function() {
+//         //         const chartType = this.dataset.chart;
+//         //         const timeRange = document.querySelector(`#${chartType}Filter`).value;
+                
+//         //         fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
+//         //             .then(response => response.json())
+//         //             .then(data => {
+//         //                 if (chartType === 'category') {
+//         //                     categoryChart.data.labels = data.labels;
+//         //                     categoryChart.data.datasets[0].data = data.data;
+//         //                     categoryChart.update();
+//         //                 } else if (chartType === 'brand') {
+//         //                     brandChart.data.labels = data.labels;
+//         //                     brandChart.data.datasets[0].data = data.data;
+//         //                     brandChart.update();
+//         //                 }
+//         //             })
+//         //             .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+//         //     });
+//         // });
+
+
+// // Filter listeners for product, category, and brand charts
+// document.querySelectorAll('.filter-option').forEach(option => {
+//         option.addEventListener('click', function(e) {
+//             e.preventDefault();
+//             const chartType = this.dataset.chart;
+//             const timeRange = this.dataset.range;
+//             const chart = chartType === 'product' ? productChart :
+//                          chartType === 'category' ? categoryChart : brandChart;
+
+//             fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     chart.data.labels = data.labels;
+//                     chart.data.datasets[0].data = data.data;
+//                     chart.update();
+//                 })
+//                 .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+//         });
+//     });
+
+
+//     } catch (error) {
+//         console.error('Error initializing charts:', error);
+//     }
+//     document.querySelectorAll('.filter-option').forEach(option => {
+//         option.addEventListener('click', function(e) {
+//             e.preventDefault();
+//             const chartType = this.dataset.chart;
+//             const timeRange = this.dataset.range;
+            
+//             fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     if (chartType === 'category') {
+//                         categoryChart.data.labels = data.labels;
+//                         categoryChart.data.datasets[0].data = data.data;
+//                         categoryChart.update();
+//                     } else if (chartType === 'brand') {
+//                         brandChart.data.labels = data.labels;
+//                         brandChart.data.datasets[0].data = data.data;
+//                         brandChart.update();
+//                     }
+//                 })
+//                 .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+//         });
+//     });
+
+// //     // Download Report
+//     document.getElementById('downloadReport').addEventListener('click', function() {
+//         const myModal = new bootstrap.Modal(document.getElementById('generateReportModal'));
+//         myModal.show();
+//     });
+
+//     document.getElementById('reportType').addEventListener('change', function() {
+//         const customDateFields = document.getElementById('customDateFields');
+//         customDateFields.style.display = this.value === 'custom' ? 'block' : 'none';
+//     });
+
+//     document.getElementById('generateReportBtn').addEventListener('click', function() {
+//         const reportType = document.getElementById('reportType').value;
+//         const reportFormat = document.getElementById('reportFormat').value;
+//         let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
+
+//         if (reportType === 'custom') {
+//             const startDate = document.getElementById('startDate').value;
+//             const endDate = document.getElementById('endDate').value;
+//             if (!startDate || !endDate) {
+//                 alert('Please select both start and end dates');
+//                 return;
+//             }
+//             downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+//         }
+
+//         const link = document.createElement('a');
+//         link.href = downloadUrl;
+//         link.target = '_blank';
+//         document.body.appendChild(link);
+//         link.click();
+//         document.body.removeChild(link);
+
+//         bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
+//     });
+// });
+<!-- Replace the existing script section with this modified version -->
+
 document.addEventListener('DOMContentLoaded', function() {
     try {
         const chartData = <%- JSON.stringify(chartData) %>;
-        console.log(chartData)
         let currentTimeRange = 'yearly';
+        let salesChart, productChart, categoryChart, brandChart;
 
-        // Function to update charts based on time range
-        function updateCharts(timeRange) {
-            currentTimeRange = timeRange;
-            
-            // Here you would fetch new data based on timeRange
-            fetch(`/admin/chart-data?timeRange=${timeRange}`)
+        // Function to fetch and update chart data
+        function fetchChartData(chartType, timeRange, chartInstance) {
+            fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Update salesChart with new data
-                    salesChart.data.labels = data.chartLabels;
-                    salesChart.data.datasets[0].data = data.revenueData;
-                    salesChart.data.datasets[1].data = data.ordersData;
-                    salesChart.update();
+                    chartInstance.data.labels = data.chartLabels || data.labels;
+                    chartInstance.data.datasets[0].data = data.revenueData || data.data;
+                    if (chartType === 'sales') {
+                        chartInstance.data.datasets[1].data = data.ordersData;
+                    }
+                    chartInstance.update();
                 })
-                .catch(error => console.error('Error updating charts:', error));
+                .catch(error => console.error(`Error updating ${chartType} chart:`, error));
         }
 
-        // Set up dropdown listeners
-        document.querySelectorAll('.dropdown-menu a').forEach(item => {
-    item.addEventListener('click', function(e) {
-        e.preventDefault();
-        const timeRange = this.textContent.toLowerCase().replace(/\s+/g, '-');
-        document.getElementById('timeRangeDropdown').innerHTML = 
-            `<i class="fas fa-calendar me-1"></i> ${this.textContent}`;
-        updateCharts(timeRange);
-    });
-});
-
-
-        // Sales Chart (Revenue & Orders Overview)
-        const salesChart = new Chart(
+        // Initialize Sales Chart
+        salesChart = new Chart(
             document.getElementById('salesChart').getContext('2d'),
-            
             {
                 type: 'line',
                 data: {
@@ -417,32 +765,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        'y-revenue': {
-                            type: 'linear',
-                            position: 'left',
-                            title: { display: true, text: 'Revenue (₹)' }
-                        },
-                        'y-orders': {
-                            type: 'linear',
-                            position: 'right',
-                            title: { display: true, text: 'Number of Orders' },
-                            beginAtZero: true
-                        }
+                        'y-revenue': { position: 'left', title: { display: true, text: 'Revenue (₹)' } },
+                        'y-orders': { position: 'right', title: { display: true, text: 'Orders' }, beginAtZero: true }
                     },
                     plugins: { legend: { position: 'top' } }
                 }
             }
         );
 
-        // Category Pie Chart - Dynamic data
-        const categoryChart = new Chart(
+        // Initialize Product Chart
+        productChart = new Chart(
+            document.getElementById('productChart').getContext('2d'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.topProducts.productLabels,
+                    datasets: [{
+                        data: chartData.topProducts.productData,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            }
+        );
+
+        // Initialize Category Chart
+        categoryChart = new Chart(
             document.getElementById('categoryChart').getContext('2d'),
             {
                 type: 'doughnut',
                 data: {
-                    labels: chartData.categoryLabels || ['No Data'],
+                    labels: chartData.topCategories.categoryLabels,
                     datasets: [{
-                        data: chartData.categoryData || [100],
+                        data: chartData.topCategories.categoryData,
                         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
                     }]
                 },
@@ -454,15 +813,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         );
 
-        // Brand Pie Chart - Dynamic data
-        const brandChart = new Chart(
+        // Initialize Brand Chart
+        brandChart = new Chart(
             document.getElementById('brandChart').getContext('2d'),
             {
                 type: 'doughnut',
                 data: {
-                    labels: chartData.brandLabels || ['No Data'],
+                    labels: chartData.topBrands.brandLabels,
                     datasets: [{
-                        data: chartData.brandData || [100],
+                        data: chartData.topBrands.brandData,
                         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
                     }]
                 },
@@ -474,55 +833,43 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         );
 
-        // Set up filter buttons for category and brand charts
-        document.querySelectorAll('.btn-filter').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const chartType = this.dataset.chart;
-                const timeRange = document.querySelector(`#${chartType}Filter`).value;
-                
-                fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (chartType === 'category') {
-                            categoryChart.data.labels = data.labels;
-                            categoryChart.data.datasets[0].data = data.data;
-                            categoryChart.update();
-                        } else if (chartType === 'brand') {
-                            brandChart.data.labels = data.labels;
-                            brandChart.data.datasets[0].data = data.data;
-                            brandChart.update();
-                        }
-                    })
-                    .catch(error => console.error(`Error updating ${chartType} chart:`, error));
+        // Dropdown listeners for Sales Chart
+        document.querySelectorAll('#timeRangeDropdown + .dropdown-menu a').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const timeRange = this.textContent.toLowerCase().replace(/\s+/g, '-');
+                document.getElementById('timeRangeDropdown').innerHTML = 
+                    `<i class="fas fa-calendar me-1"></i> ${this.textContent}`;
+                currentTimeRange = timeRange;
+                fetchChartData('chart', timeRange, salesChart);
             });
         });
+
+        // Filter listeners for Product, Category, and Brand Charts
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const chartType = this.dataset.chart;
+                const timeRange = this.dataset.range;
+                const chart = chartType === 'product' ? productChart :
+                             chartType === 'category' ? categoryChart : brandChart;
+                fetchChartData(chartType, timeRange, chart);
+            });
+        });
+
+        // Real-time polling (e.g., every 30 seconds)
+        setInterval(() => {
+            fetchChartData('chart', currentTimeRange, salesChart);
+            fetchChartData('product', 'year', productChart); // Adjust timeRange as needed
+            fetchChartData('category', 'year', categoryChart);
+            fetchChartData('brand', 'year', brandChart);
+        }, 30000); // Update every 30 seconds
+
     } catch (error) {
         console.error('Error initializing charts:', error);
     }
-    document.querySelectorAll('.filter-option').forEach(option => {
-        option.addEventListener('click', function(e) {
-            e.preventDefault();
-            const chartType = this.dataset.chart;
-            const timeRange = this.dataset.range;
-            
-            fetch(`/admin/${chartType}-data?timeRange=${timeRange}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (chartType === 'category') {
-                        categoryChart.data.labels = data.labels;
-                        categoryChart.data.datasets[0].data = data.data;
-                        categoryChart.update();
-                    } else if (chartType === 'brand') {
-                        brandChart.data.labels = data.labels;
-                        brandChart.data.datasets[0].data = data.data;
-                        brandChart.update();
-                    }
-                })
-                .catch(error => console.error(`Error updating ${chartType} chart:`, error));
-        });
-    });
 
-//     // Download Report
+    // Existing report generation code remains unchanged
     document.getElementById('downloadReport').addEventListener('click', function() {
         const myModal = new bootstrap.Modal(document.getElementById('generateReportModal'));
         myModal.show();

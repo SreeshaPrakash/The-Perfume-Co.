@@ -565,14 +565,38 @@
           };
 
           const rzp1 = new Razorpay(options);
+          // rzp1.on("payment.failed", function (response) {
+          //   swal({
+          //     title: "Error!",
+          //     text: "Payment failed. Please try again.",
+          //     icon: "error",
+          //     button: "OK",
+          //   });
+          // });
           rzp1.on("payment.failed", function (response) {
-            swal({
-              title: "Error!",
-              text: "Payment failed. Please try again.",
-              icon: "error",
-              button: "OK",
-            });
-          });
+  swal({
+    title: "Payment Failed!",
+    text: "Your payment was unsuccessful. You can check the order details and retry payment.",
+    icon: "error",
+    buttons: {
+      goToOrder: {
+        text: "Go to Order Details",
+        value: "orderDetails",
+      },
+      ok: {
+        text: "OK",
+        value: "ok",
+      },
+    },
+  }).then((value) => {
+    if (value === "orderDetails" && data.orderId) {
+      window.location.href = `/viewOrder?orderId=${data.orderId}`;
+    } else if (value === "orderDetails") {
+      swal("Error", "Order ID not found!", "error");
+    }
+  });
+});
+
           rzp1.open();
         } else if (paymentMethod === "wallet") {
         // // Handle wallet payment

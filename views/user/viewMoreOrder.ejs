@@ -124,14 +124,12 @@
                                             <td> 
                                                 <% if (item.orderStatus.toLowerCase() === 'cancelled') { %>
                                                     <button class="btn btn-secondary" disabled>Cancelled</button>
-                                            
                                                 <% } else if (item.orderStatus.toLowerCase() === 'delivered') { %>
                                                     <button class="btn btn-warning returnOrder" 
                                                             data-product-id="<%= item._id %>" 
                                                             data-order-id="<%= order._id %>">
                                                         Return
                                                     </button>
-                                                    <!-- Hidden return form -->
                                                     <div class="return-form" id="return-form-<%= item._id %>" style="display: none;">
                                                         <textarea class="form-control returnReason" placeholder="Enter return reason" required></textarea>
                                                         <button class="btn btn-primary submitReturn" 
@@ -140,17 +138,13 @@
                                                             Submit
                                                         </button>
                                                     </div>
-                                            
                                                 <% } else if (item.orderStatus.toLowerCase() === 'return request') { %>
                                                     <span class="text-primary">Return Request Processing</span>
                                                     <p><strong>Return Reason:</strong> <%= item.returnReason ? item.returnReason : 'No reason provided' %></p> 
-                                            
                                                 <% } else if (item.orderStatus.toLowerCase() === 'returned') { %>
                                                     <span class="text-success">Returned</span>
-                                            
                                                 <% } else if (item.orderStatus.toLowerCase() === 'return denied') { %>
                                                     <span class="text-danger">Return Denied</span>
-                                            
                                                 <% } else { %>
                                                     <button class="btn btn-danger cancelOrder" 
                                                             data-product-id="<%= item._id %>" 
@@ -221,10 +215,22 @@
                     
                 </div>
             </div>
- 
-            <button onclick="downloadInvoice('<%= order.orderId %>')" class="btn btn-primary">
-                <i class="bi bi-download me-2"></i>Download Invoice
-              </button>
+
+
+            <!-- Add this before the download invoice button to disable it for Payment failed status -->
+<button onclick="downloadInvoice('<%= order.orderId %>')" 
+    class="btn btn-primary" 
+    <%= order.orderItems.some(item => item.orderStatus === 'Payment failed') ? 'disabled' : '' %>>
+<i class="bi bi-download me-2"></i>Download Invoice
+</button>
+
+<% if (order.paymentMethod === 'razorpay' && order.orderItems.some(item => item.orderStatus === 'Payment failed')) { %>
+    <button class="btn btn-success payNow" 
+            data-order-id="<%= order._id %>" 
+            data-amount="<%= order.finalAmount %>">
+        Pay Now
+    </button>
+<% } %>
 
             <!-- Back Button -->
             <div class="mt-4">
@@ -235,40 +241,12 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-       // Use event delegation to handle all cancel buttons
-// document.addEventListener('click', async (event) => {
-//     // Check if clicked element is a cancel button
-//     if (event.target.classList.contains('cancelOrder')) {
-//         const productId = event.target.dataset.productId;
-//         const orderId = event.target.dataset.orderId;
-        
-//         try {
-//             const response = await fetch("/cancelOrder", {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: JSON.stringify({ orderId, productId })
-//             });
-            
-//             const data = await response.json();
-            
-//             if (data.success) {
-//                 alert(data.success);
-//                 // Optionally refresh the page or update the UI
-//                 location.reload();
-//             } else {
-//                 alert(data.message || "Failed to cancel order.");
-//             }
-//         } catch (error) {
-//             console.error("Error cancelling order:", error);
-//             alert("Something went wrong. Please try again.");
-//         }
-//     }
-// });
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    
 
 
-
-
+<script>
 document.addEventListener('click', async (event) => {
     if (event.target.classList.contains('cancelOrder')) {
         const button = event.target;
@@ -309,80 +287,10 @@ document.addEventListener('click', async (event) => {
 });
 
 
+</script>
 
 
-
-// // Handle return button click
-// document.addEventListener('click', async (event) => {
-//     if (event.target.classList.contains('returnOrder')) {
-//         const productId = event.target.dataset.productId;
-//         const orderId = event.target.dataset.orderId;
-        
-//         try {
-//             const response = await fetch("/returnOrder", {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: JSON.stringify({ orderId, productId })
-//             });
-
-//             const data = await response.json();
-
-//             if (data.success) {
-//                 alert(data.success);
-//                 location.reload();
-//             } else {
-//                 alert(data.message || "Failed to return order.");
-//             }
-//         } catch (error) {
-//             console.error("Error processing return:", error);
-//             alert("Something went wrong. Please try again.");
-//         }
-//     }
-// });
-
-    </script>
-    <!-- <script>
-        document.addEventListener('click', (event) => {
-            if (event.target.classList.contains('returnOrder')) {
-                const productId = event.target.dataset.productId;
-                document.getElementById(`return-form-${productId}`).style.display = 'block';
-            }
-        });
-        
-        document.addEventListener('click', async (event) => {
-            if (event.target.classList.contains('submitReturn')) {
-                const productId = event.target.dataset.productId;
-                const orderId = event.target.dataset.orderId;
-                const reasonInput = document.querySelector(`#return-form-${productId} .returnReason`);
-                const reason = reasonInput.value.trim();
-        
-                if (!reason) {
-                    alert("Please enter a reason for return.");
-                    return;
-                }
-        
-                try {
-                    const response = await fetch("/returnOrder", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ orderId, productId, returnReason: reason })
-                    });
-        
-                    const data = await response.json();
-        
-                    if (data.success) {
-                        alert("Return request submitted successfully!");
-                        location.reload();
-                    } else {
-                        alert("Failed to process return.");
-                    }
-                } catch (error) {
-                    console.error("Error processing return:", error);
-                    alert("Something went wrong. Please try again.");
-                }
-            }
-        });
-        </script> -->
+   
         <script>
             document.addEventListener('click', (event) => {
                 if (event.target.classList.contains('returnOrder')) {
@@ -427,24 +335,6 @@ document.addEventListener('click', async (event) => {
           
             
 
-    
-// function downloadInvoice(orderId) {
-//   window.location.href = `/download-invoice/${orderId}`;
-// }
-
-
-
-// function downloadInvoice(orderId) {
-//   try {
-//     window.location.href = `/order/download-invoice/${orderId}`;
-//   } catch (error) {
-//     console.error('Error downloading invoice:', error);
-//     alert('Failed to download invoice. Please try again later.');
-//   }
-
-// }
-
-
 
 
 function downloadInvoice(orderId) {
@@ -479,52 +369,72 @@ function downloadInvoice(orderId) {
 
 
 
-
-
-<!-- 
 <script>
     document.addEventListener('click', async (event) => {
-        if (event.target.classList.contains('approveReturn')) {
-            const orderId = event.target.dataset.orderId;
-            const productId = event.target.dataset.productId;
-    
+        if (event.target.classList.contains('payNow')) {
+            const button = event.target;
+            const orderId = button.dataset.orderId;
+            const amount = button.dataset.amount;
+
             try {
-                const response = await fetch(`/approve-return/${orderId}/${productId}`, { method: "POST" });
+                const response = await fetch('/initiate-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId, amount })
+                });
                 const data = await response.json();
-    
-                if (data.success) {
-                    alert("Return approved successfully!");
-                    location.reload();
-                } else {
-                    alert("Failed to approve return.");
+
+                if (!data.success) {
+                    alert(data.message || 'Failed to initiate payment');
+                    return;
                 }
+
+                const options = {
+                    key: '<%= razorpayKeyId %>', // This should now work
+                    amount: data.amount,
+                    currency: 'INR',
+                    name: 'The Perfume Co.',
+                    description: `Payment for Order #${orderId}`,
+                    order_id: data.razorpayOrderId,
+                    handler: async function (response) {
+                        const verifyResponse = await fetch('/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderId,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        const verifyData = await verifyResponse.json();
+
+                        if (verifyData.success) {
+                            alert('Payment successful! Order status updated to Processing.');
+                            location.reload();
+                        } else {
+                            alert('Payment verification failed.');
+                        }
+                    },
+                    prefill: {
+                        name: '<%= order.address.fullName %>',
+                        email: '<%= userEmail %>',
+                        contact: '<%= order.address.phone %>'
+                    },
+                    theme: {
+                        color: '#28a745'
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
             } catch (error) {
-                console.error("Error approving return:", error);
-            }
-        }
-    
-        if (event.target.classList.contains('denyReturn')) {
-            const orderId = event.target.dataset.orderId;
-            const productId = event.target.dataset.productId;
-    
-            try {
-                const response = await fetch(`/deny-return/${orderId}/${productId}`, { method: "POST" });
-                const data = await response.json();
-    
-                if (data.success) {
-                    alert("Return request denied.");
-                    location.reload();
-                } else {
-                    alert("Failed to deny return request.");
-                }
-            } catch (error) {
-                console.error("Error denying return:", error);
+                console.error('Error initiating payment:', error);
+                alert('Something went wrong. Please try again.');
             }
         }
     });
-    </script> -->
-
-        
+</script>
     
 </body>
 </html>

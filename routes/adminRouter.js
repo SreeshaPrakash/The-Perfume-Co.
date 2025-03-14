@@ -106,7 +106,7 @@ router.get("/dashboard", adminAuth, dashboardController.loadDashboard);
 
 // Chart data routes for filtering
 router.get("/chart-data", adminAuth, dashboardController.getChartData);
-
+router.get('/product-data',adminAuth, dashboardController.getTopProductsData); 
 router.get("/category-data", adminAuth, dashboardController.getCategoryData);
 router.get("/brand-data", adminAuth, dashboardController.getBrandData);
 

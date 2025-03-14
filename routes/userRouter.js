@@ -102,6 +102,8 @@ router.get("/order-placed", userAuth, orderController.getOrderPlacedPage);
 router.get('/orders',orderController.orderDetail)
 router.get('/viewOrder',userAuth,orderController.viewOrder)
 router.post('/cancelOrder',userAuth,orderController.cancelOrder)
+//router.get("/viewMoreOrder",userAuth, orderController.viewOrder);
+
 
 router.post('/returnOrder',userAuth, orderController.returnOrder);
 
@@ -136,7 +138,8 @@ router.post('/process-wallet-payment', userAuth, walletController.processWalletP
 
 //invoice
 router.get('/download-invoice/:orderId',userAuth, orderController.downloadInvoice);
-
+router.post('/initiate-payment', userAuth, orderController.initiatePayment);
+router.post('/verify-payment', userAuth, orderController.verifyPayment);
 
 
 

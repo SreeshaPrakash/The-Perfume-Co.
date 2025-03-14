@@ -1,442 +1,5 @@
-// const Product = require('../../models/productSchema');
-// const Order = require('../../models/orderSchema');
-// const User = require('../../models/userSchema');
 
-// const loadDashboard = async (req, res) => {
-//     try {
-//         const revenueData = await Order.aggregate([
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $match: {
-//                     "orderedItems.status": "delivered"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: null,
-//                     totalRevenue: { $sum: "$finalAmount" }
-//                 }
-//             }
-//         ]);
-//         const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
 
-//         const cancelledData = await Order.aggregate([
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $match: {
-//                     "orderedItems.status": "Cancelled"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: null,
-//                     totalCancelled: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-//         const cancelledCount = cancelledData.length > 0 ? cancelledData[0].totalCancelled : 0;
-
-//         const salesData = await Order.countDocuments();
-
-//         const newUsersCount = await User.countDocuments();
-
-//         const product = await Order.aggregate([
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $group: {
-//                     _id: "$orderedItems.products",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $project: {
-//                     _id: 1,
-//                     productName: "$productDetails.productName",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4},
-//         ]);
-
-//         const category = await Order.aggregate([
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "orderedItems.products",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $group: {
-//                     _id: "$productDetails.category",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "categories",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "categoryDetails",
-//                 },
-//             },
-//             { $unwind: "$categoryDetails" },
-//             {
-//                 $project: {
-//                     categoryName: "$categoryDetails.name",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4 },
-//         ]);
-
-//         const brand = await Order.aggregate([
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "orderedItems.products",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $group: {
-//                     _id: "$productDetails.brand",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "brands",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "brandDetails",
-//                 },
-//             },
-//             { $unwind: "$brandDetails" },
-//             {
-//                 $project: {
-//                     brandName: "$brandDetails.name",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4 },
-//         ]);
-
-//         const users = await User.aggregate([
-//             {
-//                 $group: {
-//                     _id: {
-//                         $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
-//                     },
-//                     count: { $sum: 1 }
-//                 }
-//             },
-//             { $sort: { _id: -1 } },
-//             { $limit: 4 }
-//         ]);
-
-//         const productData = product.map((item) => ({
-//             productName: item.productName,
-//             totalOrder: item.totalOrder,
-//         }));
-
-//         const categoryData = category.map((cat) => ({
-//             categoryName: cat.categoryName,
-//             totalOrder: cat.totalOrder,
-//         }));
-
-//         const brandData = brand.map((b) => ({
-//             brandName: b.brandName,
-//             totalOrder: b.totalOrder,
-//         }));
-
-//         const userData = users.map((user) => ({
-//             date: user._id,
-//             count: user.count
-//         }));
-
-//         res.render("dashboard", {
-//             product,
-//             category,
-//             brand,
-//             users,
-//             productData,
-//             categoryData,
-//             brandData,
-//             userData,
-//             totalRevenue,
-//             newUsersCount,
-//             salesData,
-//             cancelledCount
-//         });
-//     } catch (error) {
-//         console.error("Error in Loading Admin Dashboard", error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// };
-
-// const filterData = async (req, res) => {
-//     try {
-//         const { filterValue } = req.query;
-//         let filterCondition = {};
-//         let userFilterCondition = {};
-
-//         const now = new Date();
-//         switch (filterValue) {
-//             case 'daily':
-//                 filterCondition = {
-//                     createdOn: {
-//                         $gte: new Date(now.setHours(0, 0, 0, 0)),
-//                         $lt: new Date(now.setHours(23, 59, 59, 999))
-//                     }
-//                 };
-//                 userFilterCondition = {
-//                     createdAt: {
-//                         $gte: new Date(new Date().setHours(0, 0, 0, 0)),
-//                         $lt: new Date(new Date().setHours(23, 59, 59, 999))
-//                     }
-//                 };
-//                 break;
-//             case 'weekly':
-//                 const weekAgo = new Date(now);
-//                 weekAgo.setDate(now.getDate() - 7);
-//                 filterCondition = { createdOn: { $gte: weekAgo } };
-//                 userFilterCondition = { createdAt: { $gte: weekAgo } };
-//                 break;
-//             case 'monthly':
-//                 const monthAgo = new Date(now);
-//                 monthAgo.setMonth(now.getMonth() - 1);
-//                 filterCondition = { createdOn: { $gte: monthAgo } };
-//                 userFilterCondition = { createdAt: { $gte: monthAgo } };
-//                 break;
-//             case 'yearly':
-//                 const yearAgo = new Date(now);
-//                 yearAgo.setFullYear(now.getFullYear() - 1);
-//                 filterCondition = { createdOn: { $gte: yearAgo } };
-//                 userFilterCondition = { createdAt: { $gte: yearAgo } };
-//                 break;
-//             default:
-//                 filterCondition = {};
-//                 userFilterCondition = {};
-//         }
-
-//         const revenueData = await Order.aggregate([
-//             { $match: filterCondition },
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $match: {
-//                     "orderedItems.status": "delivered"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: null,
-//                     totalRevenue: { $sum: "$finalAmount" }
-//                 }
-//             }
-//         ]);
-//         const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
-
-//         const cancelledData = await Order.aggregate([
-//             { $match: filterCondition },
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $match: {
-//                     "orderedItems.status": "Cancelled"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: null,
-//                     totalCancelled: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-//         const cancelledCount = cancelledData.length > 0 ? cancelledData[0].totalCancelled : 0;
-
-//         const salesData = await Order.countDocuments(filterCondition);
-
-//         const newUsersCount = await User.countDocuments(userFilterCondition);
-
-//         const products = await Order.aggregate([
-//             { $match: filterCondition },
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $group: {
-//                     _id: "$orderedItems.products",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $project: {
-//                     _id: 1,
-//                     productName: "$productDetails.productName",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4 },
-//         ]);
-
-//         const categories = await Order.aggregate([
-//             { $match: filterCondition },
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "orderedItems.products",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $group: {
-//                     _id: "$productDetails.category",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "categories",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "categoryDetails",
-//                 },
-//             },
-//             { $unwind: "$categoryDetails" },
-//             {
-//                 $project: {
-//                     categoryName: "$categoryDetails.name",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4 },
-//         ]);
-
-//         const brands = await Order.aggregate([
-//             { $match: filterCondition },
-//             { $unwind: "$orderedItems" },
-//             {
-//                 $lookup: {
-//                     from: "products",
-//                     localField: "orderedItems.products",
-//                     foreignField: "_id",
-//                     as: "productDetails",
-//                 },
-//             },
-//             { $unwind: "$productDetails" },
-//             {
-//                 $group: {
-//                     _id: "$productDetails.brand",
-//                     totalOrder: { $sum: "$orderedItems.quantity" },
-//                 },
-//             },
-//             {
-//                 $lookup: {
-//                     from: "brands",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "brandDetails",
-//                 },
-//             },
-//             { $unwind: "$brandDetails" },
-//             {
-//                 $project: {
-//                     brandName: "$brandDetails.name",
-//                     totalOrder: 1,
-//                 },
-//             },
-//             { $sort: { totalOrder: -1 } },
-//             { $limit: 4 },
-//         ]);
-
-//         const users = await User.aggregate([
-//             { $match: userFilterCondition },
-//             {
-//                 $group: {
-//                     _id: {
-//                         $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
-//                     },
-//                     count: { $sum: 1 }
-//                 }
-//             },
-//             { $sort: { _id: -1 } },
-//             { $limit: 4 }
-//         ]);
-
-//         const productData = products.map((item) => ({
-//             productName: item.productName,
-//             totalOrder: item.totalOrder,
-//         }));
-
-//         const categoryData = categories.map((cat) => ({
-//             categoryName: cat.categoryName,
-//             totalOrder: cat.totalOrder,
-//         }));
-
-//         const brandData = brands.map((b) => ({
-//             brandName: b.brandName,
-//             totalOrder: b.totalOrder,
-//         }));
-
-//         const userData = users.map((user) => ({
-//             date: user._id,
-//             count: user.count
-//         }));
-
-//         res.json({
-//             products,
-//             categories,
-//             brands,
-//             users,
-//             productData,
-//             categoryData,
-//             brandData,
-//             userData,
-//             totalRevenue,
-//             newUsersCount,
-//             salesData,
-//             cancelledCount
-//         });
-//     } catch (error) {
-//         console.error("Error in filtering dashboard data", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
-
-// module.exports = {
-//     loadDashboard,
-//     filterData
-// };
 
 const mongoose = require("mongoose");
 const path = require("path");
@@ -446,8 +9,6 @@ const Product = require("../../models/productschema"); // Adjust path as needed
 const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 
-// File: dashboardController.js
-// Modify the loadDashboard function to include the new chart data
 
 const loadDashboard = async (req, res) => {
   if (req.session.admin) {
@@ -456,7 +17,10 @@ const loadDashboard = async (req, res) => {
       const totalProducts = await Product.countDocuments();
       const totalOrders = await Order.countDocuments();
 
-      // Calculate total revenue
+      const topProductsData = await getTopProductsData();
+      const topCategoriesData = await getTopCategoriesData();
+      const topBrandsData = await getTopBrandsData();
+
       const orders = await Order.find();
       console.log(orders);
       const totalRevenue = orders.reduce(
@@ -483,7 +47,6 @@ const loadDashboard = async (req, res) => {
       currentMonthStart.setDate(1);
       currentMonthStart.setHours(0, 0, 0, 0);
 
-      // Get counts for previous month
       const prevMonthUsers = await User.countDocuments({
         isAdmin: false,
         createdAt: { $lt: currentMonthStart },
@@ -503,7 +66,6 @@ const loadDashboard = async (req, res) => {
         })
       ).reduce((sum, order) => sum + (order.finalAmount || 0), 0);
 
-      // Calculate growth percentages
       const totalUsersGrowth =
         prevMonthUsers > 0
           ? (((totalUsers - prevMonthUsers) / prevMonthUsers) * 100).toFixed(1)
@@ -536,7 +98,6 @@ const loadDashboard = async (req, res) => {
           ? ((currentMonthRevenue / prevMonthRevenue) * 100 - 100).toFixed(1)
           : 8.9;
 
-      // Get recent orders
       const recentOrders = await Order.find()
         .populate("userId", "firstName lastName email")
         .populate("orderItems.product", "productName")
@@ -557,9 +118,13 @@ const loadDashboard = async (req, res) => {
         date: order.createdAt,
       }));
 
-      const monthlyData = await getMonthlyData();
-      console.log(monthlyData);
-      const { revenueData, ordersData, chartLabels } = monthlyData;
+      // Fetch monthly data and destructure it
+      const { revenueData, ordersData, chartLabels } = await getMonthlyData();
+      console.log("Monthly data:", { revenueData, ordersData, chartLabels });
+
+      console.log("Top products:", topProductsData);
+      console.log("Top categories:", topCategoriesData);
+      console.log("Top brands:", topBrandsData);
 
       res.render("dashboard", {
         totalDiscount,
@@ -572,11 +137,18 @@ const loadDashboard = async (req, res) => {
         totalOrdersGrowth,
         totalRevenueGrowth,
         recentOrders: formattedRecentOrders,
-        chartData: { revenueData, ordersData, chartLabels },
+        chartData: {
+          revenueData,
+          ordersData,
+          chartLabels,
+          topProducts: topProductsData,
+          topCategories: topCategoriesData,
+          topBrands: topBrandsData,
+        },
       });
     } catch (error) {
       console.error("Dashboard Error:", error);
-      res.render("error", { message: "Error loading dashboard", error });
+      res.render("error occuredd peanthhh", { message: "Error loading dashboard", error });
       return;
     }
   } else {
@@ -748,6 +320,111 @@ const getDateRange = (reportType, startDate, endDate) => {
   return { startDate: startDateTime, endDate: endDateTime };
 };
 
+
+// const getMonthlyData = async () => {
+//   const sixMonthsAgo = new Date();
+//   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+//   console.log(sixMonthsAgo);
+
+//   const monthNames = [
+//     "Jan",
+//     "Feb",
+//     "Mar",
+//     "Apr",
+//     "May",
+//     "Jun",
+//     "Jul",
+//     "Aug",
+//     "Sep",
+//     "Oct",
+//     "Nov",
+//     "Dec",
+//   ];
+//   // const monthlyData = await Order.aggregate([
+//   //   { $match: { Date: { $gte: sixMonthsAgo } } },
+//   //   // {
+//   //   //   $group: {
+//   //   //     _id: {
+//   //   //       month: { $month: "$Date" },
+//   //   //       year: { $year: "$Date" },
+//   //   //     },
+//   //   //     revenue: { $sum: "$finalAmount" },
+//   //   //     orderCount: { $sum: 1 },
+//   //   //   },
+//   //   // },
+//   //   // { $sort: { "_id.year": 1, "_id.month": 1 } },
+//   // ]);
+
+//   // console.log(monthlyData);
+
+//   // const last6Months = [];
+//   // for (let i = 0; i < 6; i++) {
+//   //   const d = new Date();
+//   //   d.setMonth(d.getMonth() - i);
+//   //   last6Months.unshift({ month: d.getMonth() + 1, year: d.getFullYear() });
+//   // }
+
+//   // const revenueData = new Array(6).fill(0);
+//   // const ordersData = new Array(6).fill(0);
+
+//   // monthlyData.forEach((data) => {
+//   //   const month = data._id.month;
+//   //   const year = data._id.year;
+//   //   const index = last6Months.findIndex(
+//   //     (m) => m.month === month && m.year === year
+//   //   );
+//   //   if (index !== -1) {
+//   //     revenueData[index] = monthlyData.revenue;
+//   //     ordersData[index] = monthlyData.orderCount;
+//   //   }
+//   // });
+
+//   // const chartLabels = last6Months.map((m) => monthNames[m.month - 1]);
+//   // return { revenueData, ordersData, chartLabels };
+
+
+//   const monthlyData = await Order.aggregate([
+//     { $match: { Date: { $gte: sixMonthsAgo } } },
+//     {
+//       $group: {
+//         _id: {
+//           // month: { $month: "$Date" },
+//           // year: { $year: "$Date" },
+//           month: { $month: "$createdAt" },
+//         year: { $year: "$createdAt" },
+//         },
+//         revenue: { $sum: "$finalAmount" },
+//         orderCount: { $sum: 1 },
+//       },
+//     },
+//     { $sort: { "_id.year": 1, "_id.month": 1 } },
+//   ]);
+//   console.log("Raw monthly data:", monthlyData); // Debug log
+  
+//   const last6Months = [];
+//   for (let i = 0; i < 6; i++) {
+//     const d = new Date();
+//     d.setMonth(d.getMonth() - i);
+//     last6Months.unshift({ month: d.getMonth() + 1, year: d.getFullYear() });
+//   }
+
+//   const revenueData = new Array(6).fill(0);
+//   const ordersData = new Array(6).fill(0);
+//   monthlyData.forEach((data) => {
+//     const index = last6Months.findIndex(
+//       (m) => m.month === data._id.month && m.year === data._id.year
+//     );
+//     if (index !== -1) {
+//       revenueData[index] = data.revenue ||  0 ;
+//       ordersData[index] = data.orderCount ||  0 ;
+//     }
+//   });
+//   const chartLabels = last6Months.map((m) => monthNames[m.month - 1]);
+
+
+// };
+
+
 const getMonthlyData = async () => {
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
@@ -767,22 +444,22 @@ const getMonthlyData = async () => {
     "Nov",
     "Dec",
   ];
-  const monthlyData = await Order.aggregate([
-    { $match: { Date: { $gte: sixMonthsAgo } } },
-    // {
-    //   $group: {
-    //     _id: {
-    //       month: { $month: "$Date" },
-    //       year: { $year: "$Date" },
-    //     },
-    //     revenue: { $sum: "$finalAmount" },
-    //     orderCount: { $sum: 1 },
-    //   },
-    // },
-    // { $sort: { "_id.year": 1, "_id.month": 1 } },
-  ]);
 
-  console.log(monthlyData);
+  const monthlyData = await Order.aggregate([
+    { $match: { createdAt: { $gte: sixMonthsAgo } } }, // Use createdAt instead of Date
+    {
+      $group: {
+        _id: {
+          month: { $month: "$createdAt" },
+          year: { $year: "$createdAt" },
+        },
+        revenue: { $sum: "$finalAmount" },
+        orderCount: { $sum: 1 },
+      },
+    },
+    { $sort: { "_id.year": 1, "_id.month": 1 } },
+  ]);
+  console.log("Raw monthly data:", monthlyData); // Debug log
 
   const last6Months = [];
   for (let i = 0; i < 6; i++) {
@@ -793,20 +470,18 @@ const getMonthlyData = async () => {
 
   const revenueData = new Array(6).fill(0);
   const ordersData = new Array(6).fill(0);
-
   monthlyData.forEach((data) => {
-    const month = data._id.month;
-    const year = data._id.year;
     const index = last6Months.findIndex(
-      (m) => m.month === month && m.year === year
+      (m) => m.month === data._id.month && m.year === data._id.year
     );
     if (index !== -1) {
-      revenueData[index] = monthlyData.revenue;
-      ordersData[index] = monthlyData.orderCount;
+      revenueData[index] = data.revenue || 0;
+      ordersData[index] = data.orderCount || 0;
     }
   });
-
   const chartLabels = last6Months.map((m) => monthNames[m.month - 1]);
+
+  // Return the data
   return { revenueData, ordersData, chartLabels };
 };
 
@@ -1027,13 +702,266 @@ const generatePDFReport = (data, reportType) => {
 // File: dashboardController.js
 // Add these new controller functions
 
+// const getChartData = async (req, res) => {
+//   try {
+//     const { timeRange } = req.query;
+//     let startDate = new Date();
+//     const endDate = new Date();
+
+//     // Set date range based on requested time range
+//     switch (timeRange) {
+//       case "last-7-days":
+//         startDate.setDate(startDate.getDate() - 7);
+//         break;
+//       case "last-30-days":
+//         startDate.setDate(startDate.getDate() - 30);
+//         break;
+//       case "last-3-months":
+//         startDate.setMonth(startDate.getMonth() - 3);
+//         break;
+//       case "yearly":
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//         break;
+//       default:
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//     }
+
+//     // Get filtered orders
+//     const orders = await Order.find({
+//     //   orderDate: { $gte: startDate, $lte: endDate },
+//     // });
+//     Date: { $gte: startDate, $lte: endDate },  // Changed from orderDate to Date
+//     });
+
+//     // Process data based on time range
+//     let chartLabels = [];
+//     let revenueData = [];
+//     let ordersData = [];
+
+//     if (timeRange === "last-7-days") {
+//       // Daily data for last 7 days
+//       for (let i = 6; i >= 0; i--) {
+//         const date = new Date();
+//         date.setDate(date.getDate() - i);
+//         const dateStr = date.toLocaleDateString("en-US", { weekday: "short" });
+//         chartLabels.push(dateStr);
+
+//         const dayOrders = orders.filter((order) => {
+//           const orderDate = new Date(order.orderDate);
+//           return (
+//             orderDate.getDate() === date.getDate() &&
+//             orderDate.getMonth() === date.getMonth() &&
+//             orderDate.getFullYear() === date.getFullYear()
+//           );
+//         });
+
+//         const dayRevenue = dayOrders.reduce(
+//           (sum, order) => sum + order.finalAmount,
+//           0
+//         );
+//         revenueData.push(dayRevenue);
+//         ordersData.push(dayOrders.length);
+//       }
+//     } else if (timeRange === "last-30-days" || timeRange === "last-3-months") {
+//       // Weekly data
+//       const weeks = timeRange === "last-30-days" ? 4 : 12;
+//       for (let i = weeks - 1; i >= 0; i--) {
+//         const endWeek = new Date();
+//         endWeek.setDate(endWeek.getDate() - i * 7);
+//         const startWeek = new Date(endWeek);
+//         startWeek.setDate(startWeek.getDate() - 6);
+
+//         const weekLabel = `${startWeek.getDate()}/${startWeek.getMonth() + 1} - ${endWeek.getDate()}/${endWeek.getMonth() + 1}`;
+//         chartLabels.push(weekLabel);
+
+//         const weekOrders = orders.filter((order) => {
+//           const orderDate = new Date(order.orderDate);
+//           return orderDate >= startWeek && orderDate <= endWeek;
+//         });
+
+//         const weekRevenue = weekOrders.reduce(
+//           (sum, order) => sum + order.finalAmount,
+//           0
+//         );
+//         revenueData.push(weekRevenue);
+//         ordersData.push(weekOrders.length);
+//       }
+//     } else {
+//       // Monthly data for yearly view
+//       const monthNames = [
+//         "Jan",
+//         "Feb",
+//         "Mar",
+//         "Apr",
+//         "May",
+//         "Jun",
+//         "Jul",
+//         "Aug",
+//         "Sep",
+//         "Oct",
+//         "Nov",
+//         "Dec",
+//       ];
+//       for (let i = 11; i >= 0; i--) {
+//         const month = new Date().getMonth() - i;
+//         const year = new Date().getFullYear() + Math.floor(month / 12);
+//         const adjustedMonth = ((month % 12) + 12) % 12;
+
+//         chartLabels.push(monthNames[adjustedMonth]);
+
+//         const monthOrders = orders.filter((order) => {
+//           const orderDate = new Date(order.orderDate);
+//           return (
+//             orderDate.getMonth() === adjustedMonth &&
+//             orderDate.getFullYear() === year
+//           );
+//         });
+
+//         const monthRevenue = monthOrders.reduce(
+//           (sum, order) => sum + order.finalAmount,
+//           0
+//         );
+//         revenueData.push(monthRevenue);
+//         ordersData.push(monthOrders.length);
+//       }
+//     }
+
+//     res.json({ chartLabels, revenueData, ordersData });
+//   } catch (error) {
+//     console.error("Error fetching chart data:", error);
+//     res.status(500).json({ error: "Failed to fetch chart data" });
+//   }
+// };
+
+// const getCategoryData = async (req, res) => {
+//   try {
+//     const { timeRange } = req.query;
+//     let startDate = new Date();
+//     const endDate = new Date();
+
+//     // Set date range based on requested time range
+//     switch (timeRange) {
+//       case "week":
+//         startDate.setDate(startDate.getDate() - 7);
+//         break;
+//       case "month":
+//         startDate.setMonth(startDate.getMonth() - 1);
+//         break;
+//       case "year":
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//         break;
+//       default:
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//     }
+
+//     // Get filtered categories data
+//     const topCategories = await Order.aggregate([
+//       //{ $match: { orderDate: { $gte: startDate, $lte: endDate } } },
+//       { $match: { Date: { $gte: startDate, $lte: endDate } } },  // Changed from orderDate to Date
+      
+//       { $unwind: "$orderItems" },
+//       {
+//         $lookup: {
+//           from: "products",
+//           localField: "orderItems.product",
+//           foreignField: "_id",
+//           as: "productInfo",
+//         },
+//       },
+//       { $unwind: "$productInfo" },
+//       {
+//         $lookup: {
+//           from: "categories",
+//           localField: "productInfo.category",
+//           foreignField: "_id",
+//           as: "categoryInfo",
+//         },
+//       },
+//       { $unwind: "$categoryInfo" },
+//       {
+//         $group: {
+//           _id: "$categoryInfo._id",
+//           categoryName: { $first: "$categoryInfo.name" },
+//           count: { $sum: "$orderItems.quantity" },
+//         },
+//       },
+//       { $sort: { count: -1 } },
+//       { $limit: 5 },
+//     ]);
+
+//     const labels = topCategories.map((c) => c.categoryName || "Unknown");
+//     const data = topCategories.map((c) => c.count);
+
+//     res.json({ labels, data });
+//   } catch (error) {
+//     console.error("Error fetching category data:", error);
+//     res.status(500).json({ error: "Failed to fetch category data" });
+//   }
+// };
+
+// const getBrandData = async (req, res) => {
+//   try {
+//     const { timeRange } = req.query;
+//     let startDate = new Date();
+//     const endDate = new Date();
+
+//     // Set date range based on requested time range
+//     switch (timeRange) {
+//       case "week":
+//         startDate.setDate(startDate.getDate() - 7);
+//         break;
+//       case "month":
+//         startDate.setMonth(startDate.getMonth() - 1);
+//         break;
+//       case "year":
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//         break;
+//       default:
+//         startDate.setFullYear(startDate.getFullYear() - 1);
+//     }
+
+//     // Get filtered brands data
+//     const topBrands = await Order.aggregate([
+//       //{ $match: { orderDate: { $gte: startDate, $lte: endDate } } },
+//       { $match: { Date: { $gte: startDate, $lte: endDate } } },  // Changed from orderDate to Date
+//       { $unwind: "$orderItems" },
+//       {
+//         $lookup: {
+//           from: "products",
+//           localField: "orderItems.product",
+//           foreignField: "_id",
+//           as: "productInfo",
+//         },
+//       },
+//       { $unwind: "$productInfo" },
+//       {
+//         $group: {
+//           _id: "$productInfo.brand",
+//           count: { $sum: "$orderItems.quantity" },
+//         },
+//       },
+//       { $sort: { count: -1 } },
+//       { $limit: 4 },
+//     ]);
+
+//     const labels = topBrands.map((b) => b._id || "Unknown");
+//     const data = topBrands.map((b) => b.count);
+
+//     res.json({ labels, data });
+//   } catch (error) {
+//     console.error("Error fetching brand data:", error);
+//     res.status(500).json({ error: "Failed to fetch brand data" });
+//   }
+// };
+
+
+// Modify getChartData to use createdAt and handle real-time updates
 const getChartData = async (req, res) => {
   try {
     const { timeRange } = req.query;
     let startDate = new Date();
     const endDate = new Date();
 
-    // Set date range based on requested time range
     switch (timeRange) {
       case "last-7-days":
         startDate.setDate(startDate.getDate() - 7);
@@ -1051,42 +979,30 @@ const getChartData = async (req, res) => {
         startDate.setFullYear(startDate.getFullYear() - 1);
     }
 
-    // Get filtered orders
     const orders = await Order.find({
-      orderDate: { $gte: startDate, $lte: endDate },
+      createdAt: { $gte: startDate, $lte: endDate }, // Use createdAt from your schema
     });
 
-    // Process data based on time range
     let chartLabels = [];
     let revenueData = [];
     let ordersData = [];
 
     if (timeRange === "last-7-days") {
-      // Daily data for last 7 days
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toLocaleDateString("en-US", { weekday: "short" });
         chartLabels.push(dateStr);
 
-        const dayOrders = orders.filter((order) => {
-          const orderDate = new Date(order.orderDate);
-          return (
-            orderDate.getDate() === date.getDate() &&
-            orderDate.getMonth() === date.getMonth() &&
-            orderDate.getFullYear() === date.getFullYear()
-          );
-        });
-
-        const dayRevenue = dayOrders.reduce(
-          (sum, order) => sum + order.finalAmount,
-          0
+        const dayOrders = orders.filter((order) =>
+          new Date(order.createdAt).toDateString() === date.toDateString()
         );
-        revenueData.push(dayRevenue);
+        revenueData.push(
+          dayOrders.reduce((sum, order) => sum + (order.finalAmount || 0), 0)
+        );
         ordersData.push(dayOrders.length);
       }
     } else if (timeRange === "last-30-days" || timeRange === "last-3-months") {
-      // Weekly data
       const weeks = timeRange === "last-30-days" ? 4 : 12;
       for (let i = weeks - 1; i >= 0; i--) {
         const endWeek = new Date();
@@ -1094,37 +1010,20 @@ const getChartData = async (req, res) => {
         const startWeek = new Date(endWeek);
         startWeek.setDate(startWeek.getDate() - 6);
 
-        const weekLabel = `${startWeek.getDate()}/${startWeek.getMonth() + 1} - ${endWeek.getDate()}/${endWeek.getMonth() + 1}`;
+        const weekLabel = `${startWeek.getDate()}/${startWeek.getMonth() + 1}`;
         chartLabels.push(weekLabel);
 
         const weekOrders = orders.filter((order) => {
-          const orderDate = new Date(order.orderDate);
+          const orderDate = new Date(order.createdAt);
           return orderDate >= startWeek && orderDate <= endWeek;
         });
-
-        const weekRevenue = weekOrders.reduce(
-          (sum, order) => sum + order.finalAmount,
-          0
+        revenueData.push(
+          weekOrders.reduce((sum, order) => sum + (order.finalAmount || 0), 0)
         );
-        revenueData.push(weekRevenue);
         ordersData.push(weekOrders.length);
       }
     } else {
-      // Monthly data for yearly view
-      const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       for (let i = 11; i >= 0; i--) {
         const month = new Date().getMonth() - i;
         const year = new Date().getFullYear() + Math.floor(month / 12);
@@ -1133,18 +1032,12 @@ const getChartData = async (req, res) => {
         chartLabels.push(monthNames[adjustedMonth]);
 
         const monthOrders = orders.filter((order) => {
-          const orderDate = new Date(order.orderDate);
-          return (
-            orderDate.getMonth() === adjustedMonth &&
-            orderDate.getFullYear() === year
-          );
+          const orderDate = new Date(order.createdAt);
+          return orderDate.getMonth() === adjustedMonth && orderDate.getFullYear() === year;
         });
-
-        const monthRevenue = monthOrders.reduce(
-          (sum, order) => sum + order.finalAmount,
-          0
+        revenueData.push(
+          monthOrders.reduce((sum, order) => sum + (order.finalAmount || 0), 0)
         );
-        revenueData.push(monthRevenue);
         ordersData.push(monthOrders.length);
       }
     }
@@ -1156,13 +1049,13 @@ const getChartData = async (req, res) => {
   }
 };
 
+// Ensure getCategoryData and getBrandData use createdAt as well
 const getCategoryData = async (req, res) => {
   try {
     const { timeRange } = req.query;
     let startDate = new Date();
     const endDate = new Date();
 
-    // Set date range based on requested time range
     switch (timeRange) {
       case "week":
         startDate.setDate(startDate.getDate() - 7);
@@ -1177,9 +1070,8 @@ const getCategoryData = async (req, res) => {
         startDate.setFullYear(startDate.getFullYear() - 1);
     }
 
-    // Get filtered categories data
     const topCategories = await Order.aggregate([
-      { $match: { orderDate: { $gte: startDate, $lte: endDate } } },
+      { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
       { $unwind: "$orderItems" },
       {
         $lookup: {
@@ -1226,7 +1118,6 @@ const getBrandData = async (req, res) => {
     let startDate = new Date();
     const endDate = new Date();
 
-    // Set date range based on requested time range
     switch (timeRange) {
       case "week":
         startDate.setDate(startDate.getDate() - 7);
@@ -1241,9 +1132,8 @@ const getBrandData = async (req, res) => {
         startDate.setFullYear(startDate.getFullYear() - 1);
     }
 
-    // Get filtered brands data
     const topBrands = await Order.aggregate([
-      { $match: { orderDate: { $gte: startDate, $lte: endDate } } },
+      { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
       { $unwind: "$orderItems" },
       {
         $lookup: {
@@ -1255,8 +1145,18 @@ const getBrandData = async (req, res) => {
       },
       { $unwind: "$productInfo" },
       {
+        $lookup: {
+          from: "brands",
+          localField: "productInfo.brand",
+          foreignField: "_id",
+          as: "brandInfo",
+        },
+      },
+      { $unwind: "$brandInfo" },
+      {
         $group: {
-          _id: "$productInfo.brand",
+          _id: "$brandInfo._id",
+          brandName: { $first: "$brandInfo.brandName" },
           count: { $sum: "$orderItems.quantity" },
         },
       },
@@ -1264,7 +1164,7 @@ const getBrandData = async (req, res) => {
       { $limit: 4 },
     ]);
 
-    const labels = topBrands.map((b) => b._id || "Unknown");
+    const labels = topBrands.map((b) => b.brandName || "Unknown");
     const data = topBrands.map((b) => b.count);
 
     res.json({ labels, data });

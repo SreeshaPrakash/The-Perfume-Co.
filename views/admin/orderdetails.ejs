@@ -468,60 +468,6 @@
             }
         };
     </script>
-<!-- 
- <script>
-    document.addEventListener('click', async (event) => {
-        if (event.target.classList.contains('approveReturn')) {
-            const orderId = event.target.dataset.orderId;
-            const productId = event.target.dataset.productId;
-
-            try {
-                const response = await fetch(`/admin/approve-return/${orderId}/${productId}`, { method: "POST" });
-                const data = await response.json();
-
-                if (data.success) {
-                    event.target.closest("tr").querySelector(".status-badge").innerText = data.updatedStatus;
-                    event.target.closest("tr").querySelector(".status-badge").classList.remove("status-return-request");
-                    event.target.closest("tr").querySelector(".status-badge").classList.add("status-returned");
-                    event.target.closest(".return-action").innerHTML = `<span class="text-success">Return Approved</span>`;
-             
-                    alert("Return approved successfully!");
-                    location.reload();
-                } else {
-                    alert("Failed to approve return.");
-                }
-            } catch (error) {
-                console.error("Error approving return:", error);
-            }
-        }
-
-        if (event.target.classList.contains('denyReturn')) {
-            const orderId = event.target.dataset.orderId;
-            const productId = event.target.dataset.productId;
-
-            try {
-                const response = await fetch(`/admin/deny-return/${orderId}/${productId}`, { method: "POST" });
-                const data = await response.json();
-
-                if (data.success) {
-                    event.target.closest("tr").querySelector(".status-badge").innerText = data.updatedStatus;
-                    event.target.closest("tr").querySelector(".status-badge").classList.remove("status-return-request");
-                    event.target.closest("tr").querySelector(".status-badge").classList.add("status-return-denied");
-                    event.target.closest(".return-action").innerHTML = `<span class="text-danger">Return Denied</span>`;
-             
-                    alert("Return request denied.");
-                    location.reload();
-                } else {
-                    alert("Failed to deny return request.");
-                }
-            } catch (error) {
-                console.error("Error denying return:", error);
-            }
-        }
-    });
-</script>
-
- -->
 
 
  <script>
