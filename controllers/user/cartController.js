@@ -125,69 +125,6 @@ const loadCart = async (req, res) => {
   }
 };
 
-// const addToCart = async (req, res) => {
-//   const userId = req.session.user._id;
-//   const productId = req.params.productId;
-//   const quantity = parseInt(req.body.quantity, 10);
-
-//   console.log("this is id of product =>", productId);
-
-//   if (!userId || !productId) {
-//     return res.status(400).send("User ID and Product ID are required");
-//   }
-
-//   const product = await Product.findById(productId).populate("category");
-
-//   if (!product) {
-//     return res.status(404).send("Product not found");
-//   }
-//   const productOffer = product.productOffer || 0;
-//   const categoryOffer = product.category.categoryOffer || 0;
-//   const bestOffer = Math.max(productOffer, categoryOffer);
-//   const finalPrice =
-//     bestOffer > 0
-//       ? product.salePrice - (product.salePrice * bestOffer) / 100
-//       : product.salePrice;
-
-//   let cart = await Cart.findOne({ userId: userId });
-
-//   if (!cart) {
-//     cart = new Cart({
-//       userId: userId,
-//       items: [
-//         {
-//           productId: productId,
-//           quantity,
-//           price: finalPrice,
-//           totalPrice: Math.floor(finalPrice * quantity),
-//         },
-//       ],
-//     });
-
-//   } else {
-//     const existingItemIndex = cart.items.findIndex(
-//       (item) => item.productId.toString() === productId
-//     );
-
-//     if (existingItemIndex !== -1) {
-//       cart.items[existingItemIndex].quantity += quantity;
-//       cart.items[existingItemIndex].totalPrice = Math.floor(
-//         cart.items[existingItemIndex].quantity * finalPrice
-//       );
-
-//     } else {
-//       cart.items.push({
-//             productId: productId,
-//             quantity,
-//             price: finalPrice,
-//             totalPrice: Math.floor(finalPrice * quantity),
-//           });
-//     }
-//   }
-
-//   await cart.save();
-//   res.json({ success: true, message: "added to cart" });
-// };
 
 const addToCart = async (req, res) => {
   try {

@@ -711,7 +711,9 @@ const downloadInvoice = async (req, res) => {
 
     deliveredItems.forEach((item) => {
       const totalItemPrice = item.price * item.quantity;
-      subTotal += totalItemPrice;
+       subTotal += totalItemPrice;
+      //subTotal += finalAmount;
+      //<%= order.finalAmount %>
 
       doc
         .text(item.product.productName, 50, yPosition, { width: 250 })
@@ -948,6 +950,6 @@ module.exports = {
   getAvailableCoupons,
   applyCoupon,
   downloadInvoice,
-  initiatePayment, // Add this
+  initiatePayment, 
    verifyPayment
 };

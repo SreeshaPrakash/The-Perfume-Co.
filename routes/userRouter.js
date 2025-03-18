@@ -52,7 +52,7 @@ router.get('/shop',productController.loadshop)
 
 //cart management
 router.get('/cart',cartController.loadCart)
-router.post('/addToCart/:productId',userAuth,cartController.addToCart)
+/router.post('/addToCart/:productId',userAuth,cartController.addToCart)
 router.patch('/increment/:itemId',userAuth,cartController.increaseQuantity); 
 router.patch('/decrement/:itemId',userAuth,cartController.decreaseQuantity);
 router.post('/remove/:itemId',userAuth,cartController.removeItem);
@@ -104,20 +104,14 @@ router.get('/viewOrder',userAuth,orderController.viewOrder)
 router.post('/cancelOrder',userAuth,orderController.cancelOrder)
 //router.get("/viewMoreOrder",userAuth, orderController.viewOrder);
 
-
 router.post('/returnOrder',userAuth, orderController.returnOrder);
-
-
-
-//router.post('/create-order',userAuth, orderController.createOrder);
-//router.post('/place-order',userAuth, orderController.placeOrder);
-
 
 
 // //wishlist management
  router.get("/wishlist",userAuth,wishlistController.getWishlist)
 router.post('/wishlist/add',userAuth, wishlistController.addToWishlist)
 router.post("/wishlist/remove",userAuth,wishlistController.removeFromWishlist)
+router.post('/add/:productId', wishlistController.addToCart);
 //router.post('/cart/add', wishlistController.addToCart);
 //router.post('/cart/add', userAuth, wishlistController.addToCart);
 

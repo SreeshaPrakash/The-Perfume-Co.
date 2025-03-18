@@ -240,6 +240,10 @@
             <span>Subtotal:</span>
             <span>₹ <span id="subtotal"> <%= total.toFixed(2) %> </span></span>
           </div>
+          <div class="price-row">
+            <span>Coupon Discount:</span>
+            <span>- ₹ <span id="coupon-discount">0.00</span></span>
+          </div>
           <div class="price-row total">
             <span>Total:</span>
             <input id="total" type="hidden" value="<%= total.toFixed(2) %>">
@@ -716,12 +720,20 @@
   // }
 
 
+
+  // Initialize variables
+  let isCouponApplied = false;
+  let appliedCoupon = "";
+  let currentDiscount = 0;
+  const originalTotal = parseFloat(document.getElementById('total').value);
+
+
   async function fetchAvailableCoupons() {
   try {
     const response = await fetch('/get-available-coupons');
     const coupons = await response.json();
 
-    const availableCouponsList = document.getElementById('available-coupons-list');
+   // const availableCouponsList = document.getElementById('available-coupons-list');
     availableCouponsList.innerHTML = ''; // Clear previous entries
 
     if (coupons.length === 0) {
@@ -750,20 +762,9 @@
 
 
 
-  // // Toggle coupons visibility
-  // showCouponsBtn.addEventListener('click', () => {
-  //   if (availableCouponsContainer.style.display === 'none') {
-  //     fetchAvailableCoupons();
-  //     availableCouponsContainer.style.display = 'block';
-  //   } else {
-  //     availableCouponsContainer.style.display = 'none';
-  //   }
-  // });
-
-
-  document.getElementById('show-coupons').addEventListener('click', () => {
-  const availableCouponsContainer = document.getElementById('available-coupons-container');
-
+  // document.getElementById('show-coupons').addEventListener('click', () => {
+  // const availableCouponsContainer = document.getElementById('available-coupons-container');
+showCouponsBtn.addEventListener('click', () => {
   if (availableCouponsContainer.style.display === 'none') {
     fetchAvailableCoupons();
     availableCouponsContainer.style.display = 'block';
@@ -773,144 +774,162 @@
 });
 
 
-    // // Apply coupon functionality
-    // async function applyCoupon(couponCode) {
-    //   const total = parseFloat(document.getElementById('total').value);
-
-    //   if (!couponCode) {
-    //     couponResultDiv.innerHTML = '<div class="text-danger">Please select a coupon</div>';
-    //     return;
-    //   }
-
-    //   try {
-    //     const response = await fetch('/apply-coupon', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({ 
-    //         couponCode, 
-    //         total 
-    //       })
-    //     });
-
-    //     const result = await response.json();
-
-    //     if (result.success) {
-    //       couponResultDiv.innerHTML = `
-    //         <div class="text-success">
-    //           Coupon applied! You saved ₹${result.discount}
-    //         </div>
-    //       `;
-          
-    //       // Update total
-    //       const finalTotal = total - result.discount;
-    //       document.getElementById('final-total').textContent = `₹${finalTotal.toFixed(2)}`;
-    //       document.getElementById('total').value = finalTotal.toFixed(2);
-
-    //       // Ensure couponCode is sent with order
-    //       document.getElementById('place-order').dataset.couponCode = couponCode;
-    //     } else {
-    //       couponResultDiv.innerHTML = `
-    //         <div class="text-danger">
-    //           ${result.message}
-    //         </div>
-    //       `;
-    //     }
-    //   } catch (error) {
-    //     couponResultDiv.innerHTML = '<div class="text-danger">Error applying coupon</div>';
-    //   }
-    // }
-
-    // // Apply coupon when button is clicked
-    // applyCouponBtn.addEventListener('click', () => {
-    //   const couponCode = document.getElementById('coupon-code').value;
-    //   applyCoupon(couponCode);
-    // });
-
-    // // Fetch coupons on page load (optional)
-    // // fetchAvailableCoupons();
+//     // Apply coupon functionality
+// let isCouponApplied = false; // Flag to track coupon application
+// let appliedCoupon = ""; // Store applied coupon
+// let originalTotal = parseFloat(document.getElementById('total').value); // Store original total before discount
 
 
+// async function applyCoupon(couponCode) {
+//   if (isCouponApplied) {
+//     couponResultDiv.innerHTML =  '<div class="text-danger">A coupon is already applied. Remove it to apply another.</div>';
+//     return;
+//   }
 
+//   const total = parseFloat(document.getElementById('total').value);
 
+//   if (!couponCode) {
+//     couponResultDiv.innerHTML = '<div class="text-danger">Please select a coupon</div>';
+//     return;
+//   }
 
-    // Apply coupon functionality
-let isCouponApplied = false; // Flag to track coupon application
-let appliedCoupon = ""; // Store applied coupon
-let originalTotal = parseFloat(document.getElementById('total').value); // Store original total before discount
+//   try {
+//     const response = await fetch('/apply-coupon', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ 
+//         couponCode, 
+//         total 
+//       })
+//     });
+
+//     const result = await response.json();
+
+//     if (result.success) {
+//       couponResultDiv.innerHTML = `
+//         <div class="text-success">
+//           Coupon applied! You saved ₹${result.discount}
+//         </div>
+//       `;
+      
+//       // Update total
+//       const finalTotal = total - result.discount;
+//       document.getElementById('final-total').textContent = `₹${finalTotal.toFixed(2)}`;
+//       document.getElementById('total').value = finalTotal.toFixed(2);
+
+//       // Ensure couponCode is sent with order
+//       document.getElementById('place-order').dataset.couponCode = couponCode;
+
+//       isCouponApplied = true; // Mark coupon as applied
+//       appliedCoupon = couponCode; // Store applied coupon
+//       removeCouponBtn.style.display = 'inline-block';
+//     } else {
+//       couponResultDiv.innerHTML = `
+//         <div class="text-danger">
+//           ${result.message}
+//         </div>
+//       `;
+//     }
+//   } catch (error) {
+//     couponResultDiv.innerHTML = '<div class="text-danger">Error applying coupon</div>';
+//   }
+// }
+
 
 
 async function applyCoupon(couponCode) {
-  if (isCouponApplied) {
-    couponResultDiv.innerHTML =  '<div class="text-danger">A coupon is already applied. Remove it to apply another.</div>';
-    return;
-  }
-
-  const total = parseFloat(document.getElementById('total').value);
-
-  if (!couponCode) {
-    couponResultDiv.innerHTML = '<div class="text-danger">Please select a coupon</div>';
-    return;
-  }
-
-  try {
-    const response = await fetch('/apply-coupon', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        couponCode, 
-        total 
-      })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      couponResultDiv.innerHTML = `
-        <div class="text-success">
-          Coupon applied! You saved ₹${result.discount}
-        </div>
-      `;
-      
-      // Update total
-      const finalTotal = total - result.discount;
-      document.getElementById('final-total').textContent = `₹${finalTotal.toFixed(2)}`;
-      document.getElementById('total').value = finalTotal.toFixed(2);
-
-      // Ensure couponCode is sent with order
-      document.getElementById('place-order').dataset.couponCode = couponCode;
-
-      isCouponApplied = true; // Mark coupon as applied
-      appliedCoupon = couponCode; // Store applied coupon
-      removeCouponBtn.style.display = 'inline-block';
-    } else {
-      couponResultDiv.innerHTML = `
-        <div class="text-danger">
-          ${result.message}
-        </div>
-      `;
+    if (!couponCode) {
+      couponResultDiv.innerHTML = '<div class="text-danger">Please select a coupon</div>';
+      return;
     }
-  } catch (error) {
-    couponResultDiv.innerHTML = '<div class="text-danger">Error applying coupon</div>';
+
+    const total = parseFloat(document.getElementById('total').value) + currentDiscount; // Add back previous discount
+    
+    try {
+      const response = await fetch('/apply-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ couponCode, total })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        currentDiscount = result.discount;
+        couponResultDiv.innerHTML = `
+          <div class="text-success">
+            Coupon applied! You saved ₹${result.discount}
+          </div>
+        `;
+        
+        // Update discount display and total
+        document.getElementById('coupon-discount').textContent = currentDiscount.toFixed(2);
+        const finalTotal = total - currentDiscount;
+        document.getElementById('final-total').textContent = `₹${finalTotal.toFixed(2)}`;
+        document.getElementById('total').value = finalTotal.toFixed(2);
+
+        isCouponApplied = true;
+        appliedCoupon = couponCode;
+        removeCouponBtn.style.display = 'inline-block';
+      } else {
+        couponResultDiv.innerHTML = `
+          <div class="text-danger">
+            ${result.message}
+          </div>
+        `;
+      }
+    } catch (error) {
+      couponResultDiv.innerHTML = '<div class="text-danger">Error applying coupon</div>';
+    }
   }
-}
 
 
-function removeCoupon() {
-  if (!isCouponApplied) return;
 
-  // Reset total to original amount
-  document.getElementById('final-total').textContent = `₹${originalTotal.toFixed(2)}`;
-  document.getElementById('total').value = originalTotal.toFixed(2);
+//   function removeCoupon() {
+//   if (!isCouponApplied) return;
+
+//   // Reset total to original amount
+//   document.getElementById('final-total').textContent = `₹${originalTotal.toFixed(2)}`;
+//   document.getElementById('total').value = originalTotal.toFixed(2);
 
 
   
-  couponResultDiv.innerHTML = '<div class="text-info">Coupon removed. You can apply another.</div>';
-  //document.getElementById('remove-coupon').style.display = 'none';
+//   couponResultDiv.innerHTML = '<div class="text-info">Coupon removed. You can apply another.</div>';
+//   //document.getElementById('remove-coupon').style.display = 'none';
 
-  isCouponApplied = false; // Reset flag
-  appliedCoupon = ""; // Clear stored coupon
-  removeCouponBtn.style.display = 'inline-block';
-}
+//   isCouponApplied = false; // Reset flag
+//   appliedCoupon = ""; // Clear stored coupon
+//   removeCouponBtn.style.display = 'inline-block';
+// }
+
+
+function removeCoupon() {
+    if (!isCouponApplied) return;
+
+    // Reset to original values
+    const subtotal = originalTotal;
+    document.getElementById('coupon-discount').textContent = '0.00';
+    document.getElementById('final-total').textContent = `₹${subtotal.toFixed(2)}`;
+    document.getElementById('total').value = subtotal.toFixed(2);
+    
+    couponResultDiv.innerHTML = '<div class="text-info">Coupon removed. You can apply another.</div>';
+    
+    isCouponApplied = false;
+    appliedCoupon = "";
+    currentDiscount = 0;
+    removeCouponBtn.style.display = 'inline-block';
+  }
+
+  applyCouponBtn.addEventListener('click', () => {
+    const couponCode = document.getElementById('coupon-code').value;
+    if (isCouponApplied) {
+      removeCoupon(); // Remove existing coupon first
+    }
+    applyCoupon(couponCode);
+  });
+
+
+
 
 document.getElementById('apply-coupon').addEventListener('click', () => {
   const couponCode = document.getElementById('coupon-code').value;
@@ -919,18 +938,6 @@ document.getElementById('apply-coupon').addEventListener('click', () => {
 
 //document.getElementById('remove-coupon').addEventListener('click', removeCoupon);
 removeCouponBtn.addEventListener('click', removeCoupon);
-
-
-
-// // Apply coupon when button is clicked
-// applyCouponBtn.addEventListener('click', () => {
-//   const couponCode = document.getElementById('coupon-code').value;
-//   applyCoupon(couponCode);
-// });
-
-// // Fetch coupons on page load (optional)
-// // fetchAvailableCoupons();
-
 
 
   });

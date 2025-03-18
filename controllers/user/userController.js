@@ -46,31 +46,7 @@ const loadHomepage = async (req, res) => {
   }
 };
 
-// const loadHomepage = async (req, res) => {
-//   try {
-//     console.log("helleo ")
-//     console.log("req.files",req.files);
-//     console.log("req.body",req.body);
 
-//     const userId = req.session.userId;
-//     let userData = null;
-
-//     if (userId) {
-//          userData = await User.findById(userId);
-//     }
-
-//     const products = await Products.find();
-
-//     return res.render("home", { user: userData, products});
-
-//     //else{
-//    // return res.render("home");
-//     //}
-//   } catch (error) {
-//     console.error("home page not found", error);
-//     res.status(500).send("server error");
-//   }
-// };
 
 const loadSignUp = async (req, res) => {
   try {

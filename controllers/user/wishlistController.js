@@ -6,31 +6,7 @@ const Category = require("../../models/categoryschema")
 const Brand = require("../../models/brandschema")
 const Cart = require("../../models/cartschema")
 
-// Get all wishlist items for a user
-// const getWishlist = async (req, res) => {
-//   try {
-//     const userId = req.session.user; // Using session user ID from your middleware
-    
-//     // Find the wishlist for the current user and populate product details
-//     let wishlistItems = await Wishlist.findOne({ userId: userId })
-//       .populate('products.productId');
-    
-//     // If no wishlist exists yet, create an empty object for rendering
-//     if (!wishlistItems) {
-//       wishlistItems = { products: [] };
-//     }
-    
-//     res.render('wishlist', {
-//       wishlistItems,
-//       pageTitle: 'My Wishlist'
-//     });
-//   } catch (error) {
-//     console.error('Error fetching wishlist:', error);
-//     res.status(500).render('error', {
-//       message: 'Failed to load wishlist. Please try again later.'
-//     });
-//   }
-// };
+
 
 const getWishlist = async (req, res) => {
   try {
@@ -57,11 +33,6 @@ const getWishlist = async (req, res) => {
     res.redirect('/wishlist');
   }
 };
-
-
-
-
-
 
 
 // Add a product to wishlist
@@ -133,55 +104,102 @@ const removeFromWishlist = async (req, res) => {
 };
 
 
-// // Add a product from wishlist to cart
-// const addToCart = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const { productId } = req.body;
+// Replace your current addToCart method with this one
+const addToCart = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const productId = req.params.productId;
+    const quantity = parseInt(req.body.quantity, 10) || 1;
 
-//     if (!userId) {
-//       return res.status(401).json({ success: false, message: "User not logged in" });
-//     }
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not logged in" });
+    }
 
-//     const product = await Product.findById(productId);
-//     if (!product) {
-//       return res.status(404).json({ success: false, message: "Product not found" });
-//     }
+    const product = await Product.findById(productId).populate("category");
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
 
-//     // Check if product is in stock
-//     if (product.quantity <= 0) {
-//       return res.status(400).json({ success: false, message: "Out of Stock" });
-//     }
+    // Check if product is in stock
+    if (product.quantity <= 0) {
+      return res.status(400).json({ success: false, message: "Out of Stock" });
+    }
 
-//     let cart = await Cart.findOne({ userId });
-//     if (!cart) {
-//       cart = new Cart({ userId, items: [] });
-//     }
+    const productOffer = product.productOffer || 0;
+    const categoryOffer = product.category.categoryOffer || 0;
+    const bestOffer = Math.max(productOffer, categoryOffer);
+    const finalPrice = bestOffer > 0
+      ? product.salePrice - (product.salePrice * bestOffer) / 100
+      : product.salePrice;
 
-//     const cartItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
-    
-//     if (cartItemIndex > -1) {
-//       cart.items[cartItemIndex].quantity += 1;
-//     } else {
-//       cart.items.push({ productId: productId, quantity: 1 });
-//     }
+    let cart = await Cart.findOne({ userId });
 
-//     await cart.save();
-//     res.status(200).json({ success: true, message: "Product added to cart" });
+    if (!cart) {
+      // Ensure the user cannot add more than 5 in a new cart
+      if (quantity > 5) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot add more than 5 of this product",
+        });
+      }
+      cart = new Cart({
+        userId,
+        items: [
+          {
+            productId,
+            quantity,
+            price: finalPrice,
+            totalPrice: Math.floor(finalPrice * quantity),
+          },
+        ],
+      });
+    } else {
+      const existingItemIndex = cart.items.findIndex(
+        (item) => item.productId.toString() === productId
+      );
 
-//   } catch (error) {
-//     console.error("Error adding to cart:", error);
-//     res.status(500).json({ success: false, message: "Failed to add product to cart" });
-//   }
-// };
+      if (existingItemIndex !== -1) {
+        // Check if adding the new quantity exceeds the limit
+        if (cart.items[existingItemIndex].quantity + quantity > 5) {
+          return res.status(400).json({
+            success: false,
+            message: "Maximum limit of 5 per product reached",
+          });
+        }
+        cart.items[existingItemIndex].quantity += quantity;
+        cart.items[existingItemIndex].totalPrice = Math.floor(
+          cart.items[existingItemIndex].quantity * finalPrice
+        );
+      } else {
+        if (quantity > 5) {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot add more than 5 of this product",
+          });
+        }
+        cart.items.push({
+          productId,
+          quantity,
+          price: finalPrice,
+          totalPrice: Math.floor(finalPrice * quantity),
+        });
+      }
+    }
 
+    await cart.save();
+    res.json({ success: true, message: "Added to cart" });
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 
 module.exports = {
     getWishlist,
     addToWishlist,
     removeFromWishlist,
-    //addToCart,
+    addToCart,
     
 
 }
