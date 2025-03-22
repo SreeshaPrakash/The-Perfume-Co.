@@ -47,14 +47,7 @@ const getOrderDetails = async (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    //   const overallStatus = order.orderItems.length > 0 ? order.orderItems[0].orderStatus : "Unknown";
-
-    //   const user = order.userId ? order.userId : null;
-    //   // Since address is already part of the order schema, no need to query it separately
-    //   const specificAddress = order.address;
-
-    //   res.render("orderdetails", { order, overallStatus, specificAddress, user});
-
+  
     const overallStatus = order.orderItems.every(
       (item) => item.orderStatus === "delivered"
     )

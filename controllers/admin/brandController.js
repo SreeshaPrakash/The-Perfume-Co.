@@ -24,33 +24,70 @@ const getBrandPage = async (req, res) => {
   }
 };
 
+
+
+
+// const addBrand = async (req, res) => {
+//   try {
+
+//     const brand = req.body.name;
+//     const findBrand = await Brand.findOne({ brand });
+//     if (!findBrand) {
+//       if (!req.file) {
+//         console.log("File not uploaded!");
+//         return res.status(400).send("No file uploaded.");
+//       }
+
+//       const image = req.file ? req.file.filename : null;
+      
+//       const newBrand = new Brand({
+//         brandName: brand,
+//         brandImage: image,
+//       });
+//       await newBrand.save();
+//       res.redirect("/admin/brands");
+//     } else {
+//       console.log("Brand already exists!");
+//     }
+//   } catch (error) {
+//     console.error("Error in addBrand:", error);
+//     res.redirect("/pageerror");
+//   }
+// };
+
 const addBrand = async (req, res) => {
   try {
+    const brand = req.body.name.trim();
 
-    const brand = req.body.name;
-    const findBrand = await Brand.findOne({ brand });
-    if (!findBrand) {
-      if (!req.file) {
-        console.log("File not uploaded!");
-        return res.status(400).send("No file uploaded.");
-      }
+    // Case-insensitive check for existing brand
+    const findBrand = await Brand.findOne({ brandName: { $regex: `^${brand}$`, $options: "i" } });
 
-      const image = req.file ? req.file.filename : null;
-      
-      const newBrand = new Brand({
-        brandName: brand,
-        brandImage: image,
-      });
-      await newBrand.save();
-      res.redirect("/admin/brands");
-    } else {
-      console.log("Brand already exists!");
+    if (findBrand) {
+      return res.status(400).json({ error: "Brand already exists!" });
     }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded!" });
+    }
+
+    const image = req.file.filename;
+
+    const newBrand = new Brand({
+      brandName: brand,
+      brandImage: [image], // Ensure this matches your schema
+    });
+
+    await newBrand.save();
+
+    return res.json({ message: "Brand added successfully!" }); // ✅ Send JSON response
   } catch (error) {
     console.error("Error in addBrand:", error);
-    res.redirect("/pageerror");
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
 
 const blockBrand = async (req, res) => {
   try {

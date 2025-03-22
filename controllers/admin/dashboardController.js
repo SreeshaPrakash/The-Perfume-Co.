@@ -242,6 +242,7 @@ const downloadReport = async (req, res) => {
         0
       ),
     }));
+    console.log(reportData)
 
     // Group data by date
     const groupedData = reportData.reduce((acc, curr) => {
@@ -263,7 +264,9 @@ const downloadReport = async (req, res) => {
       return acc;
     }, {});
 
-    const finalReportData = Object.values(groupedData);
+    const finalReportData = Object.values(reportData);
+    console.log("finalReport",finalReportData)
+
 
     // Generate report based on format
     if (reportFormat === "excel") {
@@ -320,109 +323,6 @@ const getDateRange = (reportType, startDate, endDate) => {
   return { startDate: startDateTime, endDate: endDateTime };
 };
 
-
-// const getMonthlyData = async () => {
-//   const sixMonthsAgo = new Date();
-//   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-//   console.log(sixMonthsAgo);
-
-//   const monthNames = [
-//     "Jan",
-//     "Feb",
-//     "Mar",
-//     "Apr",
-//     "May",
-//     "Jun",
-//     "Jul",
-//     "Aug",
-//     "Sep",
-//     "Oct",
-//     "Nov",
-//     "Dec",
-//   ];
-//   // const monthlyData = await Order.aggregate([
-//   //   { $match: { Date: { $gte: sixMonthsAgo } } },
-//   //   // {
-//   //   //   $group: {
-//   //   //     _id: {
-//   //   //       month: { $month: "$Date" },
-//   //   //       year: { $year: "$Date" },
-//   //   //     },
-//   //   //     revenue: { $sum: "$finalAmount" },
-//   //   //     orderCount: { $sum: 1 },
-//   //   //   },
-//   //   // },
-//   //   // { $sort: { "_id.year": 1, "_id.month": 1 } },
-//   // ]);
-
-//   // console.log(monthlyData);
-
-//   // const last6Months = [];
-//   // for (let i = 0; i < 6; i++) {
-//   //   const d = new Date();
-//   //   d.setMonth(d.getMonth() - i);
-//   //   last6Months.unshift({ month: d.getMonth() + 1, year: d.getFullYear() });
-//   // }
-
-//   // const revenueData = new Array(6).fill(0);
-//   // const ordersData = new Array(6).fill(0);
-
-//   // monthlyData.forEach((data) => {
-//   //   const month = data._id.month;
-//   //   const year = data._id.year;
-//   //   const index = last6Months.findIndex(
-//   //     (m) => m.month === month && m.year === year
-//   //   );
-//   //   if (index !== -1) {
-//   //     revenueData[index] = monthlyData.revenue;
-//   //     ordersData[index] = monthlyData.orderCount;
-//   //   }
-//   // });
-
-//   // const chartLabels = last6Months.map((m) => monthNames[m.month - 1]);
-//   // return { revenueData, ordersData, chartLabels };
-
-
-//   const monthlyData = await Order.aggregate([
-//     { $match: { Date: { $gte: sixMonthsAgo } } },
-//     {
-//       $group: {
-//         _id: {
-//           // month: { $month: "$Date" },
-//           // year: { $year: "$Date" },
-//           month: { $month: "$createdAt" },
-//         year: { $year: "$createdAt" },
-//         },
-//         revenue: { $sum: "$finalAmount" },
-//         orderCount: { $sum: 1 },
-//       },
-//     },
-//     { $sort: { "_id.year": 1, "_id.month": 1 } },
-//   ]);
-//   console.log("Raw monthly data:", monthlyData); // Debug log
-  
-//   const last6Months = [];
-//   for (let i = 0; i < 6; i++) {
-//     const d = new Date();
-//     d.setMonth(d.getMonth() - i);
-//     last6Months.unshift({ month: d.getMonth() + 1, year: d.getFullYear() });
-//   }
-
-//   const revenueData = new Array(6).fill(0);
-//   const ordersData = new Array(6).fill(0);
-//   monthlyData.forEach((data) => {
-//     const index = last6Months.findIndex(
-//       (m) => m.month === data._id.month && m.year === data._id.year
-//     );
-//     if (index !== -1) {
-//       revenueData[index] = data.revenue ||  0 ;
-//       ordersData[index] = data.orderCount ||  0 ;
-//     }
-//   });
-//   const chartLabels = last6Months.map((m) => monthNames[m.month - 1]);
-
-
-// };
 
 
 const getMonthlyData = async () => {
@@ -588,6 +488,7 @@ const getTopBrandsData = async () => {
           localField: "orderItems.product",
           foreignField: "_id",
           as: "productInfo",
+          
         },
       },
       { $unwind: "$productInfo" },
@@ -661,7 +562,7 @@ const generatePDFReport = (data, reportType) => {
   const totalOrders = data.reduce((sum, row) => sum + row.orders, 0);
   const totalRevenue = data.reduce((sum, row) => sum + row.revenue, 0);
   doc.text(`Total Orders: ${totalOrders}`, { align: "center" });
-  doc.text(`Total Revenue: ₹${totalRevenue.toLocaleString("en-IN")}`, {
+  doc.text(`Total Revenue: ${totalRevenue.toLocaleString("en-IN")}`, {
     align: "center",
   });
 
@@ -679,13 +580,14 @@ const generatePDFReport = (data, reportType) => {
     .stroke();
 
   let yPosition = tableTop + 40;
+  console.log(data)
   data.forEach((row) => {
     doc.fontSize(10);
     doc.text(row.orderId || "", 50, yPosition, { width: 150 });
     doc.text(row.date || "", 200, yPosition, { width: 100 });
     doc.text(row.customerName || "Unknown", 300, yPosition, { width: 100 });
     doc.text(row.status || "", 400, yPosition, { width: 100 });
-    doc.text(`₹${row.revenue.toLocaleString("en-IN")}`, 500, yPosition, {
+    doc.text(`${row.revenue.toLocaleString("en-IN")}`, 500, yPosition, {
       width: 100,
     });
 
@@ -699,263 +601,11 @@ const generatePDFReport = (data, reportType) => {
 
   return doc;
 };
-// File: dashboardController.js
-// Add these new controller functions
 
-// const getChartData = async (req, res) => {
-//   try {
-//     const { timeRange } = req.query;
-//     let startDate = new Date();
-//     const endDate = new Date();
-
-//     // Set date range based on requested time range
-//     switch (timeRange) {
-//       case "last-7-days":
-//         startDate.setDate(startDate.getDate() - 7);
-//         break;
-//       case "last-30-days":
-//         startDate.setDate(startDate.getDate() - 30);
-//         break;
-//       case "last-3-months":
-//         startDate.setMonth(startDate.getMonth() - 3);
-//         break;
-//       case "yearly":
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//         break;
-//       default:
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//     }
-
-//     // Get filtered orders
-//     const orders = await Order.find({
-//     //   orderDate: { $gte: startDate, $lte: endDate },
-//     // });
-//     Date: { $gte: startDate, $lte: endDate },  // Changed from orderDate to Date
-//     });
-
-//     // Process data based on time range
-//     let chartLabels = [];
-//     let revenueData = [];
-//     let ordersData = [];
-
-//     if (timeRange === "last-7-days") {
-//       // Daily data for last 7 days
-//       for (let i = 6; i >= 0; i--) {
-//         const date = new Date();
-//         date.setDate(date.getDate() - i);
-//         const dateStr = date.toLocaleDateString("en-US", { weekday: "short" });
-//         chartLabels.push(dateStr);
-
-//         const dayOrders = orders.filter((order) => {
-//           const orderDate = new Date(order.orderDate);
-//           return (
-//             orderDate.getDate() === date.getDate() &&
-//             orderDate.getMonth() === date.getMonth() &&
-//             orderDate.getFullYear() === date.getFullYear()
-//           );
-//         });
-
-//         const dayRevenue = dayOrders.reduce(
-//           (sum, order) => sum + order.finalAmount,
-//           0
-//         );
-//         revenueData.push(dayRevenue);
-//         ordersData.push(dayOrders.length);
-//       }
-//     } else if (timeRange === "last-30-days" || timeRange === "last-3-months") {
-//       // Weekly data
-//       const weeks = timeRange === "last-30-days" ? 4 : 12;
-//       for (let i = weeks - 1; i >= 0; i--) {
-//         const endWeek = new Date();
-//         endWeek.setDate(endWeek.getDate() - i * 7);
-//         const startWeek = new Date(endWeek);
-//         startWeek.setDate(startWeek.getDate() - 6);
-
-//         const weekLabel = `${startWeek.getDate()}/${startWeek.getMonth() + 1} - ${endWeek.getDate()}/${endWeek.getMonth() + 1}`;
-//         chartLabels.push(weekLabel);
-
-//         const weekOrders = orders.filter((order) => {
-//           const orderDate = new Date(order.orderDate);
-//           return orderDate >= startWeek && orderDate <= endWeek;
-//         });
-
-//         const weekRevenue = weekOrders.reduce(
-//           (sum, order) => sum + order.finalAmount,
-//           0
-//         );
-//         revenueData.push(weekRevenue);
-//         ordersData.push(weekOrders.length);
-//       }
-//     } else {
-//       // Monthly data for yearly view
-//       const monthNames = [
-//         "Jan",
-//         "Feb",
-//         "Mar",
-//         "Apr",
-//         "May",
-//         "Jun",
-//         "Jul",
-//         "Aug",
-//         "Sep",
-//         "Oct",
-//         "Nov",
-//         "Dec",
-//       ];
-//       for (let i = 11; i >= 0; i--) {
-//         const month = new Date().getMonth() - i;
-//         const year = new Date().getFullYear() + Math.floor(month / 12);
-//         const adjustedMonth = ((month % 12) + 12) % 12;
-
-//         chartLabels.push(monthNames[adjustedMonth]);
-
-//         const monthOrders = orders.filter((order) => {
-//           const orderDate = new Date(order.orderDate);
-//           return (
-//             orderDate.getMonth() === adjustedMonth &&
-//             orderDate.getFullYear() === year
-//           );
-//         });
-
-//         const monthRevenue = monthOrders.reduce(
-//           (sum, order) => sum + order.finalAmount,
-//           0
-//         );
-//         revenueData.push(monthRevenue);
-//         ordersData.push(monthOrders.length);
-//       }
-//     }
-
-//     res.json({ chartLabels, revenueData, ordersData });
-//   } catch (error) {
-//     console.error("Error fetching chart data:", error);
-//     res.status(500).json({ error: "Failed to fetch chart data" });
-//   }
-// };
-
-// const getCategoryData = async (req, res) => {
-//   try {
-//     const { timeRange } = req.query;
-//     let startDate = new Date();
-//     const endDate = new Date();
-
-//     // Set date range based on requested time range
-//     switch (timeRange) {
-//       case "week":
-//         startDate.setDate(startDate.getDate() - 7);
-//         break;
-//       case "month":
-//         startDate.setMonth(startDate.getMonth() - 1);
-//         break;
-//       case "year":
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//         break;
-//       default:
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//     }
-
-//     // Get filtered categories data
-//     const topCategories = await Order.aggregate([
-//       //{ $match: { orderDate: { $gte: startDate, $lte: endDate } } },
-//       { $match: { Date: { $gte: startDate, $lte: endDate } } },  // Changed from orderDate to Date
-      
-//       { $unwind: "$orderItems" },
-//       {
-//         $lookup: {
-//           from: "products",
-//           localField: "orderItems.product",
-//           foreignField: "_id",
-//           as: "productInfo",
-//         },
-//       },
-//       { $unwind: "$productInfo" },
-//       {
-//         $lookup: {
-//           from: "categories",
-//           localField: "productInfo.category",
-//           foreignField: "_id",
-//           as: "categoryInfo",
-//         },
-//       },
-//       { $unwind: "$categoryInfo" },
-//       {
-//         $group: {
-//           _id: "$categoryInfo._id",
-//           categoryName: { $first: "$categoryInfo.name" },
-//           count: { $sum: "$orderItems.quantity" },
-//         },
-//       },
-//       { $sort: { count: -1 } },
-//       { $limit: 5 },
-//     ]);
-
-//     const labels = topCategories.map((c) => c.categoryName || "Unknown");
-//     const data = topCategories.map((c) => c.count);
-
-//     res.json({ labels, data });
-//   } catch (error) {
-//     console.error("Error fetching category data:", error);
-//     res.status(500).json({ error: "Failed to fetch category data" });
-//   }
-// };
-
-// const getBrandData = async (req, res) => {
-//   try {
-//     const { timeRange } = req.query;
-//     let startDate = new Date();
-//     const endDate = new Date();
-
-//     // Set date range based on requested time range
-//     switch (timeRange) {
-//       case "week":
-//         startDate.setDate(startDate.getDate() - 7);
-//         break;
-//       case "month":
-//         startDate.setMonth(startDate.getMonth() - 1);
-//         break;
-//       case "year":
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//         break;
-//       default:
-//         startDate.setFullYear(startDate.getFullYear() - 1);
-//     }
-
-//     // Get filtered brands data
-//     const topBrands = await Order.aggregate([
-//       //{ $match: { orderDate: { $gte: startDate, $lte: endDate } } },
-//       { $match: { Date: { $gte: startDate, $lte: endDate } } },  // Changed from orderDate to Date
-//       { $unwind: "$orderItems" },
-//       {
-//         $lookup: {
-//           from: "products",
-//           localField: "orderItems.product",
-//           foreignField: "_id",
-//           as: "productInfo",
-//         },
-//       },
-//       { $unwind: "$productInfo" },
-//       {
-//         $group: {
-//           _id: "$productInfo.brand",
-//           count: { $sum: "$orderItems.quantity" },
-//         },
-//       },
-//       { $sort: { count: -1 } },
-//       { $limit: 4 },
-//     ]);
-
-//     const labels = topBrands.map((b) => b._id || "Unknown");
-//     const data = topBrands.map((b) => b.count);
-
-//     res.json({ labels, data });
-//   } catch (error) {
-//     console.error("Error fetching brand data:", error);
-//     res.status(500).json({ error: "Failed to fetch brand data" });
-//   }
-// };
 
 
 // Modify getChartData to use createdAt and handle real-time updates
+
 const getChartData = async (req, res) => {
   try {
     const { timeRange } = req.query;
@@ -1183,7 +833,7 @@ module.exports = {
   getBrandData,
   getTopCategoriesData,
   getTopBrandsData,
-  getTopProductsData, // Missing from exports
-  getMonthlyData, // Missing from exports
-  getDateRange, // Missing from exports
+  getTopProductsData,
+  getMonthlyData,
+  getDateRange, 
 };

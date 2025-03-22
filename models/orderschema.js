@@ -110,6 +110,10 @@ const orderschema = new Schema(
       type: Boolean,
       default: false,
     },
+    couponCode: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

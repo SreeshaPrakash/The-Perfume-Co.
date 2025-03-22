@@ -77,16 +77,6 @@ router.post("/upload", adminAuth, upload.single("image"), (req, res) => {
 
 
 //order management
-// router.get('/orders',adminAuth,adminController.getOrders)
-// router.get("/orders/:orderId",  adminController.getOrderDetails)
-
-
-// router.get('/order',adminAuth,orderController.getOrders)
-// router.get('/orderlist',adminAuth,orderController.getOrders)
-//router.get("/orders/:orderId",  orderController.getOrderDetails)
-//router.get("/admin/orderdetails/:orderId", orderController.getOrderDetails);
-
-//order management
 router.get('/orderlist',adminAuth,orderController.getOrders)
 router.get("/orderdetails/:orderId", adminAuth, orderController.getOrderDetails);
 router.post("/orders/update-status/:itemId", adminAuth, orderController.changeStatus);

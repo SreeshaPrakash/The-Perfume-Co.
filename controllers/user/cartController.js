@@ -29,29 +29,17 @@ const loadCart = async (req, res) => {
     });
 
     if (cart) {
-      // Filter out items where product, category, or brand is not listed
-      //   const validItems = cart.items.filter((item) => {
-      //     const product = item.productId;
-      //     if (
-      //       product &&
-      //       product.isListed && // Check if product is listed
-      //       product.category &&
-      //       product.category.isListed && // Check if category is listed
-      //       product.brand &&
-      //       product.brand.isListed
-      //     ) {
-      //       return item;
-      //     }
-      //   });
 
-      //   console.log("this is valid items=>", validItems)
+
+
+     
 
       // Calculate price with any applicable offers
       console.log("cart items=> ", cart.items);
       const totalPrice = cart.items.reduce((total, item) => {
         console.log("---------------", item);
         const product = item.productId;
-        let price = product.salePrice;
+        let price = product.regularPrice;
 
         console.log("before first price==>", price);
         console.log("before product offer price==>", product?.productOffer);
@@ -103,6 +91,7 @@ const loadCart = async (req, res) => {
 
       cart.items = cart.items;
       await cart.save();
+      console.log("cartDetailssss",cart)
 
       res.render("cart", {
         cart: paginatedCart,
@@ -148,8 +137,8 @@ const addToCart = async (req, res) => {
     const bestOffer = Math.max(productOffer, categoryOffer);
     const finalPrice =
       bestOffer > 0
-        ? product.salePrice - (product.salePrice * bestOffer) / 100
-        : product.salePrice;
+        ? product.regularPrice - (product.regularPrice * bestOffer) / 100
+        : product.regularPrice;
 
     let cart = await Cart.findOne({ userId: userId });
 
@@ -274,8 +263,8 @@ const increaseQuantity = async (req, res) => {
     const bestOffer = Math.max(productOffer, categoryOffer);
     const finalPrice =
       bestOffer > 0
-        ? product.salePrice - (product.salePrice * bestOffer) / 100
-        : product.salePrice;
+        ? product.regularPrice - (product.regularPrice * bestOffer) / 100
+        : product.regularPrice;
     item.quantity += 1;
     item.price = Math.floor(item.quantity * finalPrice);
 
@@ -334,8 +323,8 @@ const decreaseQuantity = async (req, res) => {
     const bestOffer = Math.max(productOffer, categoryOffer);
     const finalPrice =
       bestOffer > 0
-        ? product.salePrice - (product.salePrice * bestOffer) / 100
-        : product.salePrice;
+        ? product.regularPrice - (product.regularPrice * bestOffer) / 100
+        : product.regularPrice;
     item.quantity = item.quantity - 1;
     item.price = Math.floor(item.quantity * finalPrice);
     console.log(item.quantity);

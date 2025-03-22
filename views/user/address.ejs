@@ -18,16 +18,26 @@
            background-color: #343a40;
            color: white;
            border-radius: 10px;
-           height: 75vh;
+           overflow-y: auto;
+       }
+       .sidebar .user-profile {
+           padding: 15px 10px;
+           text-align: center;
+           word-break: break-word;
        }
        .sidebar .nav-link {
            color: white;
            transition: 0.3s;
            font-size: 1.1rem;
+           padding: 0.75rem 1rem;
+           margin: 2px 0;
        }
        .sidebar .nav-link:hover {
            background-color: #495057;
            border-radius: 5px;
+       }
+       .sidebar .nav-flex-column {
+           padding: 0 10px 10px 10px;
        }
        .logout-link {
            color: #dc3545 !important;
@@ -38,114 +48,148 @@
            background-color: white;
            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
            padding: 20px;
+           height: 100%;
+           display: flex;
+           flex-direction: column;
+       }
+       .address-content {
+           flex-grow: 1;
+       }
+       .address-actions {
+           margin-top: 15px;
        }
        .add-address {
            background: #1e3a8a;
            color: white;
-           padding: 10px;
+           padding: 10px 15px;
            border-radius: 5px;
            cursor: pointer;
+           white-space: nowrap;
+       }
+       .page-header {
+           margin-bottom: 20px;
+       }
+       
+       /* Responsive adjustments */
+       @media (min-width: 768px) {
+           .sidebar {
+               height: 75vh;
+           }
+       }
+       
+       @media (max-width: 767.98px) {
+           .sidebar {
+               margin-bottom: 20px;
+               max-height: 300px;
+           }
+           .page-title {
+               font-size: 1.5rem;
+           }
+           .add-address {
+               font-size: 0.9rem;
+               padding: 8px 12px;
+           }
+           .page-header {
+               flex-direction: column;
+               align-items: flex-start !important;
+               gap: 10px;
+           }
+           .address-card {
+               margin-bottom: 5px;
+           }
        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-4 mb-4">
         <div class="row">
-            <div class="col-md-3">
-                <div class="card sidebar p-3">
-                    <div class="text-center">
-                        <h4><%= (user && user.firstName) ? user.firstName + ' ' + user.lastName : 'Guest' %></h4>
-
+            <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar">
+                    <div class="user-profile">
+                        <h4 class="fs-5"><%= (user && user.firstName) ? user.firstName + ' ' + user.lastName : 'Guest' %></h4>
                     </div>
-                    <hr>
-                    <ul class="nav flex-column">
+                    <hr class="my-2">
+                    <ul class="nav flex-column nav-flex-column">
                         <li class="nav-item"><a href="/account" class="nav-link">Account</a></li>
                         <li class="nav-item"><a href="/user/address" class="nav-link">Address</a></li>
                         <li class="nav-item"><a href="/orders" class="nav-link">Orders</a></li>
                         <li class="nav-item"><a href="/wishlist" class="nav-link">Wishlist</a></li>
                         <li class="nav-item"><a href="/user/cart" class="nav-link">Cart</a></li>
                         <li class="nav-item"><a href="/user/wallet" class="nav-link">Wallet</a></li>
-                        <li class="nav-item"><a href="/user/coupon" class="nav-link">Coupons</a></li>
+                        <!-- <li class="nav-item"><a href="/user/coupon" class="nav-link">Coupons</a></li> -->
                         <li class="nav-item"><a href="/logout" class="nav-link logout-link">Logout</a></li>
                     </ul>
                 </div>
             </div>
+            
+            <!-- Main content -->
             <div class="col-md-9">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>Manage Addresses</h3>
-                    <!-- <button class="btn add-address"  onclick="window.location.href= '/user/add-address'"  >+ Add New Address</button> -->
+                <div class="d-flex justify-content-between align-items-center page-header">
+                    <h3 class="page-title mb-0">Manage Addresses</h3>
                     <a href="/add-address" class="btn add-address">+ Add New Address</a>
-                    
                 </div>
-                <div class="row" id="addressList">
+                
+                <div class="row g-3">
                     <% if (userAddress && userAddress.length > 0) { %>
-
                         <% userAddress.forEach(address => { %>
-                            <div class="col-md-6 mb-3">
-                                <div class="card address-card">
-                                    <h5><%= address.fullName %></h5>
-                                    <p><%= address.street %>, <%= address.city %>, <%= address.state %>, <%= address.zipcode %></p>
-                                    <p><strong>Phone:</strong> <%= address.phone %></p>
-                                    <div class="d-flex justify-content-between">
-                                       
-                                        <!-- <button class="btn btn-warning btn-sm">Edit</button> -->
-                                        <!-- <button class="btn btn-danger btn-sm">Delete</button> -->
-                                        
+                            <div class="col-12 col-sm-6">
+                                <div class="address-card">
+                                    <div class="address-content">
+                                        <h5 class="text-break"><%= address.fullName %></h5>
+                                        <p class="text-break mb-2"><%= address.street %>, <%= address.city %>, <%= address.state %>, <%= address.zipcode %></p>
+                                        <p class="mb-0"><strong>Phone:</strong> <%= address.phone %></p>
+                                    </div>
+                                    <div class="d-flex justify-content-between address-actions">
                                         <button class="btn btn-warning btn-sm" onclick="window.location.href='/edit-address/<%= address._id %>'">Edit</button>
-                                        <button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger">Delete</button>
-
-                                        
+                                        <button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger btn-sm">Delete</button>
                                     </div>
                                 </div>
                             </div>
                         <% }); %>
                     <% } else { %>
-                        <p class="text-muted">No addresses found. Please add a new address.</p>
+                        <div class="col-12">
+                            <p class="text-muted">No addresses found. Please add a new address.</p>
+                        </div>
                     <% } %>
                 </div>
             </div>
         </div>
     </div>
 
-
-
     <script>
         function deleteAddress(addressId) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "Cancel"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/address/${addressId}`, {
-                method: "DELETE",
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: data.message,
-                        icon: "success",
-                        confirmButtonText: "OK"
-                    }).then(() => {
-                        window.location.reload();  // Refresh page after deletion
-                    });
-                } else {
-                    Swal.fire("Error!", data.message, "error");
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This action cannot be undone!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/address/${addressId}`, {
+                        method: "DELETE",
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: data.message,
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.reload();  // Refresh page after deletion
+                            });
+                        } else {
+                            Swal.fire("Error!", data.message, "error");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
                 }
-            })
-            .catch(error => console.error("Error:", error));
+            });
         }
-    });
-}
-
     </script>
-
-
-
 </body>
 </html>

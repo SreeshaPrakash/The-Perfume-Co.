@@ -164,7 +164,7 @@
                             <article class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="card-title mb-0">Top Products</h5>
-                                    <div class="dropdown">
+                                    <!-- <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i> Filter
                                         </button>
@@ -173,7 +173,7 @@
                                             <li><a class="dropdown-item filter-option" href="#" data-chart="product" data-range="month">Last Month</a></li>
                                             <li><a class="dropdown-item filter-option" href="#" data-chart="product" data-range="year">Last Year</a></li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="chart-container" style="position: relative; height:180px; width:100%;">
                                     <canvas id="productChart"></canvas>
@@ -187,7 +187,7 @@
                             <article class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="card-title mb-0">Top Categories</h5>
-                                    <div class="dropdown">
+                                    <!-- <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i> Filter
                                         </button>
@@ -196,7 +196,7 @@
                                             <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="month">Last Month</a></li>
                                             <li><a class="dropdown-item filter-option" href="#" data-chart="category" data-range="year">Last Year</a></li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="chart-container" style="position: relative; height:180px; width:100%;">
                                     <canvas id="categoryChart"></canvas>
@@ -211,7 +211,7 @@
                     <article class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="card-title mb-0">Top Brands</h5>
-                            <div class="dropdown">
+                            <!-- <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-filter me-1"></i> Filter
                                 </button>
@@ -220,7 +220,7 @@
                                     <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="month">Last Month</a></li>
                                     <li><a class="dropdown-item filter-option" href="#" data-chart="brand" data-range="year">Last Year</a></li>
                                 </ul>
-                            </div> 
+                            </div>  -->
                          </div> 
                         <div class="chart-container" style="position: relative; height:180px; width:100%;">
                             <canvas id="brandChart"></canvas>
@@ -489,6 +489,8 @@ document.addEventListener('DOMContentLoaded', function() {
         );
 
         // Initialize Brand Chart
+    
+        console.log(chartData)
         brandChart = new Chart(
             document.getElementById('brandChart').getContext('2d'),
             {

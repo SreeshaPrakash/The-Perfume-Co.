@@ -2,37 +2,8 @@
 const Coupon = require('../../models/couponschema'); // Adjust path to match your Coupon model file
 
 
-// const getCouponPage = async (req, res, next) => {
-//     try {
-//         // Pagination parameters
-//         const page = parseInt(req.query.page) || 1;
-//         const limit = 10; // Number of coupons per page
-//         const skip = (page - 1) * limit;
 
-//         // Count total active (non-deleted) coupons
-//         const totalCoupons = await Coupon.countDocuments({ isDeleted: false });
-//         const totalPages = Math.ceil(totalCoupons / limit);
 
-//         // Fetch coupons with pagination and sorting
-//         const coupons = await Coupon.find({ isDeleted: false })
-//             .skip(skip)
-//             .limit(limit)
-//             .sort({ createdOn: -1 }) // Sort by creation date, newest first
-//             .select('code offerPrice minimumPrice startOn expireOn maxUses usesCount isListed'); // Select only needed fields
-
-//         // Render the EJS page with required data
-//         res.render('coupon', {
-//             coupons, // Array of coupon objects
-//             currentPage: page,
-//             totalPages,
-//             hasNextPage: page < totalPages,
-//             hasPrevPage: page > 1
-//         });
-//     } catch (error) {
-//         console.error('Error in getCouponPage:', error);
-//         next(error); // Pass to error-handling middleware
-//     }
-// };
 
 const getCouponPage = async (req, res, next) => {
     try {

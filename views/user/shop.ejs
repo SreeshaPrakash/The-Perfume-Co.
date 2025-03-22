@@ -7,11 +7,17 @@
   }
 
   /* Full-width container with extra horizontal padding */
-  .main-container {
+  /* .main-container {
     width: 100%;
     padding: 20px 40px;
     background-color: #fafafa;
-  }
+  } */
+  .main-container {
+  width: 100%;
+  padding: 20px 40px;
+  background-color: #fafafa;
+  box-sizing: border-box;
+}
 
   /* Shop Topbar remains unchanged except minor spacing tweaks */
   .shop-topbar {
@@ -388,6 +394,84 @@
     cursor: not-allowed;
     opacity: 0.7;
 }
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination-button {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 5px;
+  background: #000;
+  color: white;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.pagination-button:hover {
+  background: #b02a37;
+}
+
+.pagination-button.active {
+  background: #dc3545;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 products per row */
+  gap: 25px;
+  align-items: start;
+  align-content: flex-start;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 800px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 products per row on medium screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .product-grid {
+    grid-template-columns: repeat(1, 1fr); /* 1 product per row on small screens */
+  }
+}
+.pagination-container {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px 0;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.pagination-button {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 5px;
+  background: #000;
+  color: white;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.pagination-button:hover {
+  background: #b02a37;
+}
+
+.pagination-button.active {
+  background: #dc3545;
+}
+
 
 
 </style>
@@ -550,9 +634,36 @@
                   </div>
                 </div>
                 <% }) %>
+
                   <% } %>
+
+
+
         </main>
+
+        
       </div>
+    
+    <!-- Pagination at bottom of the page -->
+    <div class="pagination-container">
+      <% if (totalPages > 1) { %>
+        <% if (currentPage > 1) { %>
+          <a href="?page=<%= currentPage - 1 %>&search=<%= query.search %>&sort=<%= query.sort %>&category=<%= query.category %>&brand=<%= query.brand %>" class="pagination-button">Previous</a>
+        <% } %>
+    
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a href="?page=<%= i %>&search=<%= query.search %>&sort=<%= query.sort %>&category=<%= query.category %>&brand=<%= query.brand %>"
+             class="pagination-button <%= i === currentPage ? 'active' : '' %>">
+             <%= i %>
+          </a>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+          <a href="?page=<%= currentPage + 1 %>&search=<%= query.search %>&sort=<%= query.sort %>&category=<%= query.category %>&brand=<%= query.brand %>" class="pagination-button">Next</a>
+        <% } %>
+      <% } %>
+    </div>
+    
     </section>
   </div>
 

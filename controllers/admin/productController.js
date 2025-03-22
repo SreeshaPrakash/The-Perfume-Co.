@@ -111,6 +111,9 @@ const addProducts = async (req, res) => {
   }
 };
 
+
+
+
 // const getAllProducts = async (req, res) => {
 //   try {
 //     const search = req.query.search || "";
@@ -301,63 +304,6 @@ const getAllProducts = async (req, res) => {
 };
 
 
-
-
-
-
-// const addProductOffer=async(req,res)=>{
-//   try {
-      
-//       const {productId,percentage}=req.body;
-//       const findProduct=await Product.findOne({_id:productId});
-//       const findCategory=await Category.findOne({_id:findProduct.category});
-//       if(findCategory.categoryOffer>percentage){
-//           return res.json({status:false,message:'This products category already has a category offer'})
-//       }
-
-//       findProduct.salePrice=findProduct.salePrice+Math.floor(findProduct.regularPrice*(percentage/100))
-//       findProduct.productOffer=parseInt(percentage);
-//       await findProduct.save();
-//       findCategory.categoryOffer=0;
-//       await findCategory.save();
-//       res.json({status:true});
-//   } catch (error) {
-      
-//       res.redirect('/pageerror');
-//       res.status(500).json({status:false,message:'Internal Server Error'});
-//   }
-// };
-
-
-
-
-// const removeProductOffer = async (req, res) => {
-//   try {
-//       const { productId } = req.body;
-      
-//       // Find the product
-//       const findProduct = await Product.findOne({ _id: productId });
-//       if (!findProduct) {
-//           return res.status(404).json({ status: false, message: "Product not found" });
-//       }
-
-//       // If no offer exists, return early
-//       if (findProduct.productOffer === 0) {
-//           return res.json({ status: false, message: "No offer to remove" });
-//       }
-
-//       // Restore the original price
-//       findProduct.salePrice = findProduct.regularPrice;  // Reset price
-//       findProduct.productOffer = 0; // Remove the offer
-      
-//       await findProduct.save();
-//       res.json({ status: true });
-
-//   } catch (error) {
-//       console.error("Error removing product offer:", error);
-//       res.status(500).json({ status: false, message: "Internal Server Error" });
-//   }
-// };
 
 
 const addProductOffer = async (req, res) => {

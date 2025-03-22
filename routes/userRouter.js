@@ -99,6 +99,9 @@ router.post("/apply-coupon", userAuth, orderController.applyCoupon);
 router.post('/create-order',userAuth, createOrder);
 router.get("/order-placed", userAuth, orderController.getOrderPlacedPage);
 
+router.post('/payment-failed', userAuth, orderController.handlePaymentFailed);
+
+
 router.get('/orders',orderController.orderDetail)
 router.get('/viewOrder',userAuth,orderController.viewOrder)
 router.post('/cancelOrder',userAuth,orderController.cancelOrder)
