@@ -46,8 +46,6 @@ const loadHomepage = async (req, res) => {
   }
 };
 
-
-
 const loadSignUp = async (req, res) => {
   try {
     return res.render("signup");
@@ -90,7 +88,8 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
   try {
-    const { firstName, lastName, phone, email, password, confirmPassword } = req.body;
+    const { firstName, lastName, phone, email, password, confirmPassword } =
+      req.body;
 
     if (password !== confirmPassword) {
       return res.render("signup", { message: "passwords do not match" });
@@ -136,7 +135,9 @@ const verifyOtp = async (req, res) => {
     const { otp } = req.body;
 
     console.log("Received OTP:", otp);
- console.log("otp in session",req.session.userOtp)
+    console.log("otp in session", req.session.userOtp);
+    console.log("verify   =========",otp == req.session.userOtp);
+
     if (otp == req.session.userOtp) {
       const user = req.session.userData;
 
@@ -170,12 +171,13 @@ const verifyOtp = async (req, res) => {
       //console.log(user.firstName, user.lastName);
 
       const savedUser = await saveUserData.save();
-      //console.log("Saved User:", savedUser);
+      console.log("Saved User:", savedUser);
 
       req.session.user = savedUser;
 
       res.json({ success: true, redirectUrl: "/" });
     } else {
+
       res
         .status(400)
         .json({ success: false, message: "Invalid OTP, please try again" });
@@ -201,7 +203,7 @@ const resendOtp = async (req, res) => {
 
     const emailSent = await sendVerificationEmail(
       req.session.userData.email,
-      otp,
+      otp
     );
 
     if (emailSent) {
@@ -261,7 +263,6 @@ const login = async (req, res) => {
     req.session.user = findUser;
     // req.session.user = findUser._id
     //console.log("user logged in:",req.session.userId)
-  
 
     res.redirect("/");
   } catch (error) {
@@ -331,5 +332,4 @@ module.exports = {
   login,
   logout,
   uploadProduct,
-  
 };
