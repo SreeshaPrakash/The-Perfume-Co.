@@ -49,7 +49,8 @@ const userschema = new mongoose.Schema(
     }],
     googleId: {
       type: String,
-      unique: true,
+
+      // unique: true,
     },
     wallet: {
       type: Number,
