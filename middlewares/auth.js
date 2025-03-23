@@ -73,7 +73,7 @@ const userAuth = async (req, res, next) => {
 
     if (!user) {
       console.log("User not found in database");
-      req.session.destroy(); // Clear session if user is missing
+      req.session.user = null;
       return res.redirect("/login");
     }
 
