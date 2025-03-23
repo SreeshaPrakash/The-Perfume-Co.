@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartId = document.querySelector("[data-cart-id]").getAttribute("data-cart-id");
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
     const finalAmount = parseFloat(document.getElementById("total").value);
-    const couponCode = appliedCoupon;
+    const couponCode = document.getElementById('coupon-code').value;
     const couponDiscount = currentDiscount;
     // const coupon-discount
     const couponapplied = isCouponApplied
