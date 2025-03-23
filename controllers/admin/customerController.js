@@ -55,9 +55,9 @@ const customerBlocked = async (req, res) => {
     await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
 
     // Destroy session if the user is currently logged in
-    if (req.session.user && req.session.user._id == id) {
-      req.session.destroy();
-    }
+    // if (req.session.user && req.session.user._id == id) {
+    //   req.session.user = null
+    // }
 
     res.redirect("/admin/users");
   } catch (error) {
