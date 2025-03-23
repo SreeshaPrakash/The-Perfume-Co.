@@ -47,11 +47,11 @@ router.get("/logout", userController.logout);
 router.post("/upload", upload.single("image"), userController.uploadProduct);
 
 //product management
-router.get("/productDetails", productController.productDetails);
-router.get('/shop',productController.loadshop)
+router.get("/productDetails",userAuth, productController.productDetails);
+router.get('/shop',userAuth,productController.loadshop)
 
 //cart management
-router.get('/cart',cartController.loadCart)
+router.get('/cart',userAuth,cartController.loadCart)
 /router.post('/addToCart/:productId',userAuth,cartController.addToCart)
 router.patch('/increment/:itemId',userAuth,cartController.increaseQuantity); 
 router.patch('/decrement/:itemId',userAuth,cartController.decreaseQuantity);
