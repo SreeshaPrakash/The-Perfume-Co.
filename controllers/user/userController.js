@@ -161,7 +161,7 @@ const verifyOtp = async (req, res) => {
       const passwordHash = await securePassword(user.password);
       console.log("Hashed Password Before Saving:", passwordHash);
 
-      const saveUserData = new User({
+      const saveUserData = await  User.create({
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -170,13 +170,12 @@ const verifyOtp = async (req, res) => {
 
       // console.log(user.firstName, user.lastName);
 
-      console.log("Before saving:", savedUser);
+      // console.log("Before saving:", savedUser);
 
 
-      const savedUser = await saveUserData.save();
-      console.log("Saved User:", savedUser);
+      console.log("Saved User:", saveUserData);
 
-      req.session.user = savedUser;
+      req.session.user = saveUserData;
 
       res.json({ success: true, redirectUrl: "/" });
     } else {
