@@ -65,7 +65,7 @@ const createOrder = async (req, res) => {
       return res.status(401).json({ success: false, message: "User not authenticated" });
     }
 
-    const { addressId, cartId, paymentMethod, finalAmount } = req.body;
+    const { addressId, cartId, paymentMethod, finalAmount, couponapplied, couponCode, couponDiscount } = req.body;
     const userId = req.session.user._id;
 
     if (paymentMethod === "COD" && finalAmount > 1000) {
@@ -151,10 +151,14 @@ const createOrder = async (req, res) => {
         street: currentAddress.street,
         zipcode: currentAddress.zipcode,
         phone: currentAddress.phone,
+        
       },
       orderStatus: "Pending", // This is for the overall order, not individual items
       discount: totalDiscount,
       orderId: uuidv4(),
+      couponapplied : couponapplied || false ,
+      couponCode : couponCode || null,
+      couponDiscount : couponDiscount || 0
     });
 
     await newOrder.save();
@@ -334,6 +338,7 @@ const viewOrder = async (req, res) => {
       finalAmount,
        userEmail,
       razorpayKeyId,
+
 
       //userEmail: req.session.user.email
     });

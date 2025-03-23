@@ -299,6 +299,9 @@ const logout = async (req, res) => {
 //   }
 // }
 
+
+
+
 const uploadProduct = async (req, res) => {
   try {
     if (!req.file) {

@@ -351,7 +351,9 @@
                     </div>
                     <div class="price-row">
                         <span>Coupon Discount:</span>
-                        <span>- ₹ <span id="coupon-discount">0.00</span></span>
+                        <!-- <span>- ₹ <span id="coupon-discount">0.00</span></span> -->
+                        <span>- ₹ <span id="couponDiscount">0.00</span></span>
+                       
                     </div>
                     <div class="price-row total">
                         <span>Total Amount:</span>
@@ -391,6 +393,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartId = document.querySelector("[data-cart-id]").getAttribute("data-cart-id");
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
     const finalAmount = parseFloat(document.getElementById("total").value);
+    const couponCode = appliedCoupon;
+    const couponDiscount = currentDiscount;
+    // const coupon-discount
+    const couponapplied = isCouponApplied
 
     try {
       placeOrderBtn.disabled = true;
@@ -399,7 +405,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ addressId, cartId, paymentMethod, finalAmount }),
+        body: JSON.stringify({ addressId, cartId, paymentMethod, finalAmount,couponapplied,
+        couponCode,
+        couponDiscount }),
       });
       const data = await response.json();
 
@@ -629,7 +637,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         // Update discount display and total
-        document.getElementById('coupon-discount').textContent = currentDiscount.toFixed(2);
+       // document.getElementById('coupon-discount').textContent = currentDiscount.toFixed(2);
+       document.getElementById('couponDiscount').textContent = currentDiscount.toFixed(2);
         const finalTotal = total - currentDiscount;
         document.getElementById('final-total').textContent = `₹${finalTotal.toFixed(2)}`;
         document.getElementById('total').value = finalTotal.toFixed(2);
@@ -654,7 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset to original values
     const subtotal = originalTotal;
-    document.getElementById('coupon-discount').textContent = '0.00';
+    //document.getElementById('coupon-discount').textContent = '0.00';
+    document.getElementById('couponDiscount').textContent = '0.00';
+    
     document.getElementById('final-total').textContent = `₹${subtotal.toFixed(2)}`;
     document.getElementById('total').value = subtotal.toFixed(2);
     
