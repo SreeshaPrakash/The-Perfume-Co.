@@ -374,6 +374,9 @@
 
 <script>
 // Order placement script
+let isCouponApplied = false;
+  let appliedCoupon = "";
+  let currentDiscount = 0;
 document.addEventListener("DOMContentLoaded", function () {
   const placeOrderBtn = document.getElementById("place-order");
   let orderId;  // Custom UUID
@@ -566,9 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const availableCouponsList = document.getElementById('available-coupons-list');
 
   // Initialize variables
-  let isCouponApplied = false;
-  let appliedCoupon = "";
-  let currentDiscount = 0;
+  isCouponApplied = false;
+  appliedCoupon = "";
+  currentDiscount = 0;
   const originalTotal = parseFloat(document.getElementById('total').value);
 
   async function fetchAvailableCoupons() {
