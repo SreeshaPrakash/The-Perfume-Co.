@@ -141,7 +141,7 @@ const verifyOtp = async (req, res) => {
     if (otp == req.session.userOtp) {
       const user = req.session.userData;
 
-      //console.log("Session userData:", user);
+      console.log("Session userData:", user);
 
       if (!user.firstName || !user.lastName) {
         console.error("Error: firstName or lastName is missing");
@@ -159,7 +159,7 @@ const verifyOtp = async (req, res) => {
       }
 
       const passwordHash = await securePassword(user.password);
-      //console.log("Hashed Password Before Saving:", passwordHash);
+      console.log("Hashed Password Before Saving:", passwordHash);
 
       const saveUserData = new User({
         firstName: user.firstName,
@@ -168,7 +168,10 @@ const verifyOtp = async (req, res) => {
         password: passwordHash,
       });
 
-      //console.log(user.firstName, user.lastName);
+      // console.log(user.firstName, user.lastName);
+
+      console.log("Before saving:", savedUser);
+
 
       const savedUser = await saveUserData.save();
       console.log("Saved User:", savedUser);
