@@ -356,6 +356,7 @@ const walletschema = require("../../models/walletschema");
 
 const cancelOrder = async (req, res) => {
   try {
+    console.log("Helooo")
     const { orderId, productId } = req.body;
     const order = await Order.findOne({ _id: orderId });
 
@@ -367,6 +368,7 @@ const cancelOrder = async (req, res) => {
     const productItem = order.orderItems.find(
       (item) => item._id.toString() === productId
     );
+    console.log(productItem)
 
     if (!productItem) {
       return res.status(404).json({ message: "Product not found in order." });
@@ -387,8 +389,16 @@ const cancelOrder = async (req, res) => {
     // Update order status to "Cancelled"
     await Order.updateOne(
       { _id: orderId, "orderItems._id": productId },
-      { $set: { "orderItems.$.orderStatus": "cancelled" } }
+      {
+        $set: { "orderItems.$.orderStatus": "cancelled" },
+        $inc: {
+          totalPrice: -(productItem.quantity * productItem.price),
+          discount: -productItem.subdiscount,
+          finalAmount: -((productItem.quantity * productItem.price) - productItem.subdiscount)
+        }
+      }
     );
+    
 
     // Restore product quantity
     await Product.findByIdAndUpdate(productItem.product, {
@@ -410,7 +420,7 @@ const cancelOrder = async (req, res) => {
     return res.json({ success: true, message: "Order successfully cancelled" });
   } catch (error) {
     console.error("Error cancelling order:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({success: false, message: "Internal Server Error" });
   }
 };
 

@@ -302,12 +302,12 @@
                 <h5>Order Summary</h5>
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span>₹ <%= Totalprice %></span>
+                    <span>₹ <%= order.totalPrice %></span>
                 </div>
-                <% if (order.totalOfferDiscount > 0) { %>
+                <% if (order.discount > 0) { %>
                     <div class="summary-row">
                         <span>Offer Discount</span>
-                        <span>-₹ <%= order.totalOfferDiscount %></span>
+                        <span>-₹ <%= order.discount %></span>
                     </div>
                 <% } %>
                 <% if (order.couponApplied) { %>
@@ -374,9 +374,19 @@
                             statusElement.classList.remove('status-pending', 'status-processing', 'status-delivered');
                             statusElement.classList.add('status-cancelled');
                         }
+                        Swal.fire({
+                          title: "success",
+                          text: data.message,
+                          icon: "success",
+                          confirmButtonText: "OK"
+                        });
                     } else {
-                        alert(data.message || "Failed to cancel order.");
-                    }
+                        Swal.fire({
+                          title: "error",
+                          text: data.message,
+                          icon: "error",
+                          confirmButtonText: "OK"
+                        });                    }
                 } catch (error) {
                     console.error("Error cancelling order:", error);
                     alert("Something went wrong. Please try again.");
