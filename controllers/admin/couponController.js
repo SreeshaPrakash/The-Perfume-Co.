@@ -90,9 +90,8 @@ const addCoupon = async (req, res) => {
       }
 
       if (new Date(startOn) >= new Date(expireOn)) {
-          return res.status(400).json({
-              success: false,
-              message: 'Start date must be before expiry date'
+          return res.json({
+              Expmessage: 'Expiry Date Should be Greater Than Starting Date'
           });
       }
 

@@ -83,8 +83,8 @@
                     </div>
                     <div>
                         <h6 class="mb-1 text-muted">Total Revenue</h6>
-                        <span class="fs-4 fw-bold">₹<%= totalRevenue.toLocaleString('en-IN') %></span>
-                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= totalRevenueGrowth || '8.9' %>% growth</p>
+                        <span class="fs-4 fw-bold">₹<%= Math.round(totalRevenue).toLocaleString('en-IN') %></span>
+                        <p class="small text-success mb-0"><i class="fas fa-arrow-up"></i> <%= Math.round(totalRevenueGrowth) %>% growth</p>
                     </div>
                 </article>
             </div>
@@ -97,7 +97,7 @@
                     </div>
                     <div>
                         <h6 class="mb-1 text-muted">Total Discount</h6>
-                        <span class="fs-4 fw-bold"><%= totalDiscount %></span>
+                        <span class="fs-4 fw-bold"><%= Math.round(totalDiscount) %></span>
                     </div>
                 </article>
             </div>
@@ -388,6 +388,11 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    const startDate=document.getElementById('startDate').value
+    console.log(startDate)
+    document.getElementById('endDate').setAttribute('max', today)
+    document.getElementById('startDate').setAttribute('max', today)
     try {
         const chartData = <%- JSON.stringify(chartData) %>;
         let currentTimeRange = 'yearly';

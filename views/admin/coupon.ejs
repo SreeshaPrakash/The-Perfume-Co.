@@ -68,13 +68,13 @@
                             </div>
                             <div class="mb-3">
                                 <label for="expireOn" class="form-label">Expiration Date</label>
-                                <input type="date" class="form-control" id="expireOn" name="expireOn" required>
-                                <div class="invalid-feedback">Expiration date is required.</div>
+                                <input type="date" class="form-control" id="expireOn" name="expireOn" >
+                                <div id="expdatecon" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="maxUses" class="form-label">Max Uses</label>
-                                <input type="number" class="form-control" id="maxUses" name="maxUses" min="1" value="5" required>
-                                <div class="invalid-feedback">Max uses must be at least 1.</div>
+                                <input type="number" class="form-control" id="maxUses" name="maxUses" min="" value="5" required>
+                                <div id="maxUsers" class="text-danger"></div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Add</button>
                         </form>
@@ -180,7 +180,7 @@
                     minimumPrice: Number(document.getElementById('minimumPrice').value),
                     startOn: document.getElementById('startOn').value,
                     expireOn: document.getElementById('expireOn').value,
-                    maxUses: Number(document.getElementById('maxUses').value) || 5, // Default to 5
+                    maxUses: Number(document.getElementById('maxUses').value) , 
                 };
     
                 // Client-side validation
@@ -211,15 +211,19 @@
                 }
                 if (!formData.expireOn || new Date(formData.expireOn) <= new Date(formData.startOn)) {
                     document.getElementById('expireOn').classList.add('is-invalid');
+                    document.getElementById('expdatecon').innerHTML="Expiry Date Should be Greater Than Starting Date"
                     isValid = false;
                 } else {
                     document.getElementById('expireOn').classList.remove('is-invalid');
+                    document.getElementById('expdatecon').innerHTML=""
                 }
                 if (formData.maxUses < 1) {
                     document.getElementById('maxUses').classList.add('is-invalid');
+                    document.getElementById('maxUsers').innerHTML="Maximum User Should Be Greater Than  0"
                     isValid = false;
                 } else {
                     document.getElementById('maxUses').classList.remove('is-invalid');
+                    document.getElementById('maxUsers').innerHTML=""
                 }
     
                 if (!isValid) return; // Stop if validation fails
@@ -232,6 +236,9 @@
                     });
     
                     const result = await response.json();
+
+   
+
     
                     if (result.success) {
                         Swal.fire({

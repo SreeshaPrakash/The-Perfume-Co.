@@ -313,7 +313,7 @@ const addProductOffer = async (req, res) => {
     const findCategory = await Category.findOne({ _id: findProduct.category });
     
     if (findCategory.categoryOffer > percentage) {
-      return res.json({ status: false, message: 'This product\'s category already has a higher category offer' });
+      return res.json({ status: false, Cmessage: 'This product\'s category already has a higher category offer' });
     }
 
     // Calculate the discounted price by SUBTRACTING the discount amount
@@ -321,10 +321,7 @@ const addProductOffer = async (req, res) => {
     findProduct.salePrice = findProduct.regularPrice - discountAmount;
     findProduct.productOffer = parseInt(percentage);
     
-    await findProduct.save();
-    findCategory.categoryOffer = 0;
-    await findCategory.save();
-    
+    await findProduct.save(); 
     res.json({ status: true });
   } catch (error) {
     console.error("Error adding product offer:", error);

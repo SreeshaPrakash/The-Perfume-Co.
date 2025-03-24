@@ -86,24 +86,7 @@ const addCategoryOffer = async (req, res) => {
     if (!category) {
       return res.status(404).json({ status: false, message: 'Category not found' });
     }
-    
-    // Find all products in this category
-    const products = await Product.find({ category: category._id });
-    
-    // Update category offer - allow any percentage
-    await Category.updateOne({ _id: categoryId }, { $set: { categoryOffer: percentage } });
-    
-    // Update all products in this category that don't have a higher product offer
-    for (const product of products) {
-      if (!product.productOffer || product.productOffer < percentage) {
-        // Apply category offer as it's higher
-        const discountAmount = Math.floor(product.regularPrice * (percentage / 100));
-        product.salePrice = product.regularPrice - discountAmount;
-        await product.save();
-      }
-      // If product offer is higher, keep the product's current sale price
-    }
-    
+    await Category.updateOne({ _id: categoryId }, { $set: { categoryOffer: percentage } });    
     res.json({ status: true });
   } catch (error) {
     console.error("Error adding category offer:", error);
@@ -120,30 +103,6 @@ const removeCategoryOffer = async (req, res) => {
     if (!category) {
       return res.status(404).json({ status: false, message: 'Category not found' });
     }
-    
-    // Find all products in this category
-    const products = await Product.find({ category: category._id });
-    
-    // For products using category offer (no product offer or lower product offer)
-    if (products.length > 0) {
-      for (const product of products) {
-        if (!product.productOffer || product.productOffer < category.categoryOffer) {
-          // These products were using category offer, reset to product offer or regular price
-          if (product.productOffer > 0) {
-            // Apply product offer instead
-            const discountAmount = Math.floor(product.regularPrice * (product.productOffer / 100));
-            product.salePrice = product.regularPrice - discountAmount;
-          } else {
-            // No product offer, reset to regular price
-            product.salePrice = product.regularPrice;
-          }
-          await product.save();
-        }
-        // Products with higher product offer are unaffected
-      }
-    }
-    
-    // Reset category offer
     category.categoryOffer = 0;
     await category.save();
     

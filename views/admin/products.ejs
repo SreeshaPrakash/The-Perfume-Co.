@@ -145,8 +145,15 @@
                  if(response.status===true){
                     location.reload()
                     Swal.fire('Offer added','The offer has been removed','success')
-                 }else{
-                    alert('failed')
+                 }
+                 if(response.Cmessage){
+                    Swal.fire({
+                         title: "warning!",
+                         text: response.Cmessage,
+                         icon: "warning",
+                          confirmButtonText: "OK",
+                     });
+
                  }
             }
         })
