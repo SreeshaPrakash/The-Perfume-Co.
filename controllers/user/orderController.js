@@ -738,7 +738,7 @@ const downloadInvoice = async (req, res) => {
     console.log("order details",order);
     const totalsStart = doc.y + 15;
     const discount = order.discount || 0;
-    const couponDiscount =  0;
+    const couponDiscount =  order.couponDiscount;
     // const grandTotal = subTotal - discount - couponDiscount;
     const grandTotal = order.finalAmount
 

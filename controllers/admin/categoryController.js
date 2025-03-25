@@ -28,24 +28,6 @@ const categoryInfo = async (req, res) => {
 
 
 
-// const addCategory = async (req, res) => {
-//   const { name, description } = req.body;
-//   try {
-//     const existingCategory = await Category.findOne({ name });
-//     if (existingCategory) {
-//       return res.status(400).json({ error: "Category already exists" });
-//     }
-//     const newCategory = new Category({
-//       name,
-//       description,
-//     });
-//     await newCategory.save();
-//     return res.json({ message: "category added successfully" });
-//   } catch (error) {
-//     console.error("Error adding category:", error);
-//     return res.status(500).json({ error: "internal server error" });
-//   }
-// };
 
 
 
@@ -154,7 +136,7 @@ const getEditCategory = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
-    const { categoryName, description } = req.body;
+    const { categoryName, description } = req.body;  
     const existingCategory = await Category.findOne({ name: categoryName });
 
     if (existingCategory) {
