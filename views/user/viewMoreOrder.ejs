@@ -249,9 +249,9 @@
                                         <td class="text-center">₹ <%= item.price %></td>
                                         <td class="text-end">₹ <%= item.quantity * item.price %></td>
                                         <td>
-                                            <% if (item.orderStatus.toLowerCase() === 'cancelled') { %>
+                                            <% if (item.orderStatus.toLowerCase() === 'cancelled' ) { %>
                                                 <button class="btn btn-secondary" disabled>Cancelled</button>
-                                            <% } else if (item.orderStatus.toLowerCase() === 'delivered') { %>
+                                            <% } else if (item.orderStatus.toLowerCase() === 'delivered' && order.couponapplied==false) { %>
                                                 <button class="btn btn-warning returnOrder" 
                                                         data-product-id="<%= item._id %>" 
                                                         data-order-id="<%= order._id %>">
@@ -272,6 +272,8 @@
                                                 <span class="text-success">Returned</span>
                                             <% } else if (item.orderStatus.toLowerCase() === 'return denied') { %>
                                                 <span class="text-danger">Return Denied</span>
+                                                <% } else if (order.couponapplied==true) { %>
+                                                    <button class="btn btn-secondary" disabled>Unable action</button>
                                             <% } else { %>
                                                 <button class="btn btn-danger cancelOrder" 
                                                         data-product-id="<%= item._id %>" 
