@@ -312,10 +312,10 @@
                         <span>-₹ <%= order.discount %></span>
                     </div>
                 <% } %>
-                <% if (order.couponApplied) { %>
+                <% if (order.couponapplied) { %>
                     <div class="summary-row">
                         <span>Coupon Discount (Code: <%= order.couponCode %>)</span>
-                        <span>-₹ <%= order.discount %></span>
+                        <span>-₹ <%= order.couponDiscount %></span>
                     </div>
                 <% } %>
                 <div class="summary-row">
