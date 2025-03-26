@@ -2,21 +2,110 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 mt-60">
-            <form method="post" action="/admin/editCategory/<%= category._id%>">
+            <form method="post" action="/admin/editCategory/<%= category._id%>" id="categoryForm" onsubmit="return validateForm()">
                 <div class="d-grid text-end mt-30 col-md-5">
                     <button class="btn btn-primary" type="submit">Update category</button>
                 </div>
                 <div class="mb-4 mt-30">
                     <label for="product_name" class="form-label">Name</label>
-                    <input type="text" name="categoryName" value="<%=category.name %>" class="form-control border" required/>
+                    <input type="text" name="categoryName" value="<%= category.name %>" 
+                           class="form-control border" 
+                           required 
+                           pattern="^(?!\s*$)[a-zA-Z0-9\s]+$" 
+                           title="Category name is required and must contain letters or numbers"
+                           id="categoryName"/>
+                    <div id="nameError" class="text-danger" style="display: none;"></div>
                 </div>
                 
                 <div class="mb-4">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control border" required><%= category.description%> </textarea>
+                    <textarea name="description" 
+                              class="form-control border" 
+                              required
+                              pattern="^(?!\s*$)[\s\S]+$" 
+                              title="Description is required and must contain characters"
+                              id="description"><%= category.description%></textarea>
+                    <div id="descError" class="text-danger" style="display: none;"></div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+function validateForm() {
+    let isValid = true;
+    const categoryName = document.getElementById('categoryName').value;
+    const description = document.getElementById('description').value;
+    const nameError = document.getElementById('nameError');
+    const descError = document.getElementById('descError');
+
+    // Reset error messages
+    nameError.style.display = 'none';
+    descError.style.display = 'none';
+
+    // Validate category name
+    if (!categoryName || categoryName.trim() === '') {
+        nameError.textContent = 'Category name is required';
+        nameError.style.display = 'block';
+        isValid = false;
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(categoryName)) {
+        nameError.textContent = 'Category name must contain only letters, numbers, or spaces';
+        nameError.style.display = 'block';
+        isValid = false;
+    } else if (categoryName.trim().length === 0) {
+        nameError.textContent = 'Category name cannot contain only spaces';
+        nameError.style.display = 'block';
+        isValid = false;
+    }
+
+    // Validate description
+    if (!description || description.trim() === '') {
+        descError.textContent = 'Description is required';
+        descError.style.display = 'block';
+        isValid = false;
+    } else if (description.trim().length === 0) {
+        descError.textContent = 'Description cannot contain only spaces';
+        descError.style.display = 'block';
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+// Real-time validation
+document.getElementById('categoryName').addEventListener('input', function() {
+    const value = this.value;
+    const nameError = document.getElementById('nameError');
+    
+    nameError.style.display = 'none';
+    
+    if (!value || value.trim() === '') {
+        nameError.textContent = 'Category name is required';
+        nameError.style.display = 'block';
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(value)) {
+        nameError.textContent = 'Category name must contain only letters, numbers, or spaces';
+        nameError.style.display = 'block';
+    } else if (value.trim().length === 0) {
+        nameError.textContent = 'Category name cannot contain only spaces';
+        nameError.style.display = 'block';
+    }
+});
+
+document.getElementById('description').addEventListener('input', function() {
+    const value = this.value;
+    const descError = document.getElementById('descError');
+    
+    descError.style.display = 'none';
+    
+    if (!value || value.trim() === '') {
+        descError.textContent = 'Description is required';
+        descError.style.display = 'block';
+    } else if (value.trim().length === 0) {
+        descError.textContent = 'Description cannot contain only spaces';
+        descError.style.display = 'block';
+    }
+});
+</script>
+
 <%- include("../../views/partials/admin/footer") %>
