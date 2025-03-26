@@ -344,9 +344,16 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="edit-status-btn" onclick="status('<%= item._id %>')">
-                                        Edit Status
-                                    </button>
+                                    <% if (item.orderStatus=="cancelled" || item.orderStatus =="returned") { %>
+                                        <button class="edit-status-btn" onclick="status('<%= item._id %>')" disabled>
+                                            Edit Status
+                                        </button>
+                                        <% } else { %>
+                                            <button class="edit-status-btn" onclick="status('<%= item._id %>')">
+                                                Edit Status
+                                            </button>
+                                        <% } %>
+                                   
                                 </td>
                             </tr>
                             <% }); %>

@@ -40,7 +40,7 @@
                             <tr>
                                 <td><%= userData[i].firstName %> <%= userData[i].lastName %></td>
                                 <td><%= userData[i].email %></td>
-                                <td><%= userData[i].phone %></td>
+                                <td><%= userData[i].phone || "0000000000" %></td>
                                 <td> 
                                     <%if(userData[i].isBlocked===false){%>
                                         <button class="btn btn-danger" style="width: 80px;">

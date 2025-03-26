@@ -164,6 +164,7 @@ const verifyOtp = async (req, res) => {
       const saveUserData = await  User.create({
         firstName: user.firstName,
         lastName: user.lastName,
+        phone:user.phone,
         email: user.email,
         password: passwordHash,
       });
