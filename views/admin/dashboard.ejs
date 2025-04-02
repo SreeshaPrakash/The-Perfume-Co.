@@ -318,7 +318,7 @@
                             <option value="yearly">Yearly Report</option>
                         </select>
                     </div>
-                    <div class="mb-3" id="customDateFields" style="display: none;">
+                    <!-- <div class="mb-3" id="customDateFields" style="display: none;">
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="startDate" class="form-label">Start Date</label>
@@ -329,7 +329,25 @@
                                 <input type="date" class="form-control" id="endDate" name="endDate">
                             </div>
                         </div>
+                    </div> -->
+
+
+                    <div class="mb-3" id="customDateFields" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate">
+                                <span id="startDateError" class="text-danger" style="font-size: 0.875rem;"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate">
+                                <span id="endDateError" class="text-danger" style="font-size: 0.875rem;"></span>
+                            </div>
+                        </div>
                     </div>
+
+
                     <div class="mb-3">
                         <label for="reportFormat" class="form-label">Report Format</label>
                         <select class="form-select" id="reportFormat" name="reportFormat" required>
@@ -393,6 +411,119 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(startDate)
     document.getElementById('endDate').setAttribute('max', today)
     document.getElementById('startDate').setAttribute('max', today)
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+
+    // Add this new validation logic
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+const startDateError = document.getElementById('startDateError');
+const endDateError = document.getElementById('endDateError');
+
+function clearErrors() {
+    startDateError.textContent = '';
+    endDateError.textContent = '';
+}
+
+
+
+// startDateInput.addEventListener('change', function() {
+//     const startDate = new Date(this.value);
+//     const endDate = new Date(endDateInput.value);
+//     if (endDate && startDate > endDate) {
+//         alert('Start date cannot be after end date');
+//         this.value = ''; // Reset invalid start date
+//     }
+// });
+
+
+startDateInput.addEventListener('change', function() {
+    clearErrors();
+    const startDate = new Date(this.value);
+    const endDate = new Date(endDateInput.value);
+    if (endDate && startDate > endDate) {
+        startDateError.textContent = 'Start date cannot be after end date';
+        this.value = ''; // Reset invalid start date
+    }
+});
+
+
+// endDateInput.addEventListener('change', function() {
+//     const endDate = new Date(this.value);
+//     const startDate = new Date(startDateInput.value);
+//     if (startDate && endDate < startDate) {
+//         alert('End date cannot be before start date');
+//         this.value = ''; // Reset invalid end date
+//     }
+// });
+
+
+
+endDateInput.addEventListener('change', function() {
+    clearErrors();
+    const endDate = new Date(this.value);
+    const startDate = new Date(startDateInput.value);
+    if (startDate && endDate < startDate) {
+        endDateError.textContent = 'End date cannot be before start date';
+        this.value = ''; // Reset invalid end date
+    }
+});
+
+
+document.getElementById('generateReportBtn').addEventListener('click', function() {
+    clearErrors();
+    const reportType = document.getElementById('reportType').value;
+    const reportFormat = document.getElementById('reportFormat').value;
+    let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
+
+    if (reportType === 'custom') {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        if (!startDate || !endDate) {
+            if (!startDate) startDateError.textContent = 'Please select a start date';
+            if (!endDate) endDateError.textContent = 'Please select an end date';
+            return;
+        }
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const todayDate = new Date(today);
+
+        if (start > todayDate) {
+            startDateError.textContent = 'Start date cannot be in the future';
+            return;
+        }
+
+        if (end > todayDate) {
+            endDateError.textContent = 'End date cannot be in the future';
+            return;
+        }
+
+        if (start > end) {
+            startDateError.textContent = 'Start date cannot be after end date';
+            return;
+        }
+
+        downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+    }
+
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
+});
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
     try {
         const chartData = <%- JSON.stringify(chartData) %>;
         let currentTimeRange = 'yearly';
@@ -562,30 +693,73 @@ document.addEventListener('DOMContentLoaded', function() {
         customDateFields.style.display = this.value === 'custom' ? 'block' : 'none';
     });
 
-    document.getElementById('generateReportBtn').addEventListener('click', function() {
-        const reportType = document.getElementById('reportType').value;
-        const reportFormat = document.getElementById('reportFormat').value;
-        let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
+    // document.getElementById('generateReportBtn').addEventListener('click', function() {
+    //     const reportType = document.getElementById('reportType').value;
+    //     const reportFormat = document.getElementById('reportFormat').value;
+    //     let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
 
-        if (reportType === 'custom') {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            if (!startDate || !endDate) {
-                alert('Please select both start and end dates');
-                return;
-            }
-            downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+    //     if (reportType === 'custom') {
+    //         const startDate = document.getElementById('startDate').value;
+    //         const endDate = document.getElementById('endDate').value;
+    //         if (!startDate || !endDate) {
+    //             alert('Please select both start and end dates');
+    //             return;
+    //         }
+    //         downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+    //     }
+
+    //     const link = document.createElement('a');
+    //     link.href = downloadUrl;
+    //     link.target = '_blank';
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+
+    //     bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
+    // });
+
+
+    document.getElementById('generateReportBtn').addEventListener('click', function() {
+    const reportType = document.getElementById('reportType').value;
+    const reportFormat = document.getElementById('reportFormat').value;
+    let downloadUrl = `/admin/download-report?reportType=${reportType}&reportFormat=${reportFormat}`;
+
+    if (reportType === 'custom') {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
         }
 
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const todayDate = new Date(today);
 
-        bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
-    });
+        if (start > todayDate || end > todayDate) {
+            alert('Dates cannot be in the future');
+            return;
+        }
+
+        if (start > end) {
+            alert('Start date cannot be after end date');
+            return;
+        }
+
+        downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+    }
+
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    bootstrap.Modal.getInstance(document.getElementById('generateReportModal')).hide();
+});
+
 });
 
 

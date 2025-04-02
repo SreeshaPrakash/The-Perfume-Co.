@@ -158,27 +158,72 @@ const loadDashboard = async (req, res) => {
 
 // -------------------------------------------------------------------------------------
 
+// const getSalesReportData = async (startDate, endDate, period) => {
+//   let dateFilter = {};
+
+//   if (period === "custom" && startDate && endDate) {
+//     const start = new Date(startDate).setHours(0, 0, 0, 0);
+//     const end = new Date(endDate).setHours(23, 59, 59, 999);
+//     dateFilter = { Date: { $gte: new Date(start), $lte: new Date(end) } };
+//   }
+
+//   if (period === "daily") {
+//     dateFilter = {
+//       Date: {
+//         $gte: new Date(new Date().setHours(0, 0, 0)),
+//         $lt: new Date(),
+//       },
+//     };
+//   } else if (period === "weekly") {
+//     dateFilter = {
+//       Date: {
+//         $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+//         $lt: new Date(),
+//       },
+//     };
+//   } else if (period === "monthly") {
+//     dateFilter = {
+//       Date: {
+//         $gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+//         $lt: new Date(),
+//       },
+//     };
+//   } else if (period === "yearly") {
+//     dateFilter = {
+//       Date: {
+//         $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+//         $lt: new Date(),
+//       },
+//     };
+//   }
+
+//   return dateFilter;
+// };
+
+// -------------------------------------------------------------------------------------
+
+
+
+
 const getSalesReportData = async (startDate, endDate, period) => {
   let dateFilter = {};
 
   if (period === "custom" && startDate && endDate) {
     const start = new Date(startDate).setHours(0, 0, 0, 0);
     const end = new Date(endDate).setHours(23, 59, 59, 999);
-    dateFilter = { Date: { $gte: new Date(start), $lte: new Date(end) } };
-  }
-
-  if (period === "daily") {
+    dateFilter = { createdAt: { $gte: new Date(start), $lte: new Date(end) } }; // Changed from Date to createdAt
+  } else if (period === "daily") {
     dateFilter = {
-      Date: {
-        $gte: new Date(new Date().setHours(0, 0, 0)),
-        $lt: new Date(),
+      createdAt: { // Changed from Date to createdAt
+        $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        $lte: new Date(),
       },
     };
   } else if (period === "weekly") {
     dateFilter = {
-      Date: {
+      createdAt: { // Changed from Date to createdAt
         $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
-        $lt: new Date(),
+        $lte: new Date(),
       },
     };
   } else if (period === "monthly") {
@@ -190,9 +235,9 @@ const getSalesReportData = async (startDate, endDate, period) => {
     };
   } else if (period === "yearly") {
     dateFilter = {
-      Date: {
+      createdAt: { // Changed from Date to createdAt
         $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
-        $lt: new Date(),
+        $lte: new Date(),
       },
     };
   }
@@ -200,7 +245,13 @@ const getSalesReportData = async (startDate, endDate, period) => {
   return dateFilter;
 };
 
-// -------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 const downloadReport = async (req, res) => {
   try {
@@ -211,6 +262,28 @@ const downloadReport = async (req, res) => {
     //   startDate,
     //   endDate
     // );
+    // Add date validation for custom range
+    if (reportType === 'custom') {
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Start date and end date are required for custom range' });
+      }
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const currentDate = new Date();
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ error: 'Invalid date format' });
+      }
+
+      if (start > currentDate || end > currentDate) {
+        return res.status(400).json({ error: 'Dates cannot be in the future' });
+      }
+
+      if (start > end) {
+        return res.status(400).json({ error: 'Start date cannot be after end date' });
+      }
+    }
 
     const dateFilter = await getSalesReportData(startDate, endDate, reportType);
 
@@ -230,8 +303,12 @@ const downloadReport = async (req, res) => {
     const reportData = orders.map((order) => ({
       orderId: order.orderId,
       //date: order.orderDate.toLocaleDateString(),
-      date: order.Date.toLocaleDateString(),
-      // date: order.Date ? order.Date : "N/A",
+
+
+
+     // date: order.Date.toLocaleDateString(),
+date: order.createdAt.toLocaleDateString(), // Changed from order.Date
+
 
       customerName: order.userId?.firstName + ' ' + order.userId?.lastName || "Unknown",
       status: order.orderItems[0]?.orderStatus || "Processing",

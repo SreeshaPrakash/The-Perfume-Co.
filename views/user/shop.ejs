@@ -471,6 +471,20 @@
 .pagination-button.active {
   background: #dc3545;
 }
+/* Add this to your existing <style> block */
+  .filter-item a.active {
+  color: #dc3545; /* Highlight color (red in your theme) */
+  font-weight: 600; /* Bold text for emphasis */
+  background-color: #f8d7da; /* Light background to stand out */
+  padding: 6px 10px; /* Adjust padding for better appearance */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.price-button.active {
+  background: #dc3545; /* Match your theme's red */
+  color: white; /* White text for contrast */
+  border-color: #dc3545; /* Match border to background */
+}
 
 
 
@@ -518,39 +532,53 @@
           <a href="/shop" class="clear-filter-btn">
             Clear All Filters
           </a>
+
+          
           <div class="filter-section">
             <h3 class="filter-title">Categories</h3>
             <div class="filter-items">
-              <% categories.forEach(category=> { %>
+              <% categories.forEach(category => { %>
                 <div class="filter-item">
-                  <a href="?category=<%= category._id %>&sort=<%= query.sort %>&search=<%= query.search %>">
+                  <a href="?category=<%= category._id %>&sort=<%= query.sort %>&search=<%= query.search %>"
+                     class="<%= query.category === category._id.toString() ? 'active' : '' %>">
                     <%= category.name %>
                   </a>
                 </div>
-                <% }) %>
+              <% }) %>
             </div>
           </div>
+
+
           <div class="filter-section">
             <h3 class="filter-title">Brands</h3>
             <div class="filter-items">
-              <% brands.forEach(brand=> { %>
+              <% brands.forEach(brand => { %>
                 <div class="filter-item">
-                  <a href="?brand=<%= brand._id %>&sort=<%= query.sort %>&search=<%= query.search %>">
+                  <a href="?brand=<%= brand._id %>&sort=<%= query.sort %>&search=<%= query.search %>"
+                     class="<%= query.brand === brand._id.toString() ? 'active' : '' %>">
                     <%= brand.brandName %>
                   </a>
                 </div>
-                <% }) %>
+              <% }) %>
             </div>
           </div>
+
+          
+          
           <div class="filter-section">
             <h3 class="filter-title">Price Range</h3>
             <div class="price-filters">
-              <button type="button" class="price-button" onclick="filterPrice(0, 500)">Under ₹500</button>
-              <button type="button" class="price-button" onclick="filterPrice(500, 1000)">₹500 - ₹1000</button>
-              <button type="button" class="price-button" onclick="filterPrice(1000, 1500)">₹1000 - ₹1500</button>
-              <button type="button" class="price-button" onclick="filterPrice(1500, null)">Above ₹1500</button>
+              <button type="button" class="price-button <%= (query.minPrice === '0' && query.maxPrice === '500') ? 'active' : '' %>"
+                      onclick="filterPrice(0, 500)">Under ₹500</button>
+              <button type="button" class="price-button <%= (query.minPrice === '500' && query.maxPrice === '1000') ? 'active' : '' %>"
+                      onclick="filterPrice(500, 1000)">₹500 - ₹1000</button>
+              <button type="button" class="price-button <%= (query.minPrice === '1000' && query.maxPrice === '1500') ? 'active' : '' %>"
+                      onclick="filterPrice(1000, 1500)">₹1000 - ₹1500</button>
+              <button type="button" class="price-button <%= (query.minPrice === '1500' && !query.maxPrice) ? 'active' : '' %>"
+                      onclick="filterPrice(1500, null)">Above ₹1500</button>
             </div>
           </div>
+
         </aside>
 
         <main class="product-grid">
